@@ -16,7 +16,7 @@ Belum ada bang
 - **Frontend**: React, Tailwind
 - **Backend**: NodeJS, Express
 
-## 👨Team Members
+## Team Members
 
 | Name | Student ID |
 |------|------------|
