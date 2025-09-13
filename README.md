@@ -1,6 +1,6 @@
 # Third Semester Final Boss Project
 
-> **Reposirory for Group 10's Final Project**
+> **Repository for Group 10's Final Project**
 
 ![React](https://img.shields.io/badge/React-19.1.1-61DAFB?style=flat-square&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=flat-square&logo=typescript&logoColor=white)
