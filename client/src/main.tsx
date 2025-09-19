@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 
 import { routeTree } from "./routeTree.gen";
 import "./styles/globals.css";
+import { useAuthStore } from "./lib/store/auth";
 
 const rootElement = document.getElementById("root");
 
@@ -15,7 +16,7 @@ const queryClient = new QueryClient();
 const router = createRouter({
 	routeTree,
 	// biome-ignore lint/style/noNonNullAssertion: it will be set from the provider
-	context: { user: undefined!, queryClient },
+	context: { auth: undefined!, queryClient },
 });
 
 declare module "@tanstack/react-router" {
@@ -25,9 +26,11 @@ declare module "@tanstack/react-router" {
 }
 
 function App() {
+	const auth = useAuthStore();
+
 	return (
 		<QueryClientProvider client={queryClient}>
-			<RouterProvider router={router} />
+			<RouterProvider router={router} context={{ auth, queryClient }} />
 		</QueryClientProvider>
 	);
 }
