@@ -2,18 +2,20 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "node --import=tsx --watch index.ts"
+    "dev": "node --import=tsx --watch src/index.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@t3-oss/env-core": "^0.13.8",
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
     "express": "^5.1.0",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "zod": "^4.1.9"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
