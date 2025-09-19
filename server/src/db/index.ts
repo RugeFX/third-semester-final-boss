@@ -10,7 +10,7 @@ const client = new Pool({
   database: env.DB_NAME,
   user: env.DB_USER,
   password: env.DB_PASSWORD,
-  ssl: false,
+  ssl: env.DB_SSL,
 });
 
 export const db = drizzle(client, { schema });

@@ -14,6 +14,7 @@ export const env = createEnv({
     DB_NAME: z.string().min(1),
     DB_USER: z.string().min(1),
     DB_PASSWORD: z.string().min(1),
+    DB_SSL: z.coerce.boolean().default(false),
   },
 
   /**
