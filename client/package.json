@@ -18,7 +18,6 @@
     "@tanstack/react-router-devtools": "^1.131.44",
     "@untitledui/icons": "^0.0.19",
     "react": "^19.1.1",
-    "react-aria-components": "^1.12.2",
     "react-dom": "^19.1.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
