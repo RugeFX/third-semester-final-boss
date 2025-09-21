@@ -46,7 +46,7 @@ export const categoriesRelations = relations(categoriesTable, ({ many }) => ({
 
 export const vehiclesDetailsTable = pgTable("vehicles_details", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  plat_number: varchar("plat_number").notNull(),
+  plate_number: varchar("plate_number").notNull(),
   category_id: integer("category_id")
     .notNull()
     .references(() => categoriesTable.id),
