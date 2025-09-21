@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@scalar/express-api-reference": "^0.8.19",
     "@t3-oss/env-core": "^0.13.8",
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
