@@ -28,7 +28,7 @@
           "role": {
             "type": "string",
             "description": "Role of the user (e.g., admin, member, staff).",
-            "example": "member"
+            "example": "admin"
           }
         }
       },
@@ -130,6 +130,9 @@
             "type": "integer",
             "example": 1
           },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
           "joined_at": {
             "type": "string",
             "format": "date-time"
@@ -170,7 +173,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": 1
+            "example": 2
           },
           "name": {
             "type": "string",
@@ -229,6 +232,9 @@
             "type": "integer",
             "example": 1
           },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
           "amount": {
             "type": "number",
             "format": "double",
@@ -282,6 +288,9 @@
           "category_id": {
             "type": "integer",
             "example": 2
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
           }
         }
       },
@@ -336,13 +345,26 @@
           },
           "user_id": {
             "type": "integer",
+            "example": 1,
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/User",
             "nullable": true
           },
           "vehicle_detail_id": {
-            "type": "integer"
+            "type": "integer",
+            "example": 501
+          },
+          "vehicle_detail": {
+            "$ref": "#/components/schemas/VehicleDetail"
           },
           "parking_level_id": {
-            "type": "integer"
+            "type": "integer",
+            "example": 1
+          },
+          "parking_level": {
+            "$ref": "#/components/schemas/ParkingLevel"
           },
           "created_at": {
             "type": "string",
