@@ -185,7 +185,7 @@ export interface ButtonProps
 interface LinkProps
 	extends CommonProps,
 		DetailedHTMLProps<
-			Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "color">,
+			Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "color" | "href">,
 			HTMLAnchorElement
 		> {
 	/**
@@ -194,12 +194,13 @@ interface LinkProps
 	 * @example "/dashboard" or "../profile"
 	 * @link [API Docs](https://tanstack.com/router/latest/docs/framework/react/api/router/NavigateOptionsType#href)
 	 */
-	to: TanstackLinkProps["to"];
+	to?: TanstackLinkProps["to"];
 }
 
 /** Union type of button and link props */
 export type Props = ButtonProps | LinkProps;
 
+/** Wrapper component around the base AriaLink component that creates a link with a router */
 const AriaLink = createLink(BaseAriaLink);
 
 export const Button = ({
@@ -215,10 +216,9 @@ export const Button = ({
 	showTextWhileLoading,
 	...otherProps
 }: Props) => {
-	const href = "href" in otherProps ? otherProps.href : undefined;
 	const to = "to" in otherProps ? otherProps.to : undefined;
 
-	const isLink = !!(href || to);
+	const isLink = !!to;
 
 	const Component = isLink ? AriaLink : AriaButton;
 
@@ -229,14 +229,22 @@ export const Button = ({
 
 	noTextPadding = isLinkType || noTextPadding;
 
-	let props = {} as { to?: TanstackLinkProps["to"]; [key: string]: unknown };
+	let props: { to?: TanstackLinkProps["to"]; [key: string]: unknown } = {};
 
 	if (isLink) {
 		props = {
 			...otherProps,
 
-			href: disabled ? undefined : href,
 			to: disabled ? undefined : to,
+
+			onKeyDown: (
+				e: React.KeyboardEvent<HTMLAnchorElement> &
+					React.KeyboardEvent<HTMLButtonElement>,
+			) => {
+				if (e.key === "Enter") e.preventDefault();
+
+				otherProps.onKeyDown?.(e);
+			},
 
 			// Since anchor elements do not support the `disabled` attribute and state,
 			// we need to specify `data-rac` and `data-disabled` in order to be able
