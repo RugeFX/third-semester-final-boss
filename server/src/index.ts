@@ -1,5 +1,8 @@
 import "dotenv/config";
 import express from "express";
+
+import { env } from "./env";
+
 import scalarDocsRouter from "./modules/scalar/scalar.route";
 import categoryRouter from "./modules/categories/category.route";
 import priceRouter from "./modules/prices/price.route";
@@ -10,20 +13,7 @@ import userRouter from "./modules/users/user.route";
 import memberRouter from "./modules/members/member.route";
 import auditLogsRouter from "./modules/audit_logs/audit-log.route";
 
-import { db } from "./db";
-import { usersTable } from "./db/schema";
-import { env } from "./env";
-
 const app = express();
-
-app.get("/", async (req, res) => {
-  const data = await db.select().from(usersTable);
-
-  return res.json({
-    message: "HoHo",
-    data,
-  });
-});
 
 app.use("/docs", scalarDocsRouter);
 app.use("/categories", categoryRouter);
