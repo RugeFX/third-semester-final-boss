@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import categoryService from "./category.service";
 import HttpError from "../common/exceptions/http.error";
-import { success } from "zod";
 
 // Get all categories
 export const getAllCategories = async (req: Request, res: Response) => {

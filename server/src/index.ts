@@ -1,8 +1,17 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
-import scalarDocsRouter from './modules/scalar';
 
 import { env } from "./env";
+
+import scalarDocsRouter from "./modules/scalar/scalar.route";
+import categoryRouter from "./modules/categories/category.route";
+import priceRouter from "./modules/prices/price.route";
+import vehicleDetailRouter from "./modules/vehicle_details/vehicle-detail.route";
+import parkingLevelRouter from "./modules/parking_levels/parking-level.route";
+import transactionRouter from "./modules/transactions/transaction.route";
+import userRouter from "./modules/users/user.route";
+import memberRouter from "./modules/members/member.route";
+import auditLogsRouter from "./modules/audit_logs/audit-log.route";
 import HttpError from "./modules/common/exceptions/http.error";
 import BadRequestError from "./modules/common/exceptions/bad-request.error";
 
@@ -12,14 +21,24 @@ const app = express();
 app.use(express.json());
 
 app.use("/docs", scalarDocsRouter);
+app.use("/categories", categoryRouter);
+app.use("/prices", priceRouter);
+app.use("/vehicle-details", vehicleDetailRouter);
+app.use("/parking-levels", parkingLevelRouter);
+app.use("/transactions", transactionRouter);
+app.use("/users", userRouter);
+app.use("/members", memberRouter);
+app.use("/audit-logs", auditLogsRouter);
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  
   if (err instanceof BadRequestError) {
     return res.status(400).json({ success: false, message: err.message, data: {
       errorCode: err.status,
       errorMeta: err.meta
     } });
   }
+
   if (err instanceof HttpError) {
     return res.status(err.status).json({ success: false, message: err.message, data: {
       errorCode: err.status,
