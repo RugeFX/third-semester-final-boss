@@ -33,7 +33,7 @@ function RouteComponent() {
 					backgroundImage: `url(${authBackground})`,
 				}}
 			>
-				<AnimatePresence mode="sync">
+				<AnimatePresence mode="wait">
 					{pathname === "/sign-in" && (
 						<motion.img
 							key="sign-in"
@@ -44,13 +44,17 @@ function RouteComponent() {
 							}}
 							animate={{
 								y: 0,
+								transition: {
+									duration: 1,
+									ease: "easeOut",
+								},
 							}}
 							exit={{
 								y: "-100%",
-							}}
-							transition={{
-								duration: 1,
-								ease: "easeInOut",
+								transition: {
+									duration: 0.5,
+									ease: "easeIn",
+								},
 							}}
 						/>
 					)}
@@ -62,13 +66,17 @@ function RouteComponent() {
 							}}
 							animate={{
 								y: 0,
+								transition: {
+									duration: 1,
+									ease: "easeOut",
+								},
 							}}
 							exit={{
 								y: "-100%",
-							}}
-							transition={{
-								duration: 1,
-								ease: "easeInOut",
+								transition: {
+									duration: 0.5,
+									ease: "easeIn",
+								},
 							}}
 							className="object-contain object-center absolute top-0 left-0 w-full h-full scale-125 z-1"
 							src={signUpBanner}
