@@ -34,7 +34,7 @@ export const membersRelations = relations(membersTable, ({ one }) => ({
 }));
 
 export const categoriesTable = pgTable("categories", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  id: integer().primaryKey().generatedAlwaysAsIdentity().notNull(),
   name: varchar("name").notNull(),
   weight: integer("weight").notNull(),
 });
