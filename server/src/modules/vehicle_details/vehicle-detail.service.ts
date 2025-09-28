@@ -1,75 +1,80 @@
 import { db } from "../../db";
 import HttpError from "../common/exceptions/http.error";
 import { eq } from "drizzle-orm";
-import { vehiclesDetailsTable } from "../../db/schema";
+import { vehicleDetailsTable } from "../../db/schema";
 import categoryService from "../categories/category.service";
 
 // Get all vehicle details
 export const getAllVehicleDetails = async () => {
-    const vehicleDetails = await db.query.vehiclesDetailsTable.findMany({
+    const vehicleDetails = await db.query.vehicleDetailsTable.findMany({
         with: {
             category: true
         }
     });
-
-    if (!vehicleDetails) throw new HttpError(404, "Vehicle details not found");
 
     return vehicleDetails;
 };
 
 // Find vehicle detail by ID
 export const findVehicleDetailById = async (vehicleDetailId: number) => {
-    const vehicleDetail = await db.query.vehiclesDetailsTable.findFirst({
-        where: eq(vehiclesDetailsTable.id, vehicleDetailId),
+    const vehicleDetail = await db.query.vehicleDetailsTable.findFirst({
+        where: eq(vehicleDetailsTable.id, vehicleDetailId),
         with: {
             category: true
         }
     });
 
-    if (!vehicleDetail) throw new HttpError(400, "Vehicle detail not found");
+    if (!vehicleDetail) throw new HttpError(404, "Vehicle detail not found");
 
     return vehicleDetail;
 };
 
+// Find vehicle detail by plate number
+// export const findVehicleDetailByPlateNumber = async (plate_number: string) => {
+//     const vehicleDetail = await db.query.vehicleDetailsTable.findFirst({
+//         where: eq(vehicleDetailsTable.plate_number, plate_number),
+//         with: {
+//             category: true
+//         }
+//     });
+
+//     if (!vehicleDetail) throw new HttpError(404, "Vehicle detail not found");
+
+//     return vehicleDetail;
+// };
+
 // Create a new vehicle detail
 export const createVehicleDetail = async (plate_number: string, category_id: number) => {
-    const checkCategory = await categoryService.findCategoryById(category_id);
+    await categoryService.findCategoryById(category_id);
 
-    if (!checkCategory) throw new HttpError(400, "Category not found");
-
-    const newVehicleDetail = await db.insert(vehiclesDetailsTable).values({
+    const newVehicleDetail = await db.insert(vehicleDetailsTable).values({
         plate_number,
         category_id
-    });
-
-    if (!newVehicleDetail) throw new HttpError(500, "Failed to create vehicle detail");
+    }).returning();
 
     return newVehicleDetail;
 };
 
 // Update a vehicle detail
 export const updateVehicleDetail = async (vehicleDetailId: number, plate_number: string, category_id: number) => {
-    const checkCategory = await categoryService.findCategoryById(category_id);
+    await findVehicleDetailById(vehicleDetailId);
+    await categoryService.findCategoryById(category_id);
 
-    if (!checkCategory) throw new HttpError(400, "Category not found");
-
-    const updatedVehicleDetail = await db.update(vehiclesDetailsTable).set({
+    const updatedVehicleDetail = await db.update(vehicleDetailsTable).set({
         plate_number,
         category_id
-    }).where(eq(vehiclesDetailsTable.id, vehicleDetailId));
-
-    if (!updatedVehicleDetail) throw new HttpError(500, "Failed to update vehicle detail");
+    }).where(eq(vehicleDetailsTable.id, vehicleDetailId)).returning();
 
     return updatedVehicleDetail;
 };
 
 // Delete a vehicle detail
 export const deleteVehicleDetail = async (vehicleDetailId: number) => {
-    const vehicleDetail = await findVehicleDetailById(vehicleDetailId);
+    await findVehicleDetailById(vehicleDetailId);
 
-    if (!vehicleDetail) throw new HttpError(404, "Vehicle detail not found");
+    const deletedVehicleDetail = await db.delete(vehicleDetailsTable).where(eq(vehicleDetailsTable.id, vehicleDetailId));
 
-    await db.delete(vehiclesDetailsTable).where(eq(vehiclesDetailsTable.id, vehicleDetailId));
+    return deletedVehicleDetail;
 };
 
 export default { getAllVehicleDetails, findVehicleDetailById, createVehicleDetail, updateVehicleDetail, deleteVehicleDetail };
