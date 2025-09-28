@@ -1,23 +1,14 @@
 import { Request, Response } from "express";
+import parkingLevelService from "./parking-level.service";
+import { paramsSchema, createParkingLevelSchema, updateParkingLevelSchema } from "./parking-level.schema";
+import HttpError from "../common/exceptions/http.error";
 
 // Get all parking levels
-export const getAllParkingLevels = async (req: Request, res: Response) => {
-    const parkingLevels = [
-        {
-            id: 1,
-            name: "L1",
-            max_weight: 20000
-        },
-        {
-            id: 2,
-            name: "L2",
-            max_weight: 10000
-        }
-    ];
+export const getAllParkingLevels = async (_req: Request, res: Response) => {
+    const parkingLevels = await parkingLevelService.getAllParkingLevels();
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Parking levels fetched successfully",
         data: parkingLevels
     });
@@ -25,15 +16,12 @@ export const getAllParkingLevels = async (req: Request, res: Response) => {
 
 // Get parking level by ID
 export const getParkingLevelById = async (req: Request, res: Response) => {
-    const parkingLevel = {
-        id: 1,
-        name: "L1",
-        max_weight: 20000
-    };
+    const { id } = paramsSchema.parse(req.params);
 
-    res.json({
+    const parkingLevel = await parkingLevelService.findParkingLevelById(id);
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Parking level fetched successfully",
         data: parkingLevel
     });
@@ -41,39 +29,45 @@ export const getParkingLevelById = async (req: Request, res: Response) => {
 
 // Create a new parking level
 export const createParkingLevel = async (req: Request, res: Response) => {
-    const { name, max_weight } = req.body;
+    const { name, maxWeight } = createParkingLevelSchema.parse(req.body);
 
-    res.json({
+    const newParkingLevel = await parkingLevelService.createParkingLevel(name, maxWeight);
+
+    if (!newParkingLevel) throw new HttpError(500, "Failed to create parking level");
+
+    res.status(201).json({
         success: true,
-        code: 200,
         message: "Parking level created successfully",
-        data: {
-            name,
-            max_weight
-        }
+        data: newParkingLevel
     });
 };
 
 // Update a parking level
 export const updateParkingLevel = async (req: Request, res: Response) => {
-    const { name, max_weight } = req.body;
+    const { id } = paramsSchema.parse(req.params);
+    const { name, maxWeight } = updateParkingLevelSchema.parse(req.body);
 
-    res.json({
+    const updatedParkingLevel = await parkingLevelService.updateParkingLevel(id, name, maxWeight);
+
+    if (!updatedParkingLevel) throw new HttpError(500, "Failed to update parking level");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Parking level updated successfully",
-        data: {
-            name,
-            max_weight
-        }
+        data: updatedParkingLevel
     });
 };
 
 // Delete a parking level
 export const deleteParkingLevel = async (req: Request, res: Response) => {
-    res.json({
+    const { id } = paramsSchema.parse(req.params);
+
+    const deletedParkingLevel = await parkingLevelService.deleteParkingLevel(id);
+
+    if (!deletedParkingLevel) throw new HttpError(500, "Failed to delete parking level");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Parking level deleted successfully"
     });
 };
