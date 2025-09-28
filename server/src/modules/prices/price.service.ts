@@ -31,41 +31,32 @@ export const findPriceById = async (priceId: number) => {
 
 // Create a new price
 export const createPrice = async (amount: number, category_id: number) => {
-    const checkCategory = await categoryService.findCategoryById(category_id);
-
-    if (!checkCategory) throw new HttpError(400, "Category not found");
+    await categoryService.findCategoryById(category_id);
 
     const newPrice = await db.insert(pricesTable).values({
         amount,
         category_id
-    });
-
-    if (!newPrice) throw new HttpError(500, "Failed to create price");
+    }).returning();
 
     return newPrice;
 };
 
 // Update a price
 export const updatePrice = async (priceId: number, amount: number, category_id: number) => {
-    const checkCategory = await categoryService.findCategoryById(category_id);
-
-    if (!checkCategory) throw new HttpError(400, "Category not found");
+    await findPriceById(priceId);
+    await categoryService.findCategoryById(category_id);
 
     const updatedPrice = await db.update(pricesTable).set({
         amount,
         category_id
-    }).where(eq(pricesTable.id, priceId));
+    }).where(eq(pricesTable.id, priceId)).returning();
 
-    if (!updatedPrice) throw new HttpError(500, "Failed to update price");
-
-    return updatePrice;
+    return updatedPrice;
 }
 
 // Delete a price
 export const deletePrice = async (priceId: number) => {
-    const price = await findPriceById(priceId);
-
-    if (!price) throw new HttpError(404, "Price not found");
+    await findPriceById(priceId);
 
     const deletedPrice = await db.delete(pricesTable).where(eq(pricesTable.id, priceId));
 
