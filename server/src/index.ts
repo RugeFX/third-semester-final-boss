@@ -12,8 +12,8 @@ import transactionRouter from "./modules/transactions/transaction.route";
 import userRouter from "./modules/users/user.route";
 import memberRouter from "./modules/members/member.route";
 import auditLogsRouter from "./modules/audit_logs/audit-log.route";
-import HttpError from "./modules/common/exceptions/http.error";
-import BadRequestError from "./modules/common/exceptions/bad-request.error";
+import authenticateRouter from "./modules/auth/auth.route";
+import { errorHandler } from "./middleware/error-handler";
 
 const app = express();
 
@@ -29,22 +29,9 @@ app.use("/transactions", transactionRouter);
 app.use("/users", userRouter);
 app.use("/members", memberRouter);
 app.use("/audit-logs", auditLogsRouter);
+app.use("/auth", authenticateRouter);
 
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  
-  if (err instanceof BadRequestError) {
-    return res.status(400).json({ success: false, message: err.message, data: {
-      errorCode: err.status,
-      errorMeta: err.meta
-    } });
-  }
-
-  if (err instanceof HttpError) {
-    return res.status(err.status).json({ success: false, message: err.message, data: {
-      errorCode: err.status,
-    } });
-  }
-})
+app.use(errorHandler);
 
 app.listen(env.APP_PORT, () => {
   console.log(`Server started on port ${env.APP_PORT}`);
