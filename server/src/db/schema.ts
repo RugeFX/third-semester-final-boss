@@ -5,7 +5,8 @@ export const usersEnum = pgEnum("role", ["admin", "member"]);
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar("name").notNull(),
+  fullname: varchar("fullname").notNull(),
+  username: varchar("username").unique().notNull(),
   password: varchar("password").notNull(),
   role: usersEnum().notNull(),
 });
@@ -37,14 +38,15 @@ export const categoriesTable = pgTable("categories", {
   id: integer().primaryKey().generatedAlwaysAsIdentity().notNull(),
   name: varchar("name").notNull(),
   weight: integer("weight").notNull(),
+  // icon_name: varchar("icon_name").notNull(),
 });
 
 export const categoriesRelations = relations(categoriesTable, ({ many }) => ({
-  vehicles: many(vehiclesDetailsTable),
+  vehicle: many(vehicleDetailsTable),
   prices: many(pricesTable),
 }));
 
-export const vehiclesDetailsTable = pgTable("vehicles_details", {
+export const vehicleDetailsTable = pgTable("vehicle_details", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   plate_number: varchar("plate_number").notNull(),
   category_id: integer("category_id")
@@ -52,9 +54,9 @@ export const vehiclesDetailsTable = pgTable("vehicles_details", {
     .references(() => categoriesTable.id),
 });
 
-export const vehiclesDetailsRelations = relations(vehiclesDetailsTable, ({ one }) => ({
+export const vehicleDetailsRelations = relations(vehicleDetailsTable, ({ one }) => ({
   category: one(categoriesTable, {
-    fields: [vehiclesDetailsTable.category_id],
+    fields: [vehicleDetailsTable.category_id],
     references: [categoriesTable.id],
   }),
 }));
@@ -95,11 +97,10 @@ export const transactionsTable = pgTable("transactions", {
     .notNull()
     .default(sql`gen_random_uuid()`),
   user_id: integer("user_id")
-    .notNull()
     .references(() => usersTable.id),
   vehicle_detail_id: integer("vehicle_detail_id")
     .notNull()
-    .references(() => vehiclesDetailsTable.id),
+    .references(() => vehicleDetailsTable.id),
   parking_level_id: integer("parking_level_id")
     .notNull()
     .references(() => parkingLevelsTable.id),
@@ -115,9 +116,9 @@ export const transactionsRelations = relations(transactionsTable, ({ one }) => (
     fields: [transactionsTable.user_id],
     references: [usersTable.id],
   }),
-  vehiclesDetail: one(vehiclesDetailsTable, {
+  vehicleDetail: one(vehicleDetailsTable, {
     fields: [transactionsTable.vehicle_detail_id],
-    references: [vehiclesDetailsTable.id],
+    references: [vehicleDetailsTable.id],
   }),
   parkingLevel: one(parkingLevelsTable, {
     fields: [transactionsTable.parking_level_id],
