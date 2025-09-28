@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, type Variants } from "motion/react";
+
 import authBackground from "@/assets/auth-banner-bg.png";
 import signInBanner from "@/assets/sign-in-banner.png";
 import signUpBanner from "@/assets/sign-up-banner.png";
@@ -7,6 +8,26 @@ import signUpBanner from "@/assets/sign-up-banner.png";
 export const Route = createFileRoute("/_auth")({
 	component: RouteComponent,
 });
+
+const bannerVariants: Variants = {
+	initial: {
+		y: "100%",
+	},
+	animate: {
+		y: 0,
+		transition: {
+			duration: 0.7,
+			ease: "easeOut",
+		},
+	},
+	exit: {
+		y: "-100%",
+		transition: {
+			duration: 0.5,
+			ease: "easeIn",
+		},
+	},
+};
 
 function RouteComponent() {
 	const { pathname } = useLocation();
@@ -39,47 +60,21 @@ function RouteComponent() {
 							key="sign-in"
 							className="object-contain object-center absolute top-0 left-0 w-full h-full scale-150 z-1"
 							src={signInBanner}
-							initial={{
-								y: "100%",
-							}}
-							animate={{
-								y: 0,
-								transition: {
-									duration: 1,
-									ease: "easeOut",
-								},
-							}}
-							exit={{
-								y: "-100%",
-								transition: {
-									duration: 0.5,
-									ease: "easeIn",
-								},
-							}}
+							variants={bannerVariants}
+							initial="initial"
+							animate="animate"
+							exit="exit"
 						/>
 					)}
 					{pathname === "/sign-up" && (
 						<motion.img
 							key="sign-up"
-							initial={{
-								y: "100%",
-							}}
-							animate={{
-								y: 0,
-								transition: {
-									duration: 1,
-									ease: "easeOut",
-								},
-							}}
-							exit={{
-								y: "-100%",
-								transition: {
-									duration: 0.5,
-									ease: "easeIn",
-								},
-							}}
 							className="object-contain object-center absolute top-0 left-0 w-full h-full scale-125 z-1"
 							src={signUpBanner}
+							variants={bannerVariants}
+							initial="initial"
+							animate="animate"
+							exit="exit"
 						/>
 					)}
 				</AnimatePresence>
