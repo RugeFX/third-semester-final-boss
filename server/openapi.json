@@ -48,6 +48,10 @@
     {
       "name": "Prices",
       "description": "Public and admin endpoints for managing parking prices."
+    },
+    {
+      "name": "Vehicle Details",
+      "description": "Admin CRUD operations for managing vehicle details."
     }
   ],
   "components": {
@@ -55,18 +59,11 @@
       "User": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Unique identifier for the user.",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "example": "John Doe"
-          },
+          "id": { "type": "integer", "example": 1 },
+          "fullname": { "type": "string", "example": "John Doe" },
+          "username": { "type": "string", "example": "john.doe" },
           "role": {
             "type": "string",
-            "description": "Role of the user.",
             "enum": ["admin", "member"],
             "example": "member"
           }
@@ -74,12 +71,10 @@
       },
       "UserCreate": {
         "type": "object",
-        "required": ["name", "password", "role"],
+        "required": ["fullname", "username", "password", "role"],
         "properties": {
-          "name": {
-            "type": "string",
-            "example": "Jane Doe"
-          },
+          "fullname": { "type": "string", "example": "Jane Doe" },
+          "username": { "type": "string", "example": "jane.doe" },
           "password": {
             "type": "string",
             "format": "password",
@@ -95,9 +90,13 @@
       "UserUpdate": {
         "type": "object",
         "properties": {
-          "name": {
+          "fullname": {
             "type": "string",
-            "example": "Jane Smith"
+            "example": "Jane D. Smith"
+          },
+          "username": {
+            "type": "string",
+            "example": "jane.smith"
           },
           "role": {
             "type": "string",
@@ -309,13 +308,13 @@
       },
       "VehicleDetailCreate": {
         "type": "object",
-        "required": ["plate_number", "category_id"],
+        "required": ["plateNumber", "categoryId"],
         "properties": {
-          "plate_number": {
+          "plateNumber": {
             "type": "string",
             "example": "B1234XYZ"
           },
-          "category_id": {
+          "categoryId": {
             "type": "integer",
             "example": 2
           }
@@ -324,11 +323,11 @@
       "VehicleDetailUpdate": {
         "type": "object",
         "properties": {
-          "plate_number": {
+          "plateNumber": {
             "type": "string",
             "example": "B5678ABC"
           },
-          "category_id": {
+          "categoryId": {
             "type": "integer",
             "example": 3
           }
@@ -412,9 +411,9 @@
       },
       "LoginMember": {
         "type": "object",
-        "required": ["name", "password"],
+        "required": ["username", "password"],
         "properties": {
-          "name": {
+          "username": {
             "type": "string",
             "description": "The member's username.",
             "example": "john.doe"
@@ -697,6 +696,39 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Price"
+            }
+          }
+        }
+      },
+      "VehicleDetailResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VehicleDetail"
+          }
+        }
+      },
+      "VehicleDetailArrayResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VehicleDetail"
             }
           }
         }
@@ -2394,10 +2426,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/VehicleDetail"
-                  }
+                  "$ref": "#/components/schemas/VehicleDetailArrayResponse"
                 }
               }
             }
@@ -2428,7 +2457,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehicleDetail"
+                  "$ref": "#/components/schemas/VehicleDetailResponse"
                 }
               }
             }
@@ -2461,13 +2490,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehicleDetail"
+                  "$ref": "#/components/schemas/VehicleDetailResponse"
                 }
               }
             }
           },
           "404": {
-            "description": "Vehicle detail not found"
+            "description": "Vehicle detail not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
           }
         }
       },
@@ -2505,7 +2541,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VehicleDetail"
+                  "$ref": "#/components/schemas/VehicleDetailResponse"
                 }
               }
             }
@@ -2531,11 +2567,25 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Vehicle detail deleted successfully"
+          "200": {
+            "description": "Vehicle detail deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Vehicle detail not found"
+            "description": "Vehicle detail not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
           }
         }
       }
