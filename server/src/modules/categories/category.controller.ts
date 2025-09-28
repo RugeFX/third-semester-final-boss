@@ -1,16 +1,14 @@
 import { Request, Response } from "express";
 import categoryService from "./category.service";
+import { paramsSchema, createCategorySchema, updateCategorySchema } from "./category.schema";
 import HttpError from "../common/exceptions/http.error";
 
 // Get all categories
-export const getAllCategories = async (req: Request, res: Response) => {
+export const getAllCategories = async (_req: Request, res: Response) => {
     const categories = await categoryService.getAllCategories();
 
-    if (!categories) throw new HttpError(404, "Categories not found");
-
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Categories fetched successfully",
         data: categories
     });
@@ -18,13 +16,12 @@ export const getAllCategories = async (req: Request, res: Response) => {
 
 // Get category by ID
 export const getCategoryById = async (req: Request, res: Response) => {
-    const category = await categoryService.findCategoryById(Number(req.params.id));
+    const { id } = paramsSchema.parse(req.params);
 
-    if (!category) throw new HttpError(404, "Category not found");
+    const category = await categoryService.findCategoryById(id);
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Category fetched successfully",
         data: category
     });
@@ -32,15 +29,14 @@ export const getCategoryById = async (req: Request, res: Response) => {
 
 // Create a category
 export const createCategory = async (req: Request, res: Response) => {
-    const { name, weight } = req.body;
+    const { name, weight } = createCategorySchema.parse(req.body);
 
     const newCategory = await categoryService.createCategory(name, weight);
 
     if (!newCategory) throw new HttpError(500, "Failed to create category");
 
-    res.json({
+    res.status(201).json({
         success: true,
-        code: 200,
         message: "Category created successfully",
         data: newCategory
     });
@@ -48,15 +44,15 @@ export const createCategory = async (req: Request, res: Response) => {
 
 // Update a category
 export const updateCategory = async (req: Request, res: Response) => {
-    const { name, weight } = req.body;
+    const { id } = paramsSchema.parse(req.params);
+    const { name, weight } = updateCategorySchema.parse(req.body);
 
-    const updatedCategory = await categoryService.updateCategory(Number(req.params.id), name, weight);
+    const updatedCategory = await categoryService.updateCategory(id, name, weight);
 
     if (!updatedCategory) throw new HttpError(500, "Failed to update category");
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Category updated successfully",
         data: updatedCategory
     });
@@ -64,13 +60,14 @@ export const updateCategory = async (req: Request, res: Response) => {
 
 // Delete a category
 export const deleteCategory = async (req: Request, res: Response) => {
-    const deletedCategory = await categoryService.deleteCategory(Number(req.params.id));
+    const { id } = paramsSchema.parse(req.params);
+
+    const deletedCategory = await categoryService.deleteCategory(id);
 
     if (!deletedCategory) throw new HttpError(500, "Failed to delete category");
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Category deleted successfully"
     });
 };
