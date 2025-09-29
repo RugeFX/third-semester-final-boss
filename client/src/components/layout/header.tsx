@@ -1,79 +1,23 @@
-import { useRouter } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { useAuthActions, useIsAuthenticated } from "@/lib/store/auth";
+import { Link } from "@tanstack/react-router";
+
+import { APP_NAME } from "@/lib/utils/constants";
 import { Button } from "../base/buttons/button";
 import MainIcon from "../foundations/app-icons/main-icon";
 
 export default function Header() {
-	const isAuthenticated = useIsAuthenticated();
-	const { signIn, signOut } = useAuthActions();
-	const router = useRouter();
-
-	const onSignIn = () => {
-		signIn("token");
-		toast.success("Logged in");
-	};
-
-	const onSignOut = () => {
-		signOut();
-		router.invalidate().finally(() => {
-			router.navigate({ to: "/" });
-			toast.success("Logged out");
-		});
-	};
-
 	return (
-		<header className="sticky top-0 z-40 border-b backdrop-blur border-white/15 bg-black/10">
-			<div className="px-5 mx-auto max-w-7xl">
-				<div className="flex gap-2 justify-between items-center h-14">
-					<nav className="flex gap-4 items-center">
-						<MainIcon className="size-10 fill-brand-500" />
-						<Button
-							to="/"
-							color="link-gray"
-							size="md"
-							className="data-[status=active]:text-white"
-						>
-							Home
-						</Button>
-						<Button
-							to="/about"
-							color="link-gray"
-							size="md"
-							className="data-[status=active]:text-white"
-						>
-							About
-						</Button>
-						<Button
-							to="/a"
-							color="link-gray"
-							size="md"
-							className="data-[status=active]:text-white"
-						>
-							Authed a
-						</Button>
-					</nav>
-					<div className="flex gap-1 items-center">
-						<Button
-							size="md"
-							color="secondary"
-							onClick={() => toast("Hello", { duration: Infinity })}
-						>
-							Click me
-						</Button>
-						<Button size="md" isDisabled={isAuthenticated} onClick={onSignIn}>
-							Login
-						</Button>
-						<Button
-							color="primary-destructive"
-							size="md"
-							isDisabled={!isAuthenticated}
-							onClick={onSignOut}
-						>
-							Logout
-						</Button>
-					</div>
-				</div>
+		<header className="container flex justify-between items-center px-6 py-7 mx-auto w-full sm:px-8 md:px-12 lg:px-16">
+			<Link to="/entry" className="flex gap-3 items-center">
+				<MainIcon className="size-16 fill-brand-500" />
+				<h3 className="text-3xl font-bold">{APP_NAME}</h3>
+			</Link>
+			<div className="flex gap-4 items-center">
+				<Button size="xl" to="/sign-in">
+					Join Membership
+				</Button>
+				<Button color="secondary" size="xl" to="/sign-in">
+					Periksa Kendaraan
+				</Button>
 			</div>
 		</header>
 	);

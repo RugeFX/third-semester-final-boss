@@ -84,14 +84,14 @@ function RouteComponent() {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.5, ease: "easeOut" }}
-			className="flex flex-col lg:flex-row items-center bg-gray-700 h-full lg:max-h-[600px] min-h-[500px] rounded-xl overflow-hidden"
+			className="flex flex-col lg:flex-row items-center bg-gray-700 h-full lg:max-h-[600px] min-h-[500px] rounded-2xl overflow-hidden"
 		>
 			<motion.div
 				variants={bannerContainerVariants}
 				initial="initial"
 				animate="animate"
 				exit="exit"
-				className="relative flex-1 h-full bg-top bg-no-repeat bg-cover min-w-sm"
+				className="overflow-hidden relative flex-1 h-full bg-top bg-no-repeat bg-cover min-w-sm"
 				style={{
 					backgroundImage: `url(${entryBackground})`,
 				}}
@@ -109,7 +109,7 @@ function RouteComponent() {
 				</AnimatePresence>
 			</motion.div>
 
-			<main className="flex-1 flex flex-col gap-8 justify-center xl:p-20 p-10">
+			<main className="flex flex-col flex-1 gap-8 justify-center p-10 xl:p-20">
 				<div className="space-y-4">
 					<h1 className="text-5xl font-bold text-bg-brand-solid">Selamat!</h1>
 					<h2 className="text-2xl font-semibold">
@@ -127,7 +127,7 @@ function RouteComponent() {
 						<span className="sr-only">{selectedCategory.name}</span>
 					</Button>
 
-					<div className="flex-1 flex flex-col gap-2 justify-between">
+					<div className="flex flex-col flex-1 gap-2 justify-between">
 						<h3 className="text-xl font-semibold shrink-0">Tipe Kendaraan</h3>
 						<InputBase
 							size="xl"
@@ -138,7 +138,7 @@ function RouteComponent() {
 						/>
 					</div>
 
-					<div className="flex-1 flex flex-col gap-2 justify-between">
+					<div className="flex flex-col flex-1 gap-2 justify-between">
 						<h3 className="text-xl font-semibold shrink-0">Plat Nomor Kamu</h3>
 						<InputBase
 							size="xl"

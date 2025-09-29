@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as EntryRouteRouteImport } from './routes/entry/route'
+import { Route as CheckRouteRouteImport } from './routes/check/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EntryIndexRouteImport } from './routes/entry/index'
+import { Route as CheckIndexRouteImport } from './routes/check/index'
 import { Route as EntrySuccessRouteImport } from './routes/entry/success'
 import { Route as AuthedARouteImport } from './routes/_authed.a'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
@@ -26,6 +28,11 @@ const AuthedRoute = AuthedRouteImport.update({
 const EntryRouteRoute = EntryRouteRouteImport.update({
   id: '/entry',
   path: '/entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckRouteRoute = CheckRouteRouteImport.update({
+  id: '/check',
+  path: '/check',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
@@ -41,6 +48,11 @@ const EntryIndexRoute = EntryIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => EntryRouteRoute,
+} as any)
+const CheckIndexRoute = CheckIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CheckRouteRoute,
 } as any)
 const EntrySuccessRoute = EntrySuccessRouteImport.update({
   id: '/success',
@@ -65,11 +77,13 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/check': typeof CheckRouteRouteWithChildren
   '/entry': typeof EntryRouteRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/a': typeof AuthedARoute
   '/entry/success': typeof EntrySuccessRoute
+  '/check/': typeof CheckIndexRoute
   '/entry/': typeof EntryIndexRoute
 }
 export interface FileRoutesByTo {
@@ -78,48 +92,63 @@ export interface FileRoutesByTo {
   '/sign-up': typeof AuthSignUpRoute
   '/a': typeof AuthedARoute
   '/entry/success': typeof EntrySuccessRoute
+  '/check': typeof CheckIndexRoute
   '/entry': typeof EntryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
+  '/check': typeof CheckRouteRouteWithChildren
   '/entry': typeof EntryRouteRouteWithChildren
   '/_authed': typeof AuthedRouteWithChildren
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_authed/a': typeof AuthedARoute
   '/entry/success': typeof EntrySuccessRoute
+  '/check/': typeof CheckIndexRoute
   '/entry/': typeof EntryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/check'
     | '/entry'
     | '/sign-in'
     | '/sign-up'
     | '/a'
     | '/entry/success'
+    | '/check/'
     | '/entry/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sign-in' | '/sign-up' | '/a' | '/entry/success' | '/entry'
+  to:
+    | '/'
+    | '/sign-in'
+    | '/sign-up'
+    | '/a'
+    | '/entry/success'
+    | '/check'
+    | '/entry'
   id:
     | '__root__'
     | '/'
     | '/_auth'
+    | '/check'
     | '/entry'
     | '/_authed'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_authed/a'
     | '/entry/success'
+    | '/check/'
     | '/entry/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  CheckRouteRoute: typeof CheckRouteRouteWithChildren
   EntryRouteRoute: typeof EntryRouteRouteWithChildren
   AuthedRoute: typeof AuthedRouteWithChildren
 }
@@ -138,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/entry'
       fullPath: '/entry'
       preLoaderRoute: typeof EntryRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/check': {
+      id: '/check'
+      path: '/check'
+      fullPath: '/check'
+      preLoaderRoute: typeof CheckRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
@@ -160,6 +196,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/entry/'
       preLoaderRoute: typeof EntryIndexRouteImport
       parentRoute: typeof EntryRouteRoute
+    }
+    '/check/': {
+      id: '/check/'
+      path: '/'
+      fullPath: '/check/'
+      preLoaderRoute: typeof CheckIndexRouteImport
+      parentRoute: typeof CheckRouteRoute
     }
     '/entry/success': {
       id: '/entry/success'
@@ -206,6 +249,18 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
+interface CheckRouteRouteChildren {
+  CheckIndexRoute: typeof CheckIndexRoute
+}
+
+const CheckRouteRouteChildren: CheckRouteRouteChildren = {
+  CheckIndexRoute: CheckIndexRoute,
+}
+
+const CheckRouteRouteWithChildren = CheckRouteRoute._addFileChildren(
+  CheckRouteRouteChildren,
+)
+
 interface EntryRouteRouteChildren {
   EntrySuccessRoute: typeof EntrySuccessRoute
   EntryIndexRoute: typeof EntryIndexRoute
@@ -234,6 +289,7 @@ const AuthedRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
+  CheckRouteRoute: CheckRouteRouteWithChildren,
   EntryRouteRoute: EntryRouteRouteWithChildren,
   AuthedRoute: AuthedRouteWithChildren,
 }
