@@ -1,5 +1,6 @@
 import "dotenv/config";
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
+import cors from "cors";
 
 import { env } from "./env";
 
@@ -17,8 +18,9 @@ import { errorHandler } from "./middleware/error-handler";
 
 const app = express();
 
-// Parse JSON
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/docs", scalarDocsRouter);
 app.use("/categories", categoryRouter);

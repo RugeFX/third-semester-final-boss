@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/base/buttons/button";
+import { Input } from "@/components/base/input/input";
 import { wait } from "@/lib/utils";
 
 export const Route = createFileRoute("/about")({
@@ -35,6 +36,7 @@ function RouteComponent() {
 			>
 				{isPending ? "Incrementing..." : "Increment"}
 			</Button>
+			<Input label="Name" placeholder="Sigma gyatt" />
 		</div>
 	);
 }
