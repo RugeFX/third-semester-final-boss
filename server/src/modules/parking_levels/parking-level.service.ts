@@ -23,9 +23,9 @@ export const findParkingLevelById = async (parkingLevelId: number) => {
 
 // Create a new parking level
 export const createParkingLevel = async (name: string, max_weight: number) => {
-    const newParkingLevel = await db.insert(parkingLevelsTable).values({ 
+    const [ newParkingLevel ]  = await db.insert(parkingLevelsTable).values({ 
         name, 
-        max_weight 
+        max_weight: max_weight.toString() 
     }).returning();
     
     return newParkingLevel;
@@ -35,9 +35,9 @@ export const createParkingLevel = async (name: string, max_weight: number) => {
 export const updateParkingLevel = async (parkingLevelId: number, name: string, max_weight: number) => {
     await findParkingLevelById(parkingLevelId);
 
-    const updatedParkingLevel = await db.update(parkingLevelsTable).set({ 
+    const [ updatedParkingLevel ] = await db.update(parkingLevelsTable).set({ 
         name, 
-        max_weight 
+        max_weight: max_weight.toString()
     }).where(eq(parkingLevelsTable.id, parkingLevelId)).returning();
 
     return updatedParkingLevel;

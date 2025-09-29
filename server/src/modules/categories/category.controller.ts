@@ -29,9 +29,9 @@ export const getCategoryById = async (req: Request, res: Response) => {
 
 // Create a category
 export const createCategory = async (req: Request, res: Response) => {
-    const { name, weight } = createCategorySchema.parse(req.body);
+    const { name, weight, icon, thumbnail } = createCategorySchema.parse(req.body);
 
-    const newCategory = await categoryService.createCategory(name, weight);
+    const newCategory = await categoryService.createCategory(name, weight, icon, thumbnail);
 
     if (!newCategory) throw new HttpError(500, "Failed to create category");
 
@@ -45,9 +45,9 @@ export const createCategory = async (req: Request, res: Response) => {
 // Update a category
 export const updateCategory = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
-    const { name, weight } = updateCategorySchema.parse(req.body);
+    const { name, weight, icon, thumbnail } = updateCategorySchema.parse(req.body);
 
-    const updatedCategory = await categoryService.updateCategory(id, name, weight);
+    const updatedCategory = await categoryService.updateCategory(id, name, weight, icon, thumbnail);
 
     if (!updatedCategory) throw new HttpError(500, "Failed to update category");
 

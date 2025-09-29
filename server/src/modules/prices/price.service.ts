@@ -33,8 +33,8 @@ export const findPriceById = async (priceId: number) => {
 export const createPrice = async (amount: number, category_id: number) => {
     await categoryService.findCategoryById(category_id);
 
-    const newPrice = await db.insert(pricesTable).values({
-        amount,
+    const [ newPrice ] = await db.insert(pricesTable).values({
+        amount: amount.toString(),
         category_id
     }).returning();
 
@@ -46,8 +46,8 @@ export const updatePrice = async (priceId: number, amount: number, category_id: 
     await findPriceById(priceId);
     await categoryService.findCategoryById(category_id);
 
-    const updatedPrice = await db.update(pricesTable).set({
-        amount,
+    const [ updatedPrice ] = await db.update(pricesTable).set({
+        amount: amount.toString(),
         category_id
     }).where(eq(pricesTable.id, priceId)).returning();
 

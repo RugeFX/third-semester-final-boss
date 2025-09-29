@@ -47,12 +47,12 @@ export const findVehicleDetailById = async (vehicleDetailId: number) => {
 export const createVehicleDetail = async (plate_number: string, category_id: number) => {
     await categoryService.findCategoryById(category_id);
 
-    const newVehicleDetail = await db.insert(vehicleDetailsTable).values({
+    const [ newVehicleDetail ] = await db.insert(vehicleDetailsTable).values({
         plate_number,
         category_id
     }).returning();
 
-    return newVehicleDetail;
+    return newVehicleDetail ;
 };
 
 // Update a vehicle detail
@@ -60,7 +60,7 @@ export const updateVehicleDetail = async (vehicleDetailId: number, plate_number:
     await findVehicleDetailById(vehicleDetailId);
     await categoryService.findCategoryById(category_id);
 
-    const updatedVehicleDetail = await db.update(vehicleDetailsTable).set({
+    const [ updatedVehicleDetail ] = await db.update(vehicleDetailsTable).set({
         plate_number,
         category_id
     }).where(eq(vehicleDetailsTable.id, vehicleDetailId)).returning();

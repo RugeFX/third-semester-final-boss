@@ -29,9 +29,9 @@ export const getVehicleDetailById = async (req: Request, res: Response) => {
 
 // Create a vehicle detail
 export const createVehicleDetail = async (req: Request, res: Response) => {
-    const { plate_number, category_id } = createVehicleDetailSchema.parse(req.body);
+    const { plateNumber, categoryId } = createVehicleDetailSchema.parse(req.body);
 
-    const newVehicleDetail = await vehicleDetailService.createVehicleDetail(plate_number, category_id);
+    const newVehicleDetail = await vehicleDetailService.createVehicleDetail(plateNumber, categoryId);
 
     if (!newVehicleDetail) throw new HttpError(500, "Failed to create vehicle detail");    
 
@@ -45,9 +45,9 @@ export const createVehicleDetail = async (req: Request, res: Response) => {
 // Update a vehicle detail
 export const updateVehicleDetail = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
-    const { plate_number, category_id } = updateVehicleDetailSchema.parse(req.body);
+    const { plateNumber, categoryId } = updateVehicleDetailSchema.parse(req.body);
 
-    const updatedVehicleDetail = await vehicleDetailService.updateVehicleDetail(id, plate_number, category_id);
+    const updatedVehicleDetail = await vehicleDetailService.updateVehicleDetail(id, plateNumber, categoryId);
 
     if (!updatedVehicleDetail) throw new HttpError(500, "Failed to update vehicle detail");
 
