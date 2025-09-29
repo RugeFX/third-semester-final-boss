@@ -9,17 +9,17 @@ This documentation provides a base for all the resources defined in the database
  */
 
 export interface Transaction {
-	id?: number;
+	id: number;
 	/** Current status of the transaction (e.g., ACTIVE, PAID, COMPLETED). */
-	status?: string;
+	status: string;
 	/** @nullable */
-	paidAmount?: number | null;
+	paidAmount: number | null;
 	/** Unique code for this transaction. */
-	accessCode?: string;
+	accessCode: string;
 	/** @nullable */
-	userId?: number | null;
-	vehicleDetailId?: number;
-	parkingLevelId?: number;
-	createdAt?: string;
-	updatedAt?: string;
+	userId: number | null;
+	vehicleDetailId: number;
+	parkingLevelId: number;
+	createdAt: string;
+	updatedAt: string;
 }

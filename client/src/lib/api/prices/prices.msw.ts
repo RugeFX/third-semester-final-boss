@@ -12,151 +12,91 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+	BaseResponse,
 	PriceArrayResponse,
 	PriceResponse,
-	SuccessResponse,
 } from ".././models";
 
-export const getListPricesResponseMock = (
-	overrideResponse: Partial<PriceArrayResponse> = {},
-): PriceArrayResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		Array.from(
+export const getListPricesResponseMock = (): PriceArrayResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: Array.from(
 			{ length: faker.number.int({ min: 1, max: 10 }) },
 			(_, i) => i + 1,
 		).map(() => ({
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			categoryId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			amount: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+			id: faker.number.int({ min: undefined, max: undefined }),
+			categoryId: faker.number.int({ min: undefined, max: undefined }),
+			amount: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		})),
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getCreatePriceResponseMock = (
-	overrideResponse: Partial<PriceResponse> = {},
-): PriceResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			categoryId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			amount: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+export const getCreatePriceResponseMock = (): PriceResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			categoryId: faker.number.int({ min: undefined, max: undefined }),
+			amount: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getGetPriceByIdResponseMock = (
-	overrideResponse: Partial<PriceResponse> = {},
-): PriceResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			categoryId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			amount: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+export const getGetPriceByIdResponseMock = (): PriceResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			categoryId: faker.number.int({ min: undefined, max: undefined }),
+			amount: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getUpdatePriceResponseMock = (
-	overrideResponse: Partial<PriceResponse> = {},
-): PriceResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			categoryId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			amount: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+export const getUpdatePriceResponseMock = (): PriceResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			categoryId: faker.number.int({ min: undefined, max: undefined }),
+			amount: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
 export const getDeletePriceResponseMock = (
-	overrideResponse: Partial<SuccessResponse> = {},
-): SuccessResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([{}, undefined]),
+	overrideResponse: Partial<BaseResponse> = {},
+): BaseResponse => ({
+	success: faker.datatype.boolean(),
+	message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 	...overrideResponse,
 });
 
@@ -274,10 +214,10 @@ export const getUpdatePriceMockHandler = (
 
 export const getDeletePriceMockHandler = (
 	overrideResponse?:
-		| SuccessResponse
+		| BaseResponse
 		| ((
 				info: Parameters<Parameters<typeof http.delete>[1]>[0],
-		  ) => Promise<SuccessResponse> | SuccessResponse),
+		  ) => Promise<BaseResponse> | BaseResponse),
 	options?: RequestHandlerOptions,
 ) => {
 	return http.delete(

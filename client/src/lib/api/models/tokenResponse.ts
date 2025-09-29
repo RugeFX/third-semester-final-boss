@@ -10,7 +10,7 @@ This documentation provides a base for all the resources defined in the database
 import type { TokenResponseData } from "./tokenResponseData";
 
 export interface TokenResponse {
-	success?: boolean;
-	message?: string;
-	data?: TokenResponseData;
+	success: boolean;
+	message: string;
+	data: TokenResponseData;
 }

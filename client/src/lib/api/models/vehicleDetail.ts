@@ -9,7 +9,7 @@ This documentation provides a base for all the resources defined in the database
  */
 
 export interface VehicleDetail {
-	id?: number;
-	plateNumber?: string;
-	categoryId?: number;
+	id: number;
+	plateNumber: string;
+	categoryId: number;
 }

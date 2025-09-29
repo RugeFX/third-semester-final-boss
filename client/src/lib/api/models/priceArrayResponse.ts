@@ -7,10 +7,7 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { Price } from "./price";
+import type { BaseResponse } from "./baseResponse";
+import type { PriceArrayResponseAllOf } from "./priceArrayResponseAllOf";
 
-export interface PriceArrayResponse {
-	success?: boolean;
-	message?: string;
-	data?: Price[];
-}
+export type PriceArrayResponse = BaseResponse & PriceArrayResponseAllOf;

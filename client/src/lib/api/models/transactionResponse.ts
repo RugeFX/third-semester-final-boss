@@ -7,10 +7,7 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { Transaction } from "./transaction";
+import type { BaseResponse } from "./baseResponse";
+import type { TransactionResponseAllOf } from "./transactionResponseAllOf";
 
-export interface TransactionResponse {
-	success?: boolean;
-	message?: string;
-	data?: Transaction;
-}
+export type TransactionResponse = BaseResponse & TransactionResponseAllOf;

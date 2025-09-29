@@ -1,4 +1,9 @@
-import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	Outlet,
+	redirect,
+	useLocation,
+} from "@tanstack/react-router";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 
 import authBackground from "@/assets/auth-banner-bg.png";
@@ -7,6 +12,9 @@ import signUpBanner from "@/assets/sign-up-banner.png";
 
 export const Route = createFileRoute("/_auth")({
 	component: RouteComponent,
+	beforeLoad: ({ context }) => {
+		if (context.auth.token) throw redirect({ to: "/" });
+	},
 });
 
 const bannerVariants: Variants = {

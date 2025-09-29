@@ -1,4 +1,5 @@
 import { useStore } from "@tanstack/react-form";
+import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -54,6 +55,7 @@ const entryFormSchema = z.object({
 type EntryForm = z.infer<typeof entryFormSchema>;
 
 export default function EntryForm() {
+	const navigate = useNavigate();
 	const [step, setStep] = useState(1);
 
 	const { mutateAsync } = useCreateEntryTransaction({
@@ -80,11 +82,20 @@ export default function EntryForm() {
 		onSubmit: async ({ value }) => {
 			await wait(3000);
 
-			await mutateAsync({
-				data: {
+			// await mutateAsync({
+			// 	data: {
+			// 		categoryId: value.categoryId,
+			// 		plateNumber: value.plateNumber,
+			// 		parkingLevelId: 1,
+			// 	},
+			// });
+
+			navigate({
+				to: "/entry/success",
+				search: {
+					accessCode: "123456",
 					categoryId: value.categoryId,
 					plateNumber: value.plateNumber,
-					parkingLevelId: 1,
 				},
 			});
 		},
@@ -105,7 +116,7 @@ export default function EntryForm() {
 	};
 
 	return (
-		<div className="container grid flex-1 grid-cols-2 gap-12 items-center px-6 py-7 mx-auto size-full sm:px-8 md:px-12 lg:px-16">
+		<div className="grid grid-cols-2 gap-12 items-center size-full">
 			<motion.div
 				variants={bannerContainerVariants}
 				initial="initial"

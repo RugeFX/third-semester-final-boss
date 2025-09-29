@@ -26,11 +26,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
+	BaseResponse,
 	MemberArrayResponse,
 	MemberCreate,
 	MemberResponse,
 	MembershipRenewal,
-	SuccessResponse,
 	TransactionArrayResponse,
 	UpdateMemberBody,
 } from ".././models";
@@ -519,7 +519,7 @@ export const deleteMember = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<SuccessResponse>(
+	return customInstance<BaseResponse>(
 		{ url: `/members/${id}`, method: "DELETE" },
 		options,
 	);

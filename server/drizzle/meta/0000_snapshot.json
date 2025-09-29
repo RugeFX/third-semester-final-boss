@@ -1,5 +1,5 @@
 {
-  "id": "3821f555-71a4-4148-a3f0-f84dbe4e375d",
+  "id": "563d43ed-b4fa-4bbd-b749-1a7a6da95894",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -252,7 +252,7 @@
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "vehicle_detail_id": {
           "name": "vehicle_detail_id",
@@ -296,10 +296,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "transactions_vehicle_detail_id_vehicles_details_id_fk": {
-          "name": "transactions_vehicle_detail_id_vehicles_details_id_fk",
+        "transactions_vehicle_detail_id_vehicle_details_id_fk": {
+          "name": "transactions_vehicle_detail_id_vehicle_details_id_fk",
           "tableFrom": "transactions",
-          "tableTo": "vehicles_details",
+          "tableTo": "vehicle_details",
           "columnsFrom": [
             "vehicle_detail_id"
           ],
@@ -358,8 +358,14 @@
             "cycle": false
           }
         },
-        "name": {
-          "name": "name",
+        "fullname": {
+          "name": "fullname",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -381,13 +387,21 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "users_username_unique": {
+          "name": "users_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.vehicles_details": {
-      "name": "vehicles_details",
+    "public.vehicle_details": {
+      "name": "vehicle_details",
       "schema": "",
       "columns": {
         "id": {
@@ -397,7 +411,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "vehicles_details_id_seq",
+            "name": "vehicle_details_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -407,8 +421,8 @@
             "cycle": false
           }
         },
-        "plat_number": {
-          "name": "plat_number",
+        "plate_number": {
+          "name": "plate_number",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -422,9 +436,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "vehicles_details_category_id_categories_id_fk": {
-          "name": "vehicles_details_category_id_categories_id_fk",
-          "tableFrom": "vehicles_details",
+        "vehicle_details_category_id_categories_id_fk": {
+          "name": "vehicle_details_category_id_categories_id_fk",
+          "tableFrom": "vehicle_details",
           "tableTo": "categories",
           "columnsFrom": [
             "category_id"

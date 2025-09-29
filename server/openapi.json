@@ -56,8 +56,17 @@
   ],
   "components": {
     "schemas": {
+      "BaseResponse": {
+        "required": ["success", "message"],
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "message": { "type": "string", "example": "Success" }
+        }
+      },
       "User": {
         "type": "object",
+        "required": ["id", "fullname", "username", "role"],
         "properties": {
           "id": { "type": "integer", "example": 1 },
           "fullname": { "type": "string", "example": "John Doe" },
@@ -107,6 +116,7 @@
       },
       "ParkingLevel": {
         "type": "object",
+        "required": ["id", "name", "maxWeight"],
         "properties": {
           "id": {
             "type": "integer",
@@ -141,6 +151,7 @@
       },
       "Member": {
         "type": "object",
+        "required": ["id", "userId", "joinedAt", "endedAt"],
         "properties": {
           "id": {
             "type": "integer",
@@ -222,6 +233,7 @@
       },
       "Category": {
         "type": "object",
+        "required": ["id", "name", "weight"],
         "properties": {
           "id": {
             "type": "integer",
@@ -257,6 +269,7 @@
       },
       "Price": {
         "type": "object",
+        "required": ["id", "categoryId", "amount"],
         "properties": {
           "id": {
             "type": "integer",
@@ -291,6 +304,7 @@
       },
       "VehicleDetail": {
         "type": "object",
+        "required": ["id", "plateNumber", "categoryId"],
         "properties": {
           "id": {
             "type": "integer",
@@ -335,6 +349,17 @@
       },
       "Transaction": {
         "type": "object",
+        "required": [
+          "id",
+          "status",
+          "paidAmount",
+          "accessCode",
+          "userId",
+          "vehicleDetailId",
+          "parkingLevelId",
+          "createdAt",
+          "updatedAt"
+        ],
         "properties": {
           "id": {
             "type": "integer",
@@ -426,328 +451,330 @@
         }
       },
       "ApiErrorResponse": {
-        "type": "object",
-        "required": ["success", "message"],
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": false
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
+          {
             "type": "object",
-            "nullable": true,
-            "required": ["errorCode"],
+            "required": ["data"],
             "properties": {
-              "errorCode": {
-                "type": "string",
-                "description": "A unique, machine-readable error code.",
-                "example": "RESOURCE_NOT_FOUND"
-              },
-              "errorMeta": {
-                "type": "array",
-                "description": "Optional metadata for validation errors.",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "field": {
-                      "type": "string",
-                      "example": "password"
-                    },
-                    "issue": {
-                      "type": "string",
-                      "example": "Password must be at least 8 characters long."
+              "data": {
+                "type": "object",
+                "required": ["errorCode"],
+                "properties": {
+                  "errorCode": {
+                    "type": "string",
+                    "description": "A unique, machine-readable error code.",
+                    "example": "RESOURCE_NOT_FOUND"
+                  },
+                  "errorMeta": {
+                    "type": "array",
+                    "description": "Optional metadata for validation errors.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "field": {
+                          "type": "string",
+                          "example": "password"
+                        },
+                        "issue": {
+                          "type": "string",
+                          "example": "Password must be at least 8 characters long."
+                        }
+                      }
                     }
                   }
                 }
               }
             }
           }
-        }
+        ]
       },
       "UserResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/User"
-          }
-        }
-      },
-      "UserArrayResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/User"
-            }
-          }
-        }
-      },
-      "TokenResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
+          {
             "type": "object",
             "properties": {
-              "token": {
-                "type": "string"
+              "data": {
+                "$ref": "#/components/schemas/User"
               }
             }
           }
+        ]
+      },
+      "UserArrayResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
+          },
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        ],
+        "TokenResponse": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/BaseResponse"
+            },
+            {
+              "type": "object",
+              "required": ["data"],
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "required": ["token"],
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          ]
         }
       },
       "MemberResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/Member"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Member"
+              }
+            }
           }
-        }
+        ]
       },
       "MemberArrayResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Member"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Member"
+                }
+              }
             }
           }
-        }
+        ]
       },
       "TransactionResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/Transaction"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Transaction"
+              }
+            }
           }
-        }
+        ]
       },
       "TransactionArrayResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Transaction"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
             }
           }
-        }
+        ]
       },
       "DashboardSummaryResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/DashboardSummary"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/DashboardSummary"
+              }
+            }
           }
-        }
+        ]
       },
       "ParkingLevelResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/ParkingLevel"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/ParkingLevel"
+              }
+            }
           }
-        }
+        ]
       },
       "ParkingLevelArrayResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ParkingLevel"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ParkingLevel"
+                }
+              }
             }
           }
-        }
+        ]
       },
       "CategoryResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/Category"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Category"
+              }
+            }
           }
-        }
+        ]
       },
       "CategoryArrayResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Category"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
             }
           }
-        }
+        ]
       },
       "PriceResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/Price"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/Price"
+              }
+            }
           }
-        }
+        ]
       },
       "PriceArrayResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Price"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Price"
+                }
+              }
             }
           }
-        }
+        ]
       },
       "VehicleDetailResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
           },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/VehicleDetail"
-          }
-        }
-      },
-      "VehicleDetailArrayResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/VehicleDetail"
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/VehicleDetail"
+              }
             }
           }
-        }
+        ]
+      },
+      "VehicleDetailArrayResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
+          },
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/VehicleDetail"
+                }
+              }
+            }
+          }
+        ]
       },
       "SuccessResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean",
-            "example": true
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "object",
-            "nullable": true
-          }
-        }
+        "$ref": "#/components/schemas/BaseResponse"
       }
     },
     "securitySchemes": {

@@ -26,7 +26,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
-	SuccessResponse,
+	BaseResponse,
 	UserArrayResponse,
 	UserCreate,
 	UserResponse,
@@ -517,7 +517,7 @@ export const deleteUser = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<SuccessResponse>(
+	return customInstance<BaseResponse>(
 		{ url: `/users/${id}`, method: "DELETE" },
 		options,
 	);

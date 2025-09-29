@@ -9,8 +9,8 @@ This documentation provides a base for all the resources defined in the database
  */
 
 export interface ParkingLevel {
-	id?: number;
-	name?: string;
+	id: number;
+	name: string;
 	/** Maximum allowed weight in kilograms for this level. */
-	maxWeight?: number;
+	maxWeight: number;
 }

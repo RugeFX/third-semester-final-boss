@@ -26,10 +26,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
+	BaseResponse,
 	PriceArrayResponse,
 	PriceCreate,
 	PriceResponse,
-	SuccessResponse,
 } from ".././models";
 import type { BodyType, ErrorType } from ".././mutator/custom-instance";
 import { customInstance } from ".././mutator/custom-instance";
@@ -514,7 +514,7 @@ export const deletePrice = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<SuccessResponse>(
+	return customInstance<BaseResponse>(
 		{ url: `/prices/${id}`, method: "DELETE" },
 		options,
 	);

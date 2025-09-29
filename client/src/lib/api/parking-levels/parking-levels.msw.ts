@@ -12,151 +12,92 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+	BaseResponse,
 	ParkingLevelArrayResponse,
 	ParkingLevelResponse,
-	SuccessResponse,
 } from ".././models";
 
-export const getListParkingLevelsResponseMock = (
-	overrideResponse: Partial<ParkingLevelArrayResponse> = {},
-): ParkingLevelArrayResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		Array.from(
-			{ length: faker.number.int({ min: 1, max: 10 }) },
-			(_, i) => i + 1,
-		).map(() => ({
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			name: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			maxWeight: faker.helpers.arrayElement([
-				faker.number.float({
+export const getListParkingLevelsResponseMock =
+	(): ParkingLevelArrayResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+		},
+		...{
+			data: Array.from(
+				{ length: faker.number.int({ min: 1, max: 10 }) },
+				(_, i) => i + 1,
+			).map(() => ({
+				id: faker.number.int({ min: undefined, max: undefined }),
+				name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				maxWeight: faker.number.float({
 					min: undefined,
 					max: undefined,
 					fractionDigits: 2,
 				}),
-				undefined,
-			]),
-		})),
-		undefined,
-	]),
-	...overrideResponse,
+			})),
+		},
+	});
+
+export const getCreateParkingLevelResponseMock = (): ParkingLevelResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			maxWeight: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
+		},
+	},
 });
 
-export const getCreateParkingLevelResponseMock = (
-	overrideResponse: Partial<ParkingLevelResponse> = {},
-): ParkingLevelResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			name: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			maxWeight: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+export const getGetParkingLevelByIdResponseMock = (): ParkingLevelResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			maxWeight: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getGetParkingLevelByIdResponseMock = (
-	overrideResponse: Partial<ParkingLevelResponse> = {},
-): ParkingLevelResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			name: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			maxWeight: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+export const getUpdateParkingLevelResponseMock = (): ParkingLevelResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			maxWeight: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		},
-		undefined,
-	]),
-	...overrideResponse,
-});
-
-export const getUpdateParkingLevelResponseMock = (
-	overrideResponse: Partial<ParkingLevelResponse> = {},
-): ParkingLevelResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			name: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			maxWeight: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
 export const getDeleteParkingLevelResponseMock = (
-	overrideResponse: Partial<SuccessResponse> = {},
-): SuccessResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([{}, undefined]),
+	overrideResponse: Partial<BaseResponse> = {},
+): BaseResponse => ({
+	success: faker.datatype.boolean(),
+	message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 	...overrideResponse,
 });
 
@@ -274,10 +215,10 @@ export const getUpdateParkingLevelMockHandler = (
 
 export const getDeleteParkingLevelMockHandler = (
 	overrideResponse?:
-		| SuccessResponse
+		| BaseResponse
 		| ((
 				info: Parameters<Parameters<typeof http.delete>[1]>[0],
-		  ) => Promise<SuccessResponse> | SuccessResponse),
+		  ) => Promise<BaseResponse> | BaseResponse),
 	options?: RequestHandlerOptions,
 ) => {
 	return http.delete(

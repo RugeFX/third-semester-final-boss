@@ -8,42 +8,45 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as EntryRouteImport } from './routes/entry'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthedRouteImport } from './routes/_authed'
+import { Route as EntryRouteRouteImport } from './routes/entry/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as EntryIndexRouteImport } from './routes/entry/index'
+import { Route as EntrySuccessRouteImport } from './routes/entry/success'
 import { Route as AuthedARouteImport } from './routes/_authed.a'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 
-const IndexLazyRouteImport = createFileRoute('/')()
-
-const EntryRoute = EntryRouteImport.update({
-  id: '/entry',
-  path: '/entry',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthedRoute = AuthedRouteImport.update({
   id: '/_authed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntryRouteRoute = EntryRouteRouteImport.update({
+  id: '/entry',
+  path: '/entry',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexLazyRoute = IndexLazyRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any)
+const EntryIndexRoute = EntryIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EntryRouteRoute,
+} as any)
+const EntrySuccessRoute = EntrySuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
+  getParentRoute: () => EntryRouteRoute,
+} as any)
 const AuthedARoute = AuthedARouteImport.update({
   id: '/a',
   path: '/a',
@@ -61,78 +64,80 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
-  '/about': typeof AboutRoute
-  '/entry': typeof EntryRoute
+  '/': typeof IndexRoute
+  '/entry': typeof EntryRouteRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/a': typeof AuthedARoute
+  '/entry/success': typeof EntrySuccessRoute
+  '/entry/': typeof EntryIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
-  '/about': typeof AboutRoute
-  '/entry': typeof EntryRoute
+  '/': typeof IndexRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/a': typeof AuthedARoute
+  '/entry/success': typeof EntrySuccessRoute
+  '/entry': typeof EntryIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
+  '/entry': typeof EntryRouteRouteWithChildren
   '/_authed': typeof AuthedRouteWithChildren
-  '/about': typeof AboutRoute
-  '/entry': typeof EntryRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_authed/a': typeof AuthedARoute
+  '/entry/success': typeof EntrySuccessRoute
+  '/entry/': typeof EntryIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/entry' | '/sign-in' | '/sign-up' | '/a'
+  fullPaths:
+    | '/'
+    | '/entry'
+    | '/sign-in'
+    | '/sign-up'
+    | '/a'
+    | '/entry/success'
+    | '/entry/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/entry' | '/sign-in' | '/sign-up' | '/a'
+  to: '/' | '/sign-in' | '/sign-up' | '/a' | '/entry/success' | '/entry'
   id:
     | '__root__'
     | '/'
     | '/_auth'
-    | '/_authed'
-    | '/about'
     | '/entry'
+    | '/_authed'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_authed/a'
+    | '/entry/success'
+    | '/entry/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
+  IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  EntryRouteRoute: typeof EntryRouteRouteWithChildren
   AuthedRoute: typeof AuthedRouteWithChildren
-  AboutRoute: typeof AboutRoute
-  EntryRoute: typeof EntryRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/entry': {
-      id: '/entry'
-      path: '/entry'
-      fullPath: '/entry'
-      preLoaderRoute: typeof EntryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authed': {
       id: '/_authed'
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entry': {
+      id: '/entry'
+      path: '/entry'
+      fullPath: '/entry'
+      preLoaderRoute: typeof EntryRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
@@ -146,8 +151,22 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyRouteImport
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/entry/': {
+      id: '/entry/'
+      path: '/'
+      fullPath: '/entry/'
+      preLoaderRoute: typeof EntryIndexRouteImport
+      parentRoute: typeof EntryRouteRoute
+    }
+    '/entry/success': {
+      id: '/entry/success'
+      path: '/success'
+      fullPath: '/entry/success'
+      preLoaderRoute: typeof EntrySuccessRouteImport
+      parentRoute: typeof EntryRouteRoute
     }
     '/_authed/a': {
       id: '/_authed/a'
@@ -187,6 +206,20 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
+interface EntryRouteRouteChildren {
+  EntrySuccessRoute: typeof EntrySuccessRoute
+  EntryIndexRoute: typeof EntryIndexRoute
+}
+
+const EntryRouteRouteChildren: EntryRouteRouteChildren = {
+  EntrySuccessRoute: EntrySuccessRoute,
+  EntryIndexRoute: EntryIndexRoute,
+}
+
+const EntryRouteRouteWithChildren = EntryRouteRoute._addFileChildren(
+  EntryRouteRouteChildren,
+)
+
 interface AuthedRouteChildren {
   AuthedARoute: typeof AuthedARoute
 }
@@ -199,11 +232,10 @@ const AuthedRouteWithChildren =
   AuthedRoute._addFileChildren(AuthedRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
+  IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
+  EntryRouteRoute: EntryRouteRouteWithChildren,
   AuthedRoute: AuthedRouteWithChildren,
-  AboutRoute: AboutRoute,
-  EntryRoute: EntryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -12,151 +12,88 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
-	SuccessResponse,
+	BaseResponse,
 	UserArrayResponse,
 	UserResponse,
 } from ".././models";
 
-export const getListUsersResponseMock = (
-	overrideResponse: Partial<UserArrayResponse> = {},
-): UserArrayResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		Array.from(
+export const getListUsersResponseMock = (): UserArrayResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: Array.from(
 			{ length: faker.number.int({ min: 1, max: 10 }) },
 			(_, i) => i + 1,
 		).map(() => ({
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			fullname: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			username: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			role: faker.helpers.arrayElement([
-				faker.helpers.arrayElement(["admin", "member"] as const),
-				undefined,
-			]),
+			id: faker.number.int({ min: undefined, max: undefined }),
+			fullname: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			username: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			role: faker.helpers.arrayElement(["admin", "member"] as const),
 		})),
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getCreateUserResponseMock = (
-	overrideResponse: Partial<UserResponse> = {},
-): UserResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			fullname: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			username: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			role: faker.helpers.arrayElement([
-				faker.helpers.arrayElement(["admin", "member"] as const),
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
+export const getCreateUserResponseMock = (): UserResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: faker.helpers.arrayElement([
+			{
+				id: faker.number.int({ min: undefined, max: undefined }),
+				fullname: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				username: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				role: faker.helpers.arrayElement(["admin", "member"] as const),
+			},
+			undefined,
+		]),
+	},
 });
 
-export const getGetUserByIdResponseMock = (
-	overrideResponse: Partial<UserResponse> = {},
-): UserResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			fullname: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			username: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			role: faker.helpers.arrayElement([
-				faker.helpers.arrayElement(["admin", "member"] as const),
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
+export const getGetUserByIdResponseMock = (): UserResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: faker.helpers.arrayElement([
+			{
+				id: faker.number.int({ min: undefined, max: undefined }),
+				fullname: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				username: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				role: faker.helpers.arrayElement(["admin", "member"] as const),
+			},
+			undefined,
+		]),
+	},
 });
 
-export const getUpdateUserResponseMock = (
-	overrideResponse: Partial<UserResponse> = {},
-): UserResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			fullname: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			username: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			role: faker.helpers.arrayElement([
-				faker.helpers.arrayElement(["admin", "member"] as const),
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
+export const getUpdateUserResponseMock = (): UserResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: faker.helpers.arrayElement([
+			{
+				id: faker.number.int({ min: undefined, max: undefined }),
+				fullname: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				username: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				role: faker.helpers.arrayElement(["admin", "member"] as const),
+			},
+			undefined,
+		]),
+	},
 });
 
 export const getDeleteUserResponseMock = (
-	overrideResponse: Partial<SuccessResponse> = {},
-): SuccessResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([{}, undefined]),
+	overrideResponse: Partial<BaseResponse> = {},
+): BaseResponse => ({
+	success: faker.datatype.boolean(),
+	message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 	...overrideResponse,
 });
 
@@ -274,10 +211,10 @@ export const getUpdateUserMockHandler = (
 
 export const getDeleteUserMockHandler = (
 	overrideResponse?:
-		| SuccessResponse
+		| BaseResponse
 		| ((
 				info: Parameters<Parameters<typeof http.delete>[1]>[0],
-		  ) => Promise<SuccessResponse> | SuccessResponse),
+		  ) => Promise<BaseResponse> | BaseResponse),
 	options?: RequestHandlerOptions,
 ) => {
 	return http.delete(

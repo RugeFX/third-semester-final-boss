@@ -26,8 +26,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
+	BaseResponse,
 	ProcessTransactionPaymentBody,
-	SuccessResponse,
 	TransactionArrayResponse,
 	TransactionCreate,
 	TransactionResponse,
@@ -740,7 +740,7 @@ export const deleteTransactionById = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<SuccessResponse>(
+	return customInstance<BaseResponse>(
 		{ url: `/transactions/manage/${id}`, method: "DELETE" },
 		options,
 	);

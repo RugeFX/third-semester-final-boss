@@ -33,7 +33,7 @@ function InputGroup({ groupProps, inputProps }: FormInputGroupProps) {
 			isInvalid={field.state.meta.errors.length > 0}
 			{...groupProps}
 		>
-			<InputBase {...inputProps} />
+			<InputBase size="xl" {...inputProps} />
 		</InputGroupBase>
 	);
 }
@@ -43,6 +43,7 @@ function TextInput(props: InputProps) {
 
 	return (
 		<Input
+			size="xl"
 			name={field.name}
 			isInvalid={field.state.meta.errors.length > 0}
 			value={field.state.value}
@@ -59,9 +60,9 @@ function PasswordInput({ groupProps, inputProps }: FormInputGroupProps) {
 
 	return (
 		<InputGroupBase
+			size="xl"
 			label="Kata Sandi"
 			className="w-full"
-			size="md"
 			name={field.name}
 			value={field.state.value}
 			onChange={field.handleChange}
@@ -119,7 +120,7 @@ interface ErrorsProps {
 	firstOnly?: boolean;
 }
 
-function Errors({ firstOnly = false }: ErrorsProps) {
+function FieldErrors({ firstOnly = false }: ErrorsProps) {
 	const field = useFieldContext<string>();
 
 	return field.state.meta.errors.length > 0 && !firstOnly ? (
@@ -135,6 +136,28 @@ function Errors({ firstOnly = false }: ErrorsProps) {
 	) : null;
 }
 
+function FormErrors({ firstOnly = false }: ErrorsProps) {
+	const form = useFormContext();
+
+	return (
+		<form.Subscribe selector={(state) => state.errors}>
+			{(errors) =>
+				errors.length > 0 && !firstOnly ? (
+					<ul className="space-y-1 text-sm list-disc list-inside text-error-primary">
+						{errors.map((error: Error) => (
+							<li key={error.message}>{error.message}</li>
+						))}
+					</ul>
+				) : errors.length > 0 && firstOnly ? (
+					<span className="block text-sm text-error-primary">
+						{errors[0].message}
+					</span>
+				) : null
+			}
+		</form.Subscribe>
+	);
+}
+
 export const { useAppForm, withForm, withFieldGroup } = createFormHook({
 	fieldContext,
 	formContext,
@@ -142,9 +165,10 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
 		InputGroup,
 		TextInput,
 		PasswordInput,
-		Errors,
+		Errors: FieldErrors,
 	},
 	formComponents: {
 		SubmitButton,
+		Errors: FormErrors,
 	},
 });

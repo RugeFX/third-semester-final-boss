@@ -7,10 +7,8 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { DashboardSummary } from "./dashboardSummary";
+import type { BaseResponse } from "./baseResponse";
+import type { DashboardSummaryResponseAllOf } from "./dashboardSummaryResponseAllOf";
 
-export interface DashboardSummaryResponse {
-	success?: boolean;
-	message?: string;
-	data?: DashboardSummary;
-}
+export type DashboardSummaryResponse = BaseResponse &
+	DashboardSummaryResponseAllOf;

@@ -7,11 +7,8 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { ApiErrorResponseData } from "./apiErrorResponseData";
 
-export interface ApiErrorResponse {
-	success: boolean;
-	message: string;
-	/** @nullable */
-	data?: ApiErrorResponseData;
-}
+import type { ApiErrorResponseAllOf } from "./apiErrorResponseAllOf";
+import type { BaseResponse } from "./baseResponse";
+
+export type ApiErrorResponse = BaseResponse & ApiErrorResponseAllOf;

@@ -7,10 +7,7 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { ParkingLevel } from "./parkingLevel";
+import type { BaseResponse } from "./baseResponse";
+import type { ParkingLevelResponseAllOf } from "./parkingLevelResponseAllOf";
 
-export interface ParkingLevelResponse {
-	success?: boolean;
-	message?: string;
-	data?: ParkingLevel;
-}
+export type ParkingLevelResponse = BaseResponse & ParkingLevelResponseAllOf;

@@ -7,31 +7,13 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import { faker } from "@faker-js/faker";
+
 import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type { TokenResponse } from ".././models";
 
-export const getLoginUserResponseMock = (
-	overrideResponse: Partial<TokenResponse> = {},
-): TokenResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			token: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
-});
+export const getLoginUserResponseMock = (): TokenResponse => ({});
 
 export const getLoginUserMockHandler = (
 	overrideResponse?:

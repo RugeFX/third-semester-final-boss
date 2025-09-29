@@ -1,0 +1,203 @@
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { Copy01 } from "@untitledui/icons";
+import { AnimatePresence, motion, type Variants } from "motion/react";
+import { toast } from "sonner";
+import { z } from "zod";
+import entryBackground from "@/assets/entry-banner-bg.png";
+import { Button } from "@/components/base/buttons/button";
+import { InputBase } from "@/components/base/input/input";
+import { PinInput } from "@/components/base/pin-input/pin-input";
+import { categories } from "@/components/entry/data";
+
+const bannerContainerVariants: Variants = {
+	initial: {
+		opacity: 0,
+	},
+	animate: {
+		opacity: 1,
+		transition: {
+			duration: 1,
+			ease: "easeOut",
+		},
+	},
+};
+
+const bannerItemVariants: Variants = {
+	initial: {
+		opacity: 1,
+		x: "100%",
+	},
+	animate: {
+		opacity: 1,
+		x: 0,
+		transition: {
+			duration: 1,
+			ease: "circOut",
+		},
+	},
+};
+
+export const Route = createFileRoute("/entry/success")({
+	validateSearch: z.object({
+		accessCode: z.string(),
+		plateNumber: z.string(),
+		categoryId: z.number(),
+	}),
+	component: RouteComponent,
+	errorComponent: ErrorComponent,
+	loaderDeps: ({ search }) => ({
+		categoryId: search.categoryId,
+	}),
+	loader: ({ deps }) => {
+		const selectedCategory = categories.find(
+			(category) => category.id === deps.categoryId,
+		);
+
+		if (!selectedCategory) throw notFound();
+
+		return {
+			selectedCategory,
+		};
+	},
+});
+
+function ErrorComponent() {
+	return <div>Error</div>;
+}
+
+function RouteComponent() {
+	const { accessCode, plateNumber } = Route.useSearch();
+	const { selectedCategory } = Route.useLoaderData();
+
+	const onCopyAccessCode = () => {
+		navigator.clipboard.writeText(accessCode).then(() => {
+			toast.success("Kode akses berhasil disalin!", {
+				description:
+					"Anda dapat menggunakan kode akses ini untuk melihat status kendaraan anda.",
+				action: <Button size="sm">Cek Status</Button>,
+			});
+		});
+	};
+
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			transition={{ duration: 0.5, ease: "easeOut" }}
+			className="flex flex-col lg:flex-row items-center bg-gray-700 h-full lg:max-h-[600px] min-h-[500px] rounded-xl overflow-hidden"
+		>
+			<motion.div
+				variants={bannerContainerVariants}
+				initial="initial"
+				animate="animate"
+				exit="exit"
+				className="relative flex-1 h-full bg-top bg-no-repeat bg-cover min-w-sm"
+				style={{
+					backgroundImage: `url(${entryBackground})`,
+				}}
+			>
+				<div className="absolute inset-0 pt-12 pl-12 z-2">
+					<h2 className="text-5xl font-bold">{selectedCategory.name}</h2>
+				</div>
+				<AnimatePresence>
+					<motion.img
+						key={selectedCategory.id}
+						className="object-contain object-right-bottom absolute top-0 left-0 w-full h-full z-1"
+						src={selectedCategory.image}
+						variants={bannerItemVariants}
+					/>
+				</AnimatePresence>
+			</motion.div>
+
+			<main className="flex-1 flex flex-col gap-8 justify-center xl:p-20 p-10">
+				<div className="space-y-4">
+					<h1 className="text-5xl font-bold text-bg-brand-solid">Selamat!</h1>
+					<h2 className="text-2xl font-semibold">
+						Sekarang, motor anda sudah terdaftar!
+					</h2>
+				</div>
+
+				<div className="flex gap-6">
+					<Button
+						isDisabled
+						size="xl"
+						className="flex-1 w-full h-26 max-w-24 group disabled:cursor-default disabled:opacity-100"
+					>
+						<selectedCategory.icon className="size-14" />
+						<span className="sr-only">{selectedCategory.name}</span>
+					</Button>
+
+					<div className="flex-1 flex flex-col gap-2 justify-between">
+						<h3 className="text-xl font-semibold shrink-0">Tipe Kendaraan</h3>
+						<InputBase
+							size="xl"
+							wrapperClassName="flex-1 h-full bg-gray-500"
+							inputClassName="text-primary pointer-events-none"
+							value={selectedCategory.name}
+							isDisabled
+						/>
+					</div>
+
+					<div className="flex-1 flex flex-col gap-2 justify-between">
+						<h3 className="text-xl font-semibold shrink-0">Plat Nomor Kamu</h3>
+						<InputBase
+							size="xl"
+							wrapperClassName="flex-1 h-full bg-gray-500"
+							inputClassName="text-primary pointer-events-none"
+							value={plateNumber}
+							isDisabled
+						/>
+					</div>
+				</div>
+
+				<div className="space-y-2 w-full">
+					<PinInput size="lg" disabled className="w-full">
+						<PinInput.Group
+							maxLength={6}
+							value={accessCode}
+							disabled
+							readOnly
+							inputClassName="disabled:cursor-default"
+						>
+							<PinInput.Slot
+								index={0}
+								className="w-full bg-gray-500 text-primary"
+							/>
+							<PinInput.Slot
+								index={1}
+								className="w-full bg-gray-500 text-primary"
+							/>
+							<PinInput.Slot
+								index={2}
+								className="w-full bg-gray-500 text-primary"
+							/>
+							<PinInput.Separator className="text-gray-400" />
+							<PinInput.Slot
+								index={3}
+								className="w-full bg-gray-500 text-primary"
+							/>
+							<PinInput.Slot
+								index={4}
+								className="w-full bg-gray-500 text-primary"
+							/>
+							<PinInput.Slot
+								index={5}
+								className="w-full bg-gray-500 text-primary"
+							/>
+						</PinInput.Group>
+					</PinInput>
+
+					<Button
+						size="lg"
+						color="link-color"
+						className="text-lg font-normal text-primary"
+						iconLeading={<Copy01 className="text-bg-brand-solid" />}
+						onClick={onCopyAccessCode}
+					>
+						Salin kode akses untuk melihat Status Kendaraan
+					</Button>
+				</div>
+			</main>
+		</motion.div>
+	);
+}

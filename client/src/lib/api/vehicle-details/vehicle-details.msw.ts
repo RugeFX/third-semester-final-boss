@@ -12,135 +12,78 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
-	SuccessResponse,
+	BaseResponse,
 	VehicleDetailArrayResponse,
 	VehicleDetailResponse,
 } from ".././models";
 
-export const getGetVehicleDetailsResponseMock = (
-	overrideResponse: Partial<VehicleDetailArrayResponse> = {},
-): VehicleDetailArrayResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		Array.from(
-			{ length: faker.number.int({ min: 1, max: 10 }) },
-			(_, i) => i + 1,
-		).map(() => ({
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			plateNumber: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			categoryId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-		})),
-		undefined,
-	]),
-	...overrideResponse,
+export const getGetVehicleDetailsResponseMock =
+	(): VehicleDetailArrayResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+		},
+		...{
+			data: Array.from(
+				{ length: faker.number.int({ min: 1, max: 10 }) },
+				(_, i) => i + 1,
+			).map(() => ({
+				id: faker.number.int({ min: undefined, max: undefined }),
+				plateNumber: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				categoryId: faker.number.int({ min: undefined, max: undefined }),
+			})),
+		},
+	});
+
+export const getPostVehicleDetailsResponseMock = (): VehicleDetailResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			plateNumber: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			categoryId: faker.number.int({ min: undefined, max: undefined }),
+		},
+	},
 });
 
-export const getPostVehicleDetailsResponseMock = (
-	overrideResponse: Partial<VehicleDetailResponse> = {},
-): VehicleDetailResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			plateNumber: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			categoryId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
+export const getGetVehicleDetailsIdResponseMock =
+	(): VehicleDetailResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 		},
-		undefined,
-	]),
-	...overrideResponse,
-});
+		...{
+			data: {
+				id: faker.number.int({ min: undefined, max: undefined }),
+				plateNumber: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				categoryId: faker.number.int({ min: undefined, max: undefined }),
+			},
+		},
+	});
 
-export const getGetVehicleDetailsIdResponseMock = (
-	overrideResponse: Partial<VehicleDetailResponse> = {},
-): VehicleDetailResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			plateNumber: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			categoryId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
+export const getPutVehicleDetailsIdResponseMock =
+	(): VehicleDetailResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 		},
-		undefined,
-	]),
-	...overrideResponse,
-});
-
-export const getPutVehicleDetailsIdResponseMock = (
-	overrideResponse: Partial<VehicleDetailResponse> = {},
-): VehicleDetailResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			plateNumber: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			categoryId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
+		...{
+			data: {
+				id: faker.number.int({ min: undefined, max: undefined }),
+				plateNumber: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				categoryId: faker.number.int({ min: undefined, max: undefined }),
+			},
 		},
-		undefined,
-	]),
-	...overrideResponse,
-});
+	});
 
 export const getDeleteVehicleDetailsIdResponseMock = (
-	overrideResponse: Partial<SuccessResponse> = {},
-): SuccessResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([{}, undefined]),
+	overrideResponse: Partial<BaseResponse> = {},
+): BaseResponse => ({
+	success: faker.datatype.boolean(),
+	message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 	...overrideResponse,
 });
 
@@ -258,10 +201,10 @@ export const getPutVehicleDetailsIdMockHandler = (
 
 export const getDeleteVehicleDetailsIdMockHandler = (
 	overrideResponse?:
-		| SuccessResponse
+		| BaseResponse
 		| ((
 				info: Parameters<Parameters<typeof http.delete>[1]>[0],
-		  ) => Promise<SuccessResponse> | SuccessResponse),
+		  ) => Promise<BaseResponse> | BaseResponse),
 	options?: RequestHandlerOptions,
 ) => {
 	return http.delete(

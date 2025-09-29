@@ -13,37 +13,33 @@ import { delay, HttpResponse, http } from "msw";
 
 import type { DashboardSummaryResponse } from ".././models";
 
-export const getGetDashboardSummaryResponseMock = (
-	overrideResponse: Partial<DashboardSummaryResponse> = {},
-): DashboardSummaryResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			activeTransactions: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			totalCapacity: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			membershipStatus: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			membershipEndsAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
+export const getGetDashboardSummaryResponseMock =
+	(): DashboardSummaryResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 		},
-		undefined,
-	]),
-	...overrideResponse,
-});
+		...{
+			data: {
+				activeTransactions: faker.helpers.arrayElement([
+					faker.number.int({ min: undefined, max: undefined }),
+					undefined,
+				]),
+				totalCapacity: faker.helpers.arrayElement([
+					faker.number.int({ min: undefined, max: undefined }),
+					undefined,
+				]),
+				membershipStatus: faker.helpers.arrayElement([
+					faker.string.alpha({ length: { min: 10, max: 20 } }),
+					undefined,
+				]),
+				membershipEndsAt: faker.helpers.arrayElement([
+					`${faker.date.past().toISOString().split(".")[0]}Z`,
+					undefined,
+				]),
+			},
+		},
+	});
 
 export const getGetDashboardSummaryMockHandler = (
 	overrideResponse?:

@@ -98,6 +98,28 @@ export const InputGroup = ({
 			),
 			leadingText: "pl-3.5",
 		},
+		lg: {
+			input: cx(
+				// Apply padding styles when select element is passed as a child
+				hasLeading && "group-has-[&>select]:px-3.5 group-has-[&>select]:pl-3.5",
+				hasTrailing &&
+					(prefix
+						? "group-has-[&>select]:pr-6 group-has-[&>select]:pl-0"
+						: "group-has-[&>select]:pr-6 group-has-[&>select]:pl-3"),
+			),
+			leadingText: "pl-4",
+		},
+		xl: {
+			input: cx(
+				// Apply padding styles when select element is passed as a child
+				hasLeading && "group-has-[&>select]:px-4 group-has-[&>select]:pl-4",
+				hasTrailing &&
+					(prefix
+						? "group-has-[&>select]:pr-6 group-has-[&>select]:pl-0"
+						: "group-has-[&>select]:pr-6 group-has-[&>select]:pl-3"),
+			),
+			leadingText: "pl-4",
+		},
 	});
 
 	return (
