@@ -36,9 +36,8 @@ export const createMember = async (req: Request, res: Response) => {
 
     if (!newMember) throw new HttpError(500, "Failed to create member");
 
-    res.json({
+    res.status(201).json({
         success: true,
-        code: 200,
         message: "Member created successfully",
         data: newMember
     });
@@ -53,9 +52,8 @@ export const updateMember = async (req: Request, res: Response) => {
 
     if (!updatedMember) throw new HttpError(500, "Failed to update member");
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Member updated successfully",
         data: updatedMember
     });
@@ -69,9 +67,8 @@ export const deleteMember = async (req: Request, res: Response) => {
 
     if (!deletedMember) throw new HttpError(500, "Failed to delete member");
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Member deleted successfully"
     });
 };

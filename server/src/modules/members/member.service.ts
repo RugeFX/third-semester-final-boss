@@ -66,7 +66,7 @@ export const updateMember = async (memberId: number, endedAt: Date) => {
 export const deleteMember = async (memberId: number) => {
     await findMemberById(memberId);
 
-    const deletedMember = await db.delete(membersTable).where(eq(membersTable.id, memberId)).returning();
+    const deletedMember = await db.delete(membersTable).where(eq(membersTable.id, memberId));
 
     return deletedMember;
 };

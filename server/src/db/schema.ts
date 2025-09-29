@@ -110,7 +110,7 @@ export const statusEnums = pgEnum("status", ["ENTRY", "EXIT"]);
 
 export const transactionsTable = pgTable("transactions", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  status: varchar().default("ENTRY"),
+  status: statusEnums("status").notNull().default("ENTRY"),
   paid_amount: decimal("paid_amount"),
   access_code: varchar("access_code")
     .unique()
