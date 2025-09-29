@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "https://api.example.com/v1",
+      "url": "http://localhost:3000",
       "description": "Production Server"
     }
   ],
@@ -48,6 +48,10 @@
     {
       "name": "Prices",
       "description": "Public and admin endpoints for managing parking prices."
+    },
+    {
+      "name": "Vehicle Details",
+      "description": "Admin CRUD operations for managing vehicle details."
     }
   ],
   "components": {
@@ -55,38 +59,22 @@
       "User": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Unique identifier for the user.",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "example": "John Doe"
-          },
+          "id": { "type": "integer", "example": 1 },
+          "fullname": { "type": "string", "example": "John Doe" },
+          "username": { "type": "string", "example": "john.doe" },
           "role": {
             "type": "string",
-            "description": "Role of the user.",
-            "enum": [
-              "admin",
-              "member"
-            ],
+            "enum": ["admin", "member"],
             "example": "member"
           }
         }
       },
       "UserCreate": {
         "type": "object",
-        "required": [
-          "name",
-          "password",
-          "role"
-        ],
+        "required": ["fullname", "username", "password", "role"],
         "properties": {
-          "name": {
-            "type": "string",
-            "example": "Jane Doe"
-          },
+          "fullname": { "type": "string", "example": "Jane Doe" },
+          "username": { "type": "string", "example": "jane.doe" },
           "password": {
             "type": "string",
             "format": "password",
@@ -94,10 +82,7 @@
           },
           "role": {
             "type": "string",
-            "enum": [
-              "admin",
-              "member"
-            ],
+            "enum": ["admin", "member"],
             "example": "admin"
           }
         }
@@ -105,16 +90,17 @@
       "UserUpdate": {
         "type": "object",
         "properties": {
-          "name": {
+          "fullname": {
             "type": "string",
-            "example": "Jane Smith"
+            "example": "Jane D. Smith"
+          },
+          "username": {
+            "type": "string",
+            "example": "jane.smith"
           },
           "role": {
             "type": "string",
-            "enum": [
-              "admin",
-              "member"
-            ],
+            "enum": ["admin", "member"],
             "example": "member"
           }
         }
@@ -140,10 +126,7 @@
       },
       "ParkingLevelCreate": {
         "type": "object",
-        "required": [
-          "name",
-          "maxWeight"
-        ],
+        "required": ["name", "maxWeight"],
         "properties": {
           "name": {
             "type": "string",
@@ -179,10 +162,7 @@
       },
       "MemberCreate": {
         "type": "object",
-        "required": [
-          "userId",
-          "endedAt"
-        ],
+        "required": ["userId", "endedAt"],
         "properties": {
           "userId": {
             "type": "integer",
@@ -199,10 +179,7 @@
       "MembershipRenewal": {
         "type": "object",
         "description": "Payload for renewing a membership.",
-        "required": [
-          "renewalPeriodMonths",
-          "amountPaid"
-        ],
+        "required": ["renewalPeriodMonths", "amountPaid"],
         "properties": {
           "renewalPeriodMonths": {
             "type": "integer",
@@ -265,10 +242,7 @@
       },
       "CategoryCreate": {
         "type": "object",
-        "required": [
-          "name",
-          "weight"
-        ],
+        "required": ["name", "weight"],
         "properties": {
           "name": {
             "type": "string",
@@ -302,10 +276,7 @@
       },
       "PriceCreate": {
         "type": "object",
-        "required": [
-          "categoryId",
-          "amount"
-        ],
+        "required": ["categoryId", "amount"],
         "properties": {
           "categoryId": {
             "type": "integer",
@@ -332,6 +303,33 @@
           "categoryId": {
             "type": "integer",
             "example": 2
+          }
+        }
+      },
+      "VehicleDetailCreate": {
+        "type": "object",
+        "required": ["plateNumber", "categoryId"],
+        "properties": {
+          "plateNumber": {
+            "type": "string",
+            "example": "B1234XYZ"
+          },
+          "categoryId": {
+            "type": "integer",
+            "example": 2
+          }
+        }
+      },
+      "VehicleDetailUpdate": {
+        "type": "object",
+        "properties": {
+          "plateNumber": {
+            "type": "string",
+            "example": "B5678ABC"
+          },
+          "categoryId": {
+            "type": "integer",
+            "example": 3
           }
         }
       },
@@ -380,11 +378,7 @@
       "TransactionCreate": {
         "description": "Payload for creating a new transaction when a vehicle enters.",
         "type": "object",
-        "required": [
-          "plateNumber",
-          "categoryId",
-          "parkingLevelId"
-        ],
+        "required": ["plateNumber", "categoryId", "parkingLevelId"],
         "properties": {
           "plateNumber": {
             "type": "string",
@@ -417,12 +411,9 @@
       },
       "LoginMember": {
         "type": "object",
-        "required": [
-          "name",
-          "password"
-        ],
+        "required": ["username", "password"],
         "properties": {
-          "name": {
+          "username": {
             "type": "string",
             "description": "The member's username.",
             "example": "john.doe"
@@ -436,10 +427,7 @@
       },
       "ApiErrorResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "message"
-        ],
+        "required": ["success", "message"],
         "properties": {
           "success": {
             "type": "boolean",
@@ -451,9 +439,7 @@
           "data": {
             "type": "object",
             "nullable": true,
-            "required": [
-              "errorCode"
-            ],
+            "required": ["errorCode"],
             "properties": {
               "errorCode": {
                 "type": "string",
@@ -714,6 +700,39 @@
           }
         }
       },
+      "VehicleDetailResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VehicleDetail"
+          }
+        }
+      },
+      "VehicleDetailArrayResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VehicleDetail"
+            }
+          }
+        }
+      },
       "SuccessResponse": {
         "type": "object",
         "properties": {
@@ -747,9 +766,7 @@
   "paths": {
     "/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Member or Admin Login",
         "description": "Authenticates a member or admin and returns a JWT token.",
         "operationId": "loginUser",
@@ -820,9 +837,7 @@
     },
     "/users": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "List all users (Admin only)",
         "description": "Retrieves a list of all user accounts. This operation is restricted to admin users.",
         "operationId": "listUsers",
@@ -850,9 +865,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Create a new user (Admin only)",
         "description": "Creates a new user account in the system. This operation is restricted to admin users.",
         "operationId": "createUser",
@@ -902,9 +915,7 @@
     },
     "/users/{id}": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get user by ID (Admin only)",
         "description": "Retrieves the details of a specific user by their unique ID. This operation is restricted to admin users.",
         "operationId": "getUserById",
@@ -952,9 +963,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update a user (Admin only)",
         "description": "Updates a user's details. This operation is restricted to admin users.",
         "operationId": "updateUser",
@@ -1022,9 +1031,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Delete a user (Admin only)",
         "description": "Deletes a user from the system. This operation is restricted to admin users.",
         "operationId": "deleteUser",
@@ -1074,9 +1081,7 @@
     },
     "/members": {
       "get": {
-        "tags": [
-          "Members"
-        ],
+        "tags": ["Members"],
         "summary": "List all members (Admin only)",
         "description": "Retrieves a list of all member records. Restricted to admins.",
         "operationId": "listMembers",
@@ -1104,9 +1109,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Members"
-        ],
+        "tags": ["Members"],
         "summary": "Create a member record (Admin only)",
         "description": "Creates a new member record for an existing user. Restricted to admins.",
         "operationId": "createMember",
@@ -1156,9 +1159,7 @@
     },
     "/members/{id}": {
       "get": {
-        "tags": [
-          "Members"
-        ],
+        "tags": ["Members"],
         "summary": "Get member by ID (Admin only)",
         "description": "Retrieves a specific member record by ID. Restricted to admins.",
         "operationId": "getMemberById",
@@ -1206,9 +1207,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Members"
-        ],
+        "tags": ["Members"],
         "summary": "Update a member (Admin only)",
         "description": "Updates a member record. Restricted to admins.",
         "operationId": "updateMember",
@@ -1281,9 +1280,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Members"
-        ],
+        "tags": ["Members"],
         "summary": "Delete a member record (Admin only)",
         "description": "Deletes a member record. Restricted to admins.",
         "operationId": "deleteMember",
@@ -1333,9 +1330,7 @@
     },
     "/members/me/renew": {
       "post": {
-        "tags": [
-          "Members"
-        ],
+        "tags": ["Members"],
         "summary": "Renew a membership",
         "description": "Allows the currently authenticated member to extend their membership subscription.",
         "operationId": "renewCurrentMember",
@@ -1375,9 +1370,7 @@
     },
     "/members/me/transactions": {
       "get": {
-        "tags": [
-          "Members"
-        ],
+        "tags": ["Members"],
         "summary": "Get member's transaction history",
         "description": "Fetches a list of all parking transactions for the authenticated member.",
         "operationId": "getCurrentMemberTransactions",
@@ -1397,9 +1390,7 @@
     },
     "/transactions": {
       "get": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "List all transactions (Admin only)",
         "description": "Retrieves a list of all transactions. Restricted to admins.",
         "operationId": "listTransactions",
@@ -1429,9 +1420,7 @@
     },
     "/transactions/entry": {
       "post": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Create a new transaction (vehicle entry)",
         "description": "This endpoint is called when a vehicle enters the parking facility. It creates a vehicle detail and a new transaction record.",
         "operationId": "createEntryTransaction",
@@ -1471,9 +1460,7 @@
     },
     "/transactions/{accessCode}": {
       "get": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Get Transaction Status (Guest)",
         "description": "Allows a guest to retrieve the status of their active parking transaction using the access code from their ticket. This endpoint is public and does not require authentication.",
         "operationId": "getGuestTransactionByAccessCode",
@@ -1514,9 +1501,7 @@
     },
     "/transactions/{accessCode}/payment": {
       "post": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Process payment for a transaction",
         "description": "Processes a payment for an active transaction and updates its status.",
         "operationId": "processTransactionPayment",
@@ -1572,9 +1557,7 @@
     },
     "/transactions/{accessCode}/exit": {
       "post": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Complete a transaction (vehicle exit)",
         "description": "Marks a transaction as completed when a vehicle exits the parking facility. The final fee is calculated and status updated.",
         "operationId": "completeTransaction",
@@ -1614,9 +1597,7 @@
     },
     "/transactions/manage/{id}": {
       "put": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Manually update a transaction (Admin only)",
         "description": "Allows an admin to manually update transaction details by its primary ID. Restricted to admins.",
         "operationId": "updateTransactionById",
@@ -1684,9 +1665,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Transactions"
-        ],
+        "tags": ["Transactions"],
         "summary": "Delete a transaction (Admin only)",
         "description": "Allows an admin to delete/void a transaction by its primary ID. Restricted to admins.",
         "operationId": "deleteTransactionById",
@@ -1736,9 +1715,7 @@
     },
     "/dashboard/summary": {
       "get": {
-        "tags": [
-          "Dashboard"
-        ],
+        "tags": ["Dashboard"],
         "summary": "Get dashboard summary",
         "description": "Retrieves summary data for the dashboard. The response varies based on the user's role (Admin or Member).",
         "operationId": "getDashboardSummary",
@@ -1758,9 +1735,7 @@
     },
     "/parking-levels": {
       "get": {
-        "tags": [
-          "Parking Levels"
-        ],
+        "tags": ["Parking Levels"],
         "summary": "List all parking levels",
         "description": "Returns a list of all available parking levels in the facility.",
         "operationId": "listParkingLevels",
@@ -1779,9 +1754,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Parking Levels"
-        ],
+        "tags": ["Parking Levels"],
         "summary": "Create a parking level (Admin only)",
         "description": "Creates a new parking level. Restricted to admins.",
         "operationId": "createParkingLevel",
@@ -1831,9 +1804,7 @@
     },
     "/parking-levels/{id}": {
       "get": {
-        "tags": [
-          "Parking Levels"
-        ],
+        "tags": ["Parking Levels"],
         "summary": "Get parking level by ID",
         "description": "Retrieves details for a specific parking level.",
         "operationId": "getParkingLevelById",
@@ -1872,9 +1843,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Parking Levels"
-        ],
+        "tags": ["Parking Levels"],
         "summary": "Update a parking level (Admin only)",
         "description": "Updates a parking level. Restricted to admins.",
         "operationId": "updateParkingLevel",
@@ -1942,9 +1911,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Parking Levels"
-        ],
+        "tags": ["Parking Levels"],
         "summary": "Delete a parking level (Admin only)",
         "description": "Deletes a parking level. Restricted to admins.",
         "operationId": "deleteParkingLevel",
@@ -1994,9 +1961,7 @@
     },
     "/categories": {
       "get": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "List all vehicle categories",
         "description": "Returns a list of all vehicle categories.",
         "operationId": "listCategories",
@@ -2015,9 +1980,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "Create a vehicle category (Admin only)",
         "description": "Creates a new vehicle category. Restricted to admins.",
         "operationId": "createCategory",
@@ -2067,9 +2030,7 @@
     },
     "/categories/{id}": {
       "get": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "Get category by ID",
         "description": "Retrieves details for a specific vehicle category.",
         "operationId": "getCategoryById",
@@ -2108,9 +2069,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "Update a category (Admin only)",
         "description": "Updates a vehicle category. Restricted to admins.",
         "operationId": "updateCategory",
@@ -2178,9 +2137,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Categories"
-        ],
+        "tags": ["Categories"],
         "summary": "Delete a category (Admin only)",
         "description": "Deletes a vehicle category. Restricted to admins.",
         "operationId": "deleteCategory",
@@ -2230,9 +2187,7 @@
     },
     "/prices": {
       "get": {
-        "tags": [
-          "Prices"
-        ],
+        "tags": ["Prices"],
         "summary": "List all prices",
         "description": "Returns a list of all price configurations.",
         "operationId": "listPrices",
@@ -2251,9 +2206,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Prices"
-        ],
+        "tags": ["Prices"],
         "summary": "Create a price (Admin only)",
         "description": "Creates a new price configuration. Restricted to admins.",
         "operationId": "createPrice",
@@ -2303,9 +2256,7 @@
     },
     "/prices/{id}": {
       "get": {
-        "tags": [
-          "Prices"
-        ],
+        "tags": ["Prices"],
         "summary": "Get price by ID",
         "description": "Retrieves details for a specific price configuration.",
         "operationId": "getPriceById",
@@ -2344,9 +2295,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Prices"
-        ],
+        "tags": ["Prices"],
         "summary": "Update a price (Admin only)",
         "description": "Updates a price configuration. Restricted to admins.",
         "operationId": "updatePrice",
@@ -2414,9 +2363,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Prices"
-        ],
+        "tags": ["Prices"],
         "summary": "Delete a price (Admin only)",
         "description": "Deletes a price configuration. Restricted to admins.",
         "operationId": "deletePrice",
@@ -2453,6 +2400,185 @@
           },
           "404": {
             "description": "Price not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicle-details": {
+      "get": {
+        "tags": ["Vehicle Details"],
+        "summary": "List all vehicle details",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of vehicle details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleDetailArrayResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Vehicle Details"],
+        "summary": "Create a new vehicle detail",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehicleDetailCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Vehicle detail created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleDetailResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicle-details/{id}": {
+      "get": {
+        "tags": ["Vehicle Details"],
+        "summary": "Get vehicle detail by ID",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleDetailResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vehicle detail not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Vehicle Details"],
+        "summary": "Update a vehicle detail",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehicleDetailUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vehicle detail updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleDetailResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Vehicle Details"],
+        "summary": "Delete a vehicle detail",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vehicle detail deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vehicle detail not found",
             "content": {
               "application/json": {
                 "schema": {

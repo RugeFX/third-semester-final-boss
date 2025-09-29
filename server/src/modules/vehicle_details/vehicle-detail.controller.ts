@@ -1,33 +1,14 @@
 import { Request, Response } from "express";
+import vehicleDetailService from "./vehicle-detail.service";
+import { paramsSchema, createVehicleDetailSchema, updateVehicleDetailSchema } from "./vehicle-detail.schema";
+import HttpError from "../common/exceptions/http.error";
 
 // Get all vehicle details
 export const getAllVehicleDetails = async (req: Request, res: Response) => {
-    const vehicleDetails = [
-        {
-            id: 1,
-            plate_number: "B1234XYZ",
-            category_id: 1,
-            category: {
-                id: 1,
-                name: "Car",
-                weight: 200
-            }
-        },
-        {
-            id: 2,
-            plate_number: "C5678ABC",
-            category_id: 2,
-            category: {
-                id: 2,
-                name: "Motorcycle",
-                weight: 100
-            }
-        }
-    ];
+    const vehicleDetails = await vehicleDetailService.getAllVehicleDetails();
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Vehicle details fetched successfully",
         data: vehicleDetails
     });
@@ -35,20 +16,12 @@ export const getAllVehicleDetails = async (req: Request, res: Response) => {
 
 // Get vehicle detail by ID
 export const getVehicleDetailById = async (req: Request, res: Response) => {
-    const vehicleDetail = {
-        id: 1,
-        plate_number: "B1234XYZ",
-        category_id: 1,
-        category: {
-            id: 1,
-            name: "Car",
-            weight: 200
-        }
-    };
+    const { id } = paramsSchema.parse(req.params);
 
-    res.json({
+    const vehicleDetail = await vehicleDetailService.findVehicleDetailById(id);
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Vehicle detail fetched successfully",
         data: vehicleDetail
     });
@@ -56,39 +29,45 @@ export const getVehicleDetailById = async (req: Request, res: Response) => {
 
 // Create a vehicle detail
 export const createVehicleDetail = async (req: Request, res: Response) => {
-    const { plate_number, category_id } = req.body;
+    const { plate_number, category_id } = createVehicleDetailSchema.parse(req.body);
 
-    res.json({
+    const newVehicleDetail = await vehicleDetailService.createVehicleDetail(plate_number, category_id);
+
+    if (!newVehicleDetail) throw new HttpError(500, "Failed to create vehicle detail");    
+
+    res.status(201).json({
         success: true,
-        code: 200,
         message: "Vehicle detail created successfully",
-        data: {
-            plate_number,
-            category_id
-        }
+        data: newVehicleDetail
     });
 };
 
 // Update a vehicle detail
 export const updateVehicleDetail = async (req: Request, res: Response) => {
-    const { plate_number, category_id } = req.body;
+    const { id } = paramsSchema.parse(req.params);
+    const { plate_number, category_id } = updateVehicleDetailSchema.parse(req.body);
 
-    res.json({
+    const updatedVehicleDetail = await vehicleDetailService.updateVehicleDetail(id, plate_number, category_id);
+
+    if (!updatedVehicleDetail) throw new HttpError(500, "Failed to update vehicle detail");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Vehicle detail updated successfully",
-        data: {
-            plate_number,
-            category_id
-        }
+        data: updatedVehicleDetail
     });
 };
 
 // Delete a vehicle detail
 export const deleteVehicleDetail = async (req: Request, res: Response) => {
-    res.json({
+    const { id } = paramsSchema.parse(req.params);
+
+    const deletedVehicleDetail = await vehicleDetailService.deleteVehicleDetail(id);
+
+    if (!deletedVehicleDetail) throw new HttpError(500, "Failed to delete vehicle detail");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Vehicle detail deleted successfully"
     });
 };

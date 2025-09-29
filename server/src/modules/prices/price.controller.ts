@@ -1,43 +1,14 @@
 import { Request, Response } from "express";
+import priceService from "./price.service";
+import HttpError from "../common/exceptions/http.error";
+import { paramsSchema, createPriceSchema, updatePriceSchema } from "./price.schema";
 
 // Get all prices
-export const getAllPrices = async (req: Request, res: Response) => {
-    const prices = [
-        {
-            id: 1,
-            amount: 100,
-            category_id: 1,
-            category: {
-                id: 1,
-                name: "Car",
-                weight: 200
-            }
-        },
-        {
-            id: 2,
-            amount: 200,
-            category_id: 1,
-            category: {
-                id: 1,
-                name: "Car",
-                weight: 200
-            }
-        },
-        {
-            id: 3,
-            amount: 300,
-            category_id: 2,
-            category: {
-                id: 2,
-                name: "Motorcycle",
-                weight: 100
-            }
-        }
-    ];
+export const getAllPrices = async (_req: Request, res: Response) => {
+    const prices = await priceService.getAllPrices();
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Prices fetched successfully",
         data: prices
     });
@@ -45,20 +16,12 @@ export const getAllPrices = async (req: Request, res: Response) => {
 
 // Get price by ID
 export const getPriceById = async (req: Request, res: Response) => {
-    const price = {
-        id: 1,
-        amount: 100,
-        category_id: 1,
-        category: {
-            id: 1,
-            name: "Car",
-            weight: 200
-        }
-    };
+    const { id } = paramsSchema.parse(req.params);
 
-    res.json({
+    const price = await priceService.findPriceById(id);
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Price fetched successfully",
         data: price
     });
@@ -66,39 +29,45 @@ export const getPriceById = async (req: Request, res: Response) => {
 
 // Create a new price
 export const createPrice = async (req: Request, res: Response) => {
-    const { amount, category_id } = req.body;
+    const { amount, categoryId } = createPriceSchema.parse(req.body);
 
-    res.json({
+    const newPrice = await priceService.createPrice(amount, categoryId);
+
+    if (!newPrice) throw new HttpError(500, "Failed to create price");
+
+    res.status(201).json({
         success: true,
-        code: 200,
         message: "Price created successfully",
-        data: {
-            amount,
-            category_id
-        }
+        data: newPrice
     });
 };
 
 // Update a price
 export const updatePrice = async (req: Request, res: Response) => {
-    const { amount, category_id } = req.body;
+    const { id } = paramsSchema.parse(req.params);
+    const { amount, categoryId } = updatePriceSchema.parse(req.body);
 
-    res.json({
+    const updatedPrice = await priceService.updatePrice(id, amount, categoryId);
+
+    if (!updatedPrice) throw new HttpError(500, "Failed to update price");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Price updated successfully",
-        data: {
-            amount,
-            category_id
-        }
+        data: updatedPrice
     });
 };
 
 // Delete a price
 export const deletePrice = async (req: Request, res: Response) => {
-    res.json({
+    const { id } = paramsSchema.parse(req.params);
+
+    const deletedPrice = await priceService.deletePrice(id);
+
+    if (!deletedPrice) throw new HttpError(500, "Failed to delete price");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Price deleted successfully"
     });
 };
