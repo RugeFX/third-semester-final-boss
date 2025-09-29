@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "check": "biome check --write .",
+    "format": "biome format --write .",
+    "preview": "vite preview",
+    "orval": "orval --config orval.config.ts"
   },
   "dependencies": {
     "@react-stately/utils": "^3.10.8",
@@ -19,6 +21,8 @@
     "@tanstack/react-router": "^1.131.44",
     "@tanstack/react-router-devtools": "^1.131.44",
     "@untitledui/icons": "^0.0.19",
+    "axios": "^1.12.2",
+    "input-otp": "^1.4.2",
     "motion": "^12.23.22",
     "react": "^19.1.1",
     "react-aria-components": "^1.12.0",
@@ -33,18 +37,16 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
-    "@eslint/js": "^9.33.0",
+    "@faker-js/faker": "^10.0.0",
     "@tanstack/router-plugin": "^1.131.44",
     "@types/node": "^24.5.1",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react-swc": "^4.0.0",
-    "eslint": "^9.33.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "msw": "^2.11.3",
+    "orval": "^7.13.0",
     "typescript": "~5.8.3",
-    "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2"
   }
 }

@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 
 import { env } from "./env";
 
@@ -14,6 +15,10 @@ import memberRouter from "./modules/members/member.route";
 import auditLogsRouter from "./modules/audit_logs/audit-log.route";
 
 const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/docs", scalarDocsRouter);
 app.use("/categories", categoryRouter);

@@ -104,6 +104,7 @@ function SubmitButton(props: ButtonProps) {
 			{([isSubmitting, canSubmit, isPristine]) => (
 				<Button
 					type="submit"
+					size="xl"
 					onClick={form.handleSubmit}
 					isLoading={isSubmitting}
 					isDisabled={!canSubmit || isPristine}

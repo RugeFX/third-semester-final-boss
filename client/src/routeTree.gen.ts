@@ -11,6 +11,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as EntryRouteImport } from './routes/entry'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
@@ -20,6 +21,11 @@ import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 
 const IndexLazyRouteImport = createFileRoute('/')()
 
+const EntryRoute = EntryRouteImport.update({
+  id: '/entry',
+  path: '/entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -57,6 +63,7 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutRoute
+  '/entry': typeof EntryRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/a': typeof AuthedARoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/about': typeof AboutRoute
+  '/entry': typeof EntryRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/a': typeof AuthedARoute
@@ -74,21 +82,23 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_authed': typeof AuthedRouteWithChildren
   '/about': typeof AboutRoute
+  '/entry': typeof EntryRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_authed/a': typeof AuthedARoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/sign-in' | '/sign-up' | '/a'
+  fullPaths: '/' | '/about' | '/entry' | '/sign-in' | '/sign-up' | '/a'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/sign-in' | '/sign-up' | '/a'
+  to: '/' | '/about' | '/entry' | '/sign-in' | '/sign-up' | '/a'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/_authed'
     | '/about'
+    | '/entry'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_authed/a'
@@ -99,10 +109,18 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AuthedRoute: typeof AuthedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  EntryRoute: typeof EntryRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/entry': {
+      id: '/entry'
+      path: '/entry'
+      fullPath: '/entry'
+      preLoaderRoute: typeof EntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -185,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   AuthedRoute: AuthedRouteWithChildren,
   AboutRoute: AboutRoute,
+  EntryRoute: EntryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

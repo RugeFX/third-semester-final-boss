@@ -73,7 +73,7 @@ export const styles = sortCx({
 		},
 		secondary: {
 			root: [
-				"bg-primary text-secondary shadow-xs-skeumorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover",
+				"bg-secondary text-secondary shadow-xs-skeumorphic ring-1 ring-primary ring-inset hover:bg-secondary_hover hover:text-secondary_hover data-loading:bg-secondary_hover",
 				// Disabled styles
 				"disabled:shadow-xs disabled:ring-disabled_subtle",
 				// Icon styles

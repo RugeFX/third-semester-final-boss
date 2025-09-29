@@ -33,8 +33,8 @@ function RouteComponent() {
 	const { pathname } = useLocation();
 
 	return (
-		<div className="flex p-20 min-h-screen bg-gray-950">
-			<div className="flex flex-1 justify-center items-center">
+		<div className="grid gap-6 items-center px-6 py-7 mx-auto w-full min-h-screen md:container lg:grid-cols-2 sm:px-8 md:px-12 lg:px-16">
+			<div className="flex justify-center items-center">
 				<Outlet />
 			</div>
 
@@ -49,7 +49,7 @@ function RouteComponent() {
 					duration: 1,
 					ease: "easeOut",
 				}}
-				className="overflow-hidden relative flex-1 bg-center bg-no-repeat bg-contain"
+				className="hidden overflow-hidden relative bg-center bg-no-repeat bg-cover rounded-xl lg:block h-full max-h-[820px]"
 				style={{
 					backgroundImage: `url(${authBackground})`,
 				}}

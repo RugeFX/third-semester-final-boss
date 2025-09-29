@@ -12,6 +12,7 @@
   "dependencies": {
     "@scalar/express-api-reference": "^0.8.19",
     "@t3-oss/env-core": "^0.13.8",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "drizzle-orm": "^0.44.5",
     "express": "^5.1.0",
