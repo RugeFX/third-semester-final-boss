@@ -1,37 +1,14 @@
 import { Request, Response } from "express";
+import memberService from "./member.service";
+import { paramsSchema, createMemberSchema, updateMemberSchema } from "./member.schema";
+import HttpError from "../common/exceptions/http.error";
 
 // Get all members
 export const getAllMembers = async (req: Request, res: Response) => {
-    const members = [
-        {
-            id: 1,
-            joined_at: new Date(),
-            ended_at: new Date(),
-            user_id: 1,
-            user: {
-                id: 1,
-                name: "John Doe",
-                password: "password123",
-                role: "admin"
-            }
-        },
-        {
-            id: 2,
-            joined_at: new Date(),
-            ended_at: new Date(),
-            user_id: 2,
-            user: {
-                id: 2,
-                name: "Jane Doe",
-                password: "password456",
-                role: "member"
-            }
-        }
-    ];
+    const members = await memberService.getAllMembers();
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Members fetched successfully",
         data: members
     });
@@ -39,22 +16,12 @@ export const getAllMembers = async (req: Request, res: Response) => {
 
 // Get member by ID
 export const getMemberById = async (req: Request, res: Response) => {
-    const member = {
-        id: 1,
-        joined_at: new Date(),
-        ended_at: new Date(),
-        user_id: 1,
-        user: {
-            id: 1,
-            name: "John Doe",
-            password: "password123",
-            role: "admin"
-        }
-    };
+    const { id } = paramsSchema.parse(req.params);
 
-    res.json({
+    const member = await memberService.findMemberById(id);
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Member fetched successfully",
         data: member
     });
@@ -62,41 +29,46 @@ export const getMemberById = async (req: Request, res: Response) => {
 
 // Create a new member
 export const createMember = async (req: Request, res: Response) => {
-    const { joined_at, ended_at, user_id } = req.body;
+    const joinedAt = new Date();
+    const { endedAt, userId } = createMemberSchema.parse(req.body);
 
-    res.json({
+    const newMember = await memberService.createMember(joinedAt, endedAt, userId);
+
+    if (!newMember) throw new HttpError(500, "Failed to create member");
+
+    res.status(201).json({
         success: true,
-        code: 200,
         message: "Member created successfully",
-        data: {
-            joined_at,
-            ended_at,
-            user_id
-        }
+        data: newMember
     });
 };
 
 // Update a member
 export const updateMember = async (req: Request, res: Response) => {
-    const { joined_at, ended_at, user_id } = req.body;
+    const { id } = paramsSchema.parse(req.params);
+    const { endedAt } = updateMemberSchema.parse(req.body);
 
-    res.json({
+    const updatedMember = await memberService.updateMember(id, endedAt);
+
+    if (!updatedMember) throw new HttpError(500, "Failed to update member");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Member updated successfully",
-        data: {
-            joined_at,
-            ended_at,
-            user_id
-        }
+        data: updatedMember
     });
 };
 
 // Delete a member
 export const deleteMember = async (req: Request, res: Response) => {
-    res.json({
+    const { id } = paramsSchema.parse(req.params);
+
+    const deletedMember = await memberService.deleteMember(id);
+
+    if (!deletedMember) throw new HttpError(500, "Failed to delete member");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Member deleted successfully"
     });
 };

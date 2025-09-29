@@ -52,6 +52,10 @@
     {
       "name": "Vehicle Details",
       "description": "Admin CRUD operations for managing vehicle details."
+    },
+    {
+      "name": "Audit Logs",
+      "description": "Admin endpoints for viewing audit logs."
     }
   ],
   "components": {
@@ -237,12 +241,22 @@
             "format": "double",
             "description": "Average weight of vehicles in this category.",
             "example": 200
+          },
+          "icon": {
+            "type": "string",
+            "description": "URL or identifier for the category icon.",
+            "example": "icon-motorcycle.png"
+          },
+          "thumbnail": {
+            "type": "string",
+            "description": "URL or identifier for the category thumbnail image.",
+            "example": "thumb-motorcycle.jpg"
           }
         }
       },
       "CategoryCreate": {
         "type": "object",
-        "required": ["name", "weight"],
+        "required": ["name", "weight", "icon", "thumbnail"],
         "properties": {
           "name": {
             "type": "string",
@@ -252,6 +266,14 @@
             "type": "number",
             "format": "double",
             "example": 1800
+          },
+          "icon": {
+            "type": "string",
+            "example": "icon-electric-car.png"
+          },
+          "thumbnail": {
+            "type": "string",
+            "example": "thumb-electric-car.jpg"
           }
         }
       },
@@ -342,8 +364,9 @@
           },
           "status": {
             "type": "string",
-            "description": "Current status of the transaction (e.g., ACTIVE, PAID, COMPLETED).",
-            "example": "ACTIVE"
+            "description": "Status of the transaction, indicating vehicle entry or exit.",
+            "enum": ["ENTRY", "EXIT"],
+            "example": "ENTRY"
           },
           "paidAmount": {
             "type": "number",
@@ -380,6 +403,10 @@
         "type": "object",
         "required": ["plateNumber", "categoryId", "parkingLevelId"],
         "properties": {
+          "userId": {
+            "type": "integer",
+            "example": 2
+          },
           "plateNumber": {
             "type": "string",
             "example": "D4321ABC"
@@ -400,13 +427,24 @@
         "properties": {
           "status": {
             "type": "string",
-            "example": "PAID"
+            "enum": ["ENTRY", "EXIT"],
+            "example": "EXIT"
           },
           "paidAmount": {
             "type": "number",
             "format": "double",
             "example": 25.5
           }
+        }
+      },
+      "AuditLog": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "context": { "type": "string", "example": "USER_LOGIN_SUCCESS" },
+          "type": { "type": "string", "example": "AUTHENTICATION" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "createdBy": { "type": "integer", "example": 1 }
         }
       },
       "LoginMember": {
@@ -730,6 +768,25 @@
             "items": {
               "$ref": "#/components/schemas/VehicleDetail"
             }
+          }
+        }
+      },
+      "AuditLogResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/AuditLog" }
+        }
+      },
+      "AuditLogArrayResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "message": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AuditLog" }
           }
         }
       },
@@ -2579,6 +2636,86 @@
           },
           "404": {
             "description": "Vehicle detail not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audit-logs": {
+      "get": {
+        "tags": ["Audit Logs"],
+        "summary": "List all audit logs (Admin only)",
+        "description": "Retrieves a list of all audit log records. Restricted to admins.",
+        "operationId": "listAuditLogs",
+        "responses": {
+          "200": {
+            "description": "A list of audit logs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLogArrayResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. User does not have the necessary permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audit-logs/{id}": {
+      "get": {
+        "tags": ["Audit Logs"],
+        "summary": "Get audit log by ID (Admin only)",
+        "description": "Retrieves a specific audit log by ID. Restricted to admins.",
+        "operationId": "getAuditLogById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditLogResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Audit log not found.",
             "content": {
               "application/json": {
                 "schema": {

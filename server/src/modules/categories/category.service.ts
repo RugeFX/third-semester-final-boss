@@ -22,22 +22,26 @@ export const findCategoryById = async (categoryId: number) => {
 };
 
 // Create a category
-export const createCategory = async (name: string, weight: number) => {
-    const newCategory = await db.insert(categoriesTable).values({
+export const createCategory = async (name: string, weight: number, icon: string, thumbnail: string) => {
+    const [ newCategory ] = await db.insert(categoriesTable).values({
         name,
-        weight
+        weight: weight.toString(),
+        icon,
+        thumbnail
     }).returning();
 
     return newCategory;
 };
 
 // Update a category
-export const updateCategory = async (categoryId: number, name: string, weight: number) => {
+export const updateCategory = async (categoryId: number, name: string, weight: number, icon: string, thumbnail: string) => {
     await findCategoryById(categoryId);
 
-    const updatedCategory = await db.update(categoriesTable).set({
+    const [ updatedCategory ] = await db.update(categoriesTable).set({
         name,
-        weight
+        weight: weight.toString(),
+        icon,
+        thumbnail
     }).where(eq(categoriesTable.id, categoryId)).returning();
 
     return updatedCategory;
