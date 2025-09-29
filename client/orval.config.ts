@@ -1,4 +1,8 @@
+import "dotenv/config";
 import { defineConfig } from "orval";
+
+const API_URL = process.env.VITE_API_URL || "http://localhost:3000";
+const SPEC_URL = `${API_URL}/docs/json`;
 
 export default defineConfig({
   api: {
@@ -19,7 +23,7 @@ export default defineConfig({
       afterAllFilesWrite: "biome check --write",
     },
     input: {
-      target: "./api-spec.json",
+      target: SPEC_URL,
     },
   },
 });

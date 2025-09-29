@@ -7,7 +7,8 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { BaseResponse } from "./baseResponse";
-import type { TokenResponseAllOf } from "./tokenResponseAllOf";
+import type { TokenResponseAllOfData } from "./tokenResponseAllOfData";
 
-export type TokenResponse = BaseResponse & TokenResponseAllOf;
+export type TokenResponseAllOf = {
+	data: TokenResponseAllOfData;
+};

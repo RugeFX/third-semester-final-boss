@@ -1,3 +1,4 @@
+
 {
   "openapi": "3.0.3",
   "info": {
@@ -523,29 +524,29 @@
               }
             }
           }
-        ],
-        "TokenResponse": {
-          "allOf": [
-            {
-              "$ref": "#/components/schemas/BaseResponse"
-            },
-            {
-              "type": "object",
-              "required": ["data"],
-              "properties": {
-                "data": {
-                  "type": "object",
-                  "required": ["token"],
-                  "properties": {
-                    "token": {
-                      "type": "string"
-                    }
+        ]
+      },
+      "TokenResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
+          },
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "type": "object",
+                "required": ["token"],
+                "properties": {
+                  "token": {
+                    "type": "string"
                   }
                 }
               }
             }
-          ]
-        }
+          }
+        ]
       },
       "MemberResponse": {
         "allOf": [

@@ -49,6 +49,8 @@ export * from "./required";
 export * from "./successResponse";
 export * from "./successResponseData";
 export * from "./tokenResponse";
+export * from "./tokenResponseAllOf";
+export * from "./tokenResponseAllOfData";
 export * from "./tokenResponseData";
 export * from "./transaction";
 export * from "./transactionArrayResponse";
