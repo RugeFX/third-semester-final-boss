@@ -23,7 +23,7 @@ export const findMemberById = async (id: number) => {
         }
     });
 
-    if (!member) throw new HttpError(400, "Member not found");
+    if (!member) throw new HttpError(404, "Member not found");
 
     return member;
 };
