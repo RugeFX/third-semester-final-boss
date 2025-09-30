@@ -9,9 +9,9 @@ This documentation provides a base for all the resources defined in the database
  */
 
 export interface Category {
-	id?: number;
+	id: number;
 	/** Name of the vehicle category. */
-	name?: string;
+	name: string;
 	/** Average weight of vehicles in this category. */
-	weight?: number;
+	weight: number;
 }

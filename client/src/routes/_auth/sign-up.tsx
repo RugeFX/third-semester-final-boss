@@ -1,13 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { motion } from "motion/react";
 import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/base/buttons/button";
 import { useAppForm } from "@/lib/form";
 import { wait } from "@/lib/utils";
+import { routeTitle } from "@/lib/utils/title";
 
 export const Route = createFileRoute("/_auth/sign-up")({
 	component: RouteComponent,
+	head: () => ({
+		meta: [routeTitle("Daftar")],
+	}),
 });
 
 const signUpSchema = z
@@ -59,7 +64,19 @@ function RouteComponent() {
 	});
 
 	return (
-		<div className="space-y-4 w-full max-w-md">
+		<motion.div
+			className="space-y-4 w-full max-w-md"
+			initial={{
+				opacity: 0,
+			}}
+			animate={{
+				opacity: 1,
+				transition: {
+					duration: 0.5,
+					ease: "easeOut",
+				},
+			}}
+		>
 			<form.AppField name="fullName">
 				{(field) => (
 					<div>
@@ -68,7 +85,6 @@ function RouteComponent() {
 							label="Nama Lengkap"
 							placeholder="Masukkan Nama Lengkap Anda"
 							className="w-full"
-							size="md"
 						/>
 						<field.Errors firstOnly />
 					</div>
@@ -83,7 +99,6 @@ function RouteComponent() {
 							label="Nama Pengguna"
 							placeholder="Masukkan Nama Pengguna Anda"
 							className="w-full"
-							size="md"
 						/>
 						<field.Errors firstOnly />
 					</div>
@@ -98,7 +113,6 @@ function RouteComponent() {
 							label="Nomor Telepon"
 							placeholder="Masukkan Nomor Telepon Anda"
 							className="w-full"
-							size="md"
 						/>
 						<field.Errors firstOnly />
 					</div>
@@ -138,6 +152,6 @@ function RouteComponent() {
 					Masuk
 				</Button>
 			</div>
-		</div>
+		</motion.div>
 	);
 }

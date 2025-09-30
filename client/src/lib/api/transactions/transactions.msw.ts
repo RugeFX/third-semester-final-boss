@@ -12,34 +12,25 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
-	SuccessResponse,
+	BaseResponse,
 	TransactionArrayResponse,
 	TransactionResponse,
 } from ".././models";
 
-export const getListTransactionsResponseMock = (
-	overrideResponse: Partial<TransactionArrayResponse> = {},
-): TransactionArrayResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		Array.from(
-			{ length: faker.number.int({ min: 1, max: 10 }) },
-			(_, i) => i + 1,
-		).map(() => ({
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			status: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			paidAmount: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
+export const getListTransactionsResponseMock =
+	(): TransactionArrayResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+		},
+		...{
+			data: Array.from(
+				{ length: faker.number.int({ min: 1, max: 10 }) },
+				(_, i) => i + 1,
+			).map(() => ({
+				id: faker.number.int({ min: undefined, max: undefined }),
+				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				paidAmount: faker.helpers.arrayElement([
 					faker.number.float({
 						min: undefined,
 						max: undefined,
@@ -47,61 +38,153 @@ export const getListTransactionsResponseMock = (
 					}),
 					null,
 				]),
-				undefined,
-			]),
-			accessCode: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
+				accessCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				userId: faker.helpers.arrayElement([
 					faker.number.int({ min: undefined, max: undefined }),
 					null,
 				]),
-				undefined,
+				vehicleDetailId: faker.number.int({ min: undefined, max: undefined }),
+				parkingLevelId: faker.number.int({ min: undefined, max: undefined }),
+				createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+				updatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			})),
+		},
+	});
+
+export const getCreateEntryTransactionResponseMock =
+	(): TransactionResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+		},
+		...{
+			data: {
+				id: faker.number.int({ min: undefined, max: undefined }),
+				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				paidAmount: faker.helpers.arrayElement([
+					faker.number.float({
+						min: undefined,
+						max: undefined,
+						fractionDigits: 2,
+					}),
+					null,
+				]),
+				accessCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				userId: faker.helpers.arrayElement([
+					faker.number.int({ min: undefined, max: undefined }),
+					null,
+				]),
+				vehicleDetailId: faker.number.int({ min: undefined, max: undefined }),
+				parkingLevelId: faker.number.int({ min: undefined, max: undefined }),
+				createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+				updatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			},
+		},
+	});
+
+export const getGetGuestTransactionByAccessCodeResponseMock =
+	(): TransactionResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+		},
+		...{
+			data: {
+				id: faker.number.int({ min: undefined, max: undefined }),
+				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				paidAmount: faker.helpers.arrayElement([
+					faker.number.float({
+						min: undefined,
+						max: undefined,
+						fractionDigits: 2,
+					}),
+					null,
+				]),
+				accessCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				userId: faker.helpers.arrayElement([
+					faker.number.int({ min: undefined, max: undefined }),
+					null,
+				]),
+				vehicleDetailId: faker.number.int({ min: undefined, max: undefined }),
+				parkingLevelId: faker.number.int({ min: undefined, max: undefined }),
+				createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+				updatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			},
+		},
+	});
+
+export const getProcessTransactionPaymentResponseMock =
+	(): TransactionResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+		},
+		...{
+			data: {
+				id: faker.number.int({ min: undefined, max: undefined }),
+				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				paidAmount: faker.helpers.arrayElement([
+					faker.number.float({
+						min: undefined,
+						max: undefined,
+						fractionDigits: 2,
+					}),
+					null,
+				]),
+				accessCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				userId: faker.helpers.arrayElement([
+					faker.number.int({ min: undefined, max: undefined }),
+					null,
+				]),
+				vehicleDetailId: faker.number.int({ min: undefined, max: undefined }),
+				parkingLevelId: faker.number.int({ min: undefined, max: undefined }),
+				createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+				updatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			},
+		},
+	});
+
+export const getCompleteTransactionResponseMock = (): TransactionResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			paidAmount: faker.helpers.arrayElement([
+				faker.number.float({
+					min: undefined,
+					max: undefined,
+					fractionDigits: 2,
+				}),
+				null,
 			]),
-			vehicleDetailId: faker.helpers.arrayElement([
+			accessCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			userId: faker.helpers.arrayElement([
 				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
+				null,
 			]),
-			parkingLevelId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			createdAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			updatedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-		})),
-		undefined,
-	]),
-	...overrideResponse,
+			vehicleDetailId: faker.number.int({ min: undefined, max: undefined }),
+			parkingLevelId: faker.number.int({ min: undefined, max: undefined }),
+			createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			updatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+		},
+	},
 });
 
-export const getCreateEntryTransactionResponseMock = (
-	overrideResponse: Partial<TransactionResponse> = {},
-): TransactionResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			status: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			paidAmount: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
+export const getUpdateTransactionByIdResponseMock =
+	(): TransactionResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+		},
+		...{
+			data: {
+				id: faker.number.int({ min: undefined, max: undefined }),
+				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				paidAmount: faker.helpers.arrayElement([
 					faker.number.float({
 						min: undefined,
 						max: undefined,
@@ -109,298 +192,24 @@ export const getCreateEntryTransactionResponseMock = (
 					}),
 					null,
 				]),
-				undefined,
-			]),
-			accessCode: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
+				accessCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				userId: faker.helpers.arrayElement([
 					faker.number.int({ min: undefined, max: undefined }),
 					null,
 				]),
-				undefined,
-			]),
-			vehicleDetailId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			parkingLevelId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			createdAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			updatedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
+				vehicleDetailId: faker.number.int({ min: undefined, max: undefined }),
+				parkingLevelId: faker.number.int({ min: undefined, max: undefined }),
+				createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+				updatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			},
 		},
-		undefined,
-	]),
-	...overrideResponse,
-});
-
-export const getGetGuestTransactionByAccessCodeResponseMock = (
-	overrideResponse: Partial<TransactionResponse> = {},
-): TransactionResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			status: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			paidAmount: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
-					faker.number.float({
-						min: undefined,
-						max: undefined,
-						fractionDigits: 2,
-					}),
-					null,
-				]),
-				undefined,
-			]),
-			accessCode: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
-					faker.number.int({ min: undefined, max: undefined }),
-					null,
-				]),
-				undefined,
-			]),
-			vehicleDetailId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			parkingLevelId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			createdAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			updatedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
-});
-
-export const getProcessTransactionPaymentResponseMock = (
-	overrideResponse: Partial<TransactionResponse> = {},
-): TransactionResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			status: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			paidAmount: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
-					faker.number.float({
-						min: undefined,
-						max: undefined,
-						fractionDigits: 2,
-					}),
-					null,
-				]),
-				undefined,
-			]),
-			accessCode: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
-					faker.number.int({ min: undefined, max: undefined }),
-					null,
-				]),
-				undefined,
-			]),
-			vehicleDetailId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			parkingLevelId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			createdAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			updatedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
-});
-
-export const getCompleteTransactionResponseMock = (
-	overrideResponse: Partial<TransactionResponse> = {},
-): TransactionResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			status: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			paidAmount: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
-					faker.number.float({
-						min: undefined,
-						max: undefined,
-						fractionDigits: 2,
-					}),
-					null,
-				]),
-				undefined,
-			]),
-			accessCode: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
-					faker.number.int({ min: undefined, max: undefined }),
-					null,
-				]),
-				undefined,
-			]),
-			vehicleDetailId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			parkingLevelId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			createdAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			updatedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
-});
-
-export const getUpdateTransactionByIdResponseMock = (
-	overrideResponse: Partial<TransactionResponse> = {},
-): TransactionResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			status: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			paidAmount: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
-					faker.number.float({
-						min: undefined,
-						max: undefined,
-						fractionDigits: 2,
-					}),
-					null,
-				]),
-				undefined,
-			]),
-			accessCode: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
-					faker.number.int({ min: undefined, max: undefined }),
-					null,
-				]),
-				undefined,
-			]),
-			vehicleDetailId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			parkingLevelId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			createdAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			updatedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
-});
+	});
 
 export const getDeleteTransactionByIdResponseMock = (
-	overrideResponse: Partial<SuccessResponse> = {},
-): SuccessResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([{}, undefined]),
+	overrideResponse: Partial<BaseResponse> = {},
+): BaseResponse => ({
+	success: faker.datatype.boolean(),
+	message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 	...overrideResponse,
 });
 
@@ -574,10 +383,10 @@ export const getUpdateTransactionByIdMockHandler = (
 
 export const getDeleteTransactionByIdMockHandler = (
 	overrideResponse?:
-		| SuccessResponse
+		| BaseResponse
 		| ((
 				info: Parameters<Parameters<typeof http.delete>[1]>[0],
-		  ) => Promise<SuccessResponse> | SuccessResponse),
+		  ) => Promise<BaseResponse> | BaseResponse),
 	options?: RequestHandlerOptions,
 ) => {
 	return http.delete(

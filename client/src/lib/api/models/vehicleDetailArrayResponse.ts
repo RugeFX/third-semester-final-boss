@@ -7,10 +7,8 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { VehicleDetail } from "./vehicleDetail";
+import type { BaseResponse } from "./baseResponse";
+import type { VehicleDetailArrayResponseAllOf } from "./vehicleDetailArrayResponseAllOf";
 
-export interface VehicleDetailArrayResponse {
-	success?: boolean;
-	message?: string;
-	data?: VehicleDetail[];
-}
+export type VehicleDetailArrayResponse = BaseResponse &
+	VehicleDetailArrayResponseAllOf;

@@ -6,10 +6,16 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [react(), tailwindcss(), tanstackRouter()],
-	resolve: {
-		alias: {
-			"@": resolve(__dirname, "./src"),
-		},
-	},
+  plugins: [
+    tanstackRouter({
+      autoCodeSplitting: true,
+    }),
+    tailwindcss(),
+    react(),
+  ],
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "./src"),
+    },
+  },
 });

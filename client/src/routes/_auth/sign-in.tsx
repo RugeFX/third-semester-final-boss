@@ -1,14 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { motion } from "motion/react";
 import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/base/buttons/button";
 import MainIcon from "@/components/foundations/app-icons/main-icon";
+import { useLoginUser } from "@/lib/api/auth/auth";
 import { useAppForm } from "@/lib/form";
-import { wait } from "@/lib/utils";
+import { useAuthActions } from "@/lib/store/auth";
+import { APP_NAME } from "@/lib/utils/constants";
+import { routeTitle } from "@/lib/utils/title";
 
 export const Route = createFileRoute("/_auth/sign-in")({
 	component: RouteComponent,
+	head: () => ({
+		meta: [routeTitle("Masuk")],
+	}),
 });
 
 const signInSchema = z.object({
@@ -30,22 +37,63 @@ const signInSchema = z.object({
 type SignInForm = z.infer<typeof signInSchema>;
 
 function RouteComponent() {
+	const router = useRouter();
+	const { signIn } = useAuthActions();
+
+	const { mutateAsync: signInUser, isPending } = useLoginUser({
+		mutation: {
+			onSuccess: (data) => {
+				signIn(data.data.token, "user");
+				router.invalidate().finally(() => {
+					router.navigate({ to: "/" });
+					toast.success(`Selamat datang di ${APP_NAME}!`);
+				});
+			},
+			onError: ({ response, status }) => {
+				if (status === 401) {
+					form.setErrorMap({
+						onSubmit: {
+							fields: {},
+							form: {
+								message: "Nama pengguna atau kata sandi salah",
+							},
+						},
+					});
+					return;
+				}
+
+				toast.error("Login gagal", {
+					description: response?.data.message,
+				});
+			},
+		},
+	});
+
 	const form = useAppForm({
 		defaultValues: {
 			username: "",
 			password: "",
 		} as SignInForm,
-		onSubmit: async ({ value }) => {
-			await wait(3000);
-			toast.info("Data", { description: JSON.stringify(value) });
-		},
 		validators: {
 			onChange: signInSchema,
 		},
+		onSubmit: ({ value }) => signInUser({ data: value }),
 	});
 
 	return (
-		<div className="space-y-8 w-full max-w-md">
+		<motion.div
+			className="space-y-8 w-full max-w-md"
+			initial={{
+				opacity: 0,
+			}}
+			animate={{
+				opacity: 1,
+				transition: {
+					duration: 0.5,
+					ease: "easeOut",
+				},
+			}}
+		>
 			<div className="space-y-6">
 				<MainIcon className="size-24 fill-brand-500" />
 
@@ -71,7 +119,6 @@ function RouteComponent() {
 								label="Nama Pengguna"
 								placeholder="Masukkan Nama Pengguna Anda"
 								className="w-full"
-								size="md"
 							/>
 							<field.Errors firstOnly />
 						</div>
@@ -94,9 +141,16 @@ function RouteComponent() {
 				</div>
 
 				<form.AppForm>
-					<form.SubmitButton className="w-full" showTextWhileLoading>
-						Masuk
-					</form.SubmitButton>
+					<div className="space-y-2">
+						<form.Errors firstOnly />
+						<form.SubmitButton
+							className="w-full"
+							showTextWhileLoading
+							isLoading={isPending}
+						>
+							Masuk
+						</form.SubmitButton>
+					</div>
 				</form.AppForm>
 
 				<div>
@@ -106,6 +160,6 @@ function RouteComponent() {
 					</Button>
 				</div>
 			</div>
-		</div>
+		</motion.div>
 	);
 }

@@ -26,10 +26,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
+	BaseResponse,
 	ParkingLevelArrayResponse,
 	ParkingLevelCreate,
 	ParkingLevelResponse,
-	SuccessResponse,
 } from ".././models";
 import type { BodyType, ErrorType } from ".././mutator/custom-instance";
 import { customInstance } from ".././mutator/custom-instance";
@@ -554,7 +554,7 @@ export const deleteParkingLevel = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<SuccessResponse>(
+	return customInstance<BaseResponse>(
 		{ url: `/parking-levels/${id}`, method: "DELETE" },
 		options,
 	);

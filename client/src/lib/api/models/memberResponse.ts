@@ -7,10 +7,7 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { Member } from "./member";
+import type { BaseResponse } from "./baseResponse";
+import type { MemberResponseAllOf } from "./memberResponseAllOf";
 
-export interface MemberResponse {
-	success?: boolean;
-	message?: string;
-	data?: Member;
-}
+export type MemberResponse = BaseResponse & MemberResponseAllOf;

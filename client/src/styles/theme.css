@@ -785,7 +785,7 @@
 	--color-bg-error-secondary: var(--color-error-100);
 	--color-bg-warning-primary: var(--color-warning-50);
 	--color-bg-warning-secondary: var(--color-warning-100);
-	--color-bg-success-primary: var(--color-success-50);
+	--color-bg-success-primary: var(--color-success-100);
 	--color-bg-success-secondary: var(--color-success-100);
 	--color-bg-brand-solid: var(--color-brand-500);
 	--color-bg-secondary-solid: var(--color-gray-600);
@@ -1209,7 +1209,7 @@
 		--color-bg-error-secondary: var(--color-error-600);
 		--color-bg-warning-primary: var(--color-warning-950);
 		--color-bg-warning-secondary: var(--color-warning-600);
-		--color-bg-success-primary: var(--color-success-950);
+		--color-bg-success-primary: var(--color-gray-900);
 		--color-bg-success-secondary: var(--color-success-600);
 		--color-bg-brand-solid: var(--color-brand-500);
 		--color-bg-secondary-solid: var(--color-gray-600);

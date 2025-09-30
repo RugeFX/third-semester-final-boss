@@ -12,210 +12,112 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+	BaseResponse,
 	MemberArrayResponse,
 	MemberResponse,
-	SuccessResponse,
 	TransactionArrayResponse,
 } from ".././models";
 
-export const getListMembersResponseMock = (
-	overrideResponse: Partial<MemberArrayResponse> = {},
-): MemberArrayResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		Array.from(
+export const getListMembersResponseMock = (): MemberArrayResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: Array.from(
 			{ length: faker.number.int({ min: 1, max: 10 }) },
 			(_, i) => i + 1,
 		).map(() => ({
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			joinedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			endedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
+			id: faker.number.int({ min: undefined, max: undefined }),
+			userId: faker.number.int({ min: undefined, max: undefined }),
+			joinedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			endedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
 		})),
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getCreateMemberResponseMock = (
-	overrideResponse: Partial<MemberResponse> = {},
-): MemberResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			joinedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			endedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
+export const getCreateMemberResponseMock = (): MemberResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			userId: faker.number.int({ min: undefined, max: undefined }),
+			joinedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			endedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getGetMemberByIdResponseMock = (
-	overrideResponse: Partial<MemberResponse> = {},
-): MemberResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			joinedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			endedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
+export const getGetMemberByIdResponseMock = (): MemberResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			userId: faker.number.int({ min: undefined, max: undefined }),
+			joinedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			endedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getUpdateMemberResponseMock = (
-	overrideResponse: Partial<MemberResponse> = {},
-): MemberResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			joinedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			endedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
+export const getUpdateMemberResponseMock = (): MemberResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			userId: faker.number.int({ min: undefined, max: undefined }),
+			joinedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			endedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
 export const getDeleteMemberResponseMock = (
-	overrideResponse: Partial<SuccessResponse> = {},
-): SuccessResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([{}, undefined]),
+	overrideResponse: Partial<BaseResponse> = {},
+): BaseResponse => ({
+	success: faker.datatype.boolean(),
+	message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 	...overrideResponse,
 });
 
-export const getRenewCurrentMemberResponseMock = (
-	overrideResponse: Partial<MemberResponse> = {},
-): MemberResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			joinedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			endedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
+export const getRenewCurrentMemberResponseMock = (): MemberResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			userId: faker.number.int({ min: undefined, max: undefined }),
+			joinedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			endedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getGetCurrentMemberTransactionsResponseMock = (
-	overrideResponse: Partial<TransactionArrayResponse> = {},
-): TransactionArrayResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		Array.from(
-			{ length: faker.number.int({ min: 1, max: 10 }) },
-			(_, i) => i + 1,
-		).map(() => ({
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			status: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			paidAmount: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
+export const getGetCurrentMemberTransactionsResponseMock =
+	(): TransactionArrayResponse => ({
+		...{
+			success: faker.datatype.boolean(),
+			message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+		},
+		...{
+			data: Array.from(
+				{ length: faker.number.int({ min: 1, max: 10 }) },
+				(_, i) => i + 1,
+			).map(() => ({
+				id: faker.number.int({ min: undefined, max: undefined }),
+				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				paidAmount: faker.helpers.arrayElement([
 					faker.number.float({
 						min: undefined,
 						max: undefined,
@@ -223,40 +125,18 @@ export const getGetCurrentMemberTransactionsResponseMock = (
 					}),
 					null,
 				]),
-				undefined,
-			]),
-			accessCode: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			userId: faker.helpers.arrayElement([
-				faker.helpers.arrayElement([
+				accessCode: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				userId: faker.helpers.arrayElement([
 					faker.number.int({ min: undefined, max: undefined }),
 					null,
 				]),
-				undefined,
-			]),
-			vehicleDetailId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			parkingLevelId: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			createdAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-			updatedAt: faker.helpers.arrayElement([
-				`${faker.date.past().toISOString().split(".")[0]}Z`,
-				undefined,
-			]),
-		})),
-		undefined,
-	]),
-	...overrideResponse,
-});
+				vehicleDetailId: faker.number.int({ min: undefined, max: undefined }),
+				parkingLevelId: faker.number.int({ min: undefined, max: undefined }),
+				createdAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+				updatedAt: `${faker.date.past().toISOString().split(".")[0]}Z`,
+			})),
+		},
+	});
 
 export const getListMembersMockHandler = (
 	overrideResponse?:
@@ -372,10 +252,10 @@ export const getUpdateMemberMockHandler = (
 
 export const getDeleteMemberMockHandler = (
 	overrideResponse?:
-		| SuccessResponse
+		| BaseResponse
 		| ((
 				info: Parameters<Parameters<typeof http.delete>[1]>[0],
-		  ) => Promise<SuccessResponse> | SuccessResponse),
+		  ) => Promise<BaseResponse> | BaseResponse),
 	options?: RequestHandlerOptions,
 ) => {
 	return http.delete(

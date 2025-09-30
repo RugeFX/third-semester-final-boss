@@ -13,24 +13,12 @@ import { delay, HttpResponse, http } from "msw";
 
 import type { TokenResponse } from ".././models";
 
-export const getLoginUserResponseMock = (
-	overrideResponse: Partial<TokenResponse> = {},
-): TokenResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			token: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-		},
-		undefined,
-	]),
-	...overrideResponse,
+export const getLoginUserResponseMock = (): TokenResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{ data: { token: faker.string.alpha({ length: { min: 10, max: 20 } }) } },
 });
 
 export const getLoginUserMockHandler = (

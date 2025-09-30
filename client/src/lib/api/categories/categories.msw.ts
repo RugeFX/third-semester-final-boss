@@ -12,151 +12,91 @@ import type { RequestHandlerOptions } from "msw";
 import { delay, HttpResponse, http } from "msw";
 
 import type {
+	BaseResponse,
 	CategoryArrayResponse,
 	CategoryResponse,
-	SuccessResponse,
 } from ".././models";
 
-export const getListCategoriesResponseMock = (
-	overrideResponse: Partial<CategoryArrayResponse> = {},
-): CategoryArrayResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		Array.from(
+export const getListCategoriesResponseMock = (): CategoryArrayResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: Array.from(
 			{ length: faker.number.int({ min: 1, max: 10 }) },
 			(_, i) => i + 1,
 		).map(() => ({
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			name: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			weight: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+			id: faker.number.int({ min: undefined, max: undefined }),
+			name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			weight: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		})),
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getCreateCategoryResponseMock = (
-	overrideResponse: Partial<CategoryResponse> = {},
-): CategoryResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			name: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			weight: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+export const getCreateCategoryResponseMock = (): CategoryResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			weight: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getGetCategoryByIdResponseMock = (
-	overrideResponse: Partial<CategoryResponse> = {},
-): CategoryResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			name: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			weight: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+export const getGetCategoryByIdResponseMock = (): CategoryResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			weight: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
-export const getUpdateCategoryResponseMock = (
-	overrideResponse: Partial<CategoryResponse> = {},
-): CategoryResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([
-		{
-			id: faker.helpers.arrayElement([
-				faker.number.int({ min: undefined, max: undefined }),
-				undefined,
-			]),
-			name: faker.helpers.arrayElement([
-				faker.string.alpha({ length: { min: 10, max: 20 } }),
-				undefined,
-			]),
-			weight: faker.helpers.arrayElement([
-				faker.number.float({
-					min: undefined,
-					max: undefined,
-					fractionDigits: 2,
-				}),
-				undefined,
-			]),
+export const getUpdateCategoryResponseMock = (): CategoryResponse => ({
+	...{
+		success: faker.datatype.boolean(),
+		message: faker.string.alpha({ length: { min: 10, max: 20 } }),
+	},
+	...{
+		data: {
+			id: faker.number.int({ min: undefined, max: undefined }),
+			name: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			weight: faker.number.float({
+				min: undefined,
+				max: undefined,
+				fractionDigits: 2,
+			}),
 		},
-		undefined,
-	]),
-	...overrideResponse,
+	},
 });
 
 export const getDeleteCategoryResponseMock = (
-	overrideResponse: Partial<SuccessResponse> = {},
-): SuccessResponse => ({
-	success: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]),
-	message: faker.helpers.arrayElement([
-		faker.string.alpha({ length: { min: 10, max: 20 } }),
-		undefined,
-	]),
-	data: faker.helpers.arrayElement([{}, undefined]),
+	overrideResponse: Partial<BaseResponse> = {},
+): BaseResponse => ({
+	success: faker.datatype.boolean(),
+	message: faker.string.alpha({ length: { min: 10, max: 20 } }),
 	...overrideResponse,
 });
 
@@ -274,10 +214,10 @@ export const getUpdateCategoryMockHandler = (
 
 export const getDeleteCategoryMockHandler = (
 	overrideResponse?:
-		| SuccessResponse
+		| BaseResponse
 		| ((
 				info: Parameters<Parameters<typeof http.delete>[1]>[0],
-		  ) => Promise<SuccessResponse> | SuccessResponse),
+		  ) => Promise<BaseResponse> | BaseResponse),
 	options?: RequestHandlerOptions,
 ) => {
 	return http.delete(

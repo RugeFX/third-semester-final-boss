@@ -50,12 +50,12 @@ export const styles = sortCx({
 			linkRoot: "gap-1",
 		},
 		lg: {
-			root: "gap-1.5 rounded-lg px-4 py-2.5 text-md font-semibold before:rounded-[7px] data-icon-only:p-3",
-			linkRoot: "gap-1.5",
+			root: "gap-2 rounded-lg px-4 py-2.5 text-md font-semibold before:rounded-[7px] data-icon-only:p-3",
+			linkRoot: "gap-2",
 		},
 		xl: {
-			root: "gap-1.5 rounded-lg px-4.5 py-3 text-md font-semibold before:rounded-[7px] data-icon-only:p-3.5",
-			linkRoot: "gap-1.5",
+			root: "gap-2 rounded-lg px-4.5 py-3 text-md font-semibold before:rounded-[7px] data-icon-only:p-3.5",
+			linkRoot: "gap-2",
 		},
 	},
 

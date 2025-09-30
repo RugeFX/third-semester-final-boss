@@ -9,8 +9,8 @@ This documentation provides a base for all the resources defined in the database
  */
 
 export interface Price {
-	id?: number;
-	categoryId?: number;
+	id: number;
+	categoryId: number;
 	/** Price per hour for this category. */
-	amount?: number;
+	amount: number;
 }

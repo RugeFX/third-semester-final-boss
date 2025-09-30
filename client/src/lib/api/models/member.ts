@@ -9,8 +9,8 @@ This documentation provides a base for all the resources defined in the database
  */
 
 export interface Member {
-	id?: number;
-	userId?: number;
-	joinedAt?: string;
-	endedAt?: string;
+	id: number;
+	userId: number;
+	joinedAt: string;
+	endedAt: string;
 }

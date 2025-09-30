@@ -26,10 +26,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
+	BaseResponse,
 	CategoryArrayResponse,
 	CategoryCreate,
 	CategoryResponse,
-	SuccessResponse,
 } from ".././models";
 import type { BodyType, ErrorType } from ".././mutator/custom-instance";
 import { customInstance } from ".././mutator/custom-instance";
@@ -534,7 +534,7 @@ export const deleteCategory = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<SuccessResponse>(
+	return customInstance<BaseResponse>(
 		{ url: `/categories/${id}`, method: "DELETE" },
 		options,
 	);

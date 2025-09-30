@@ -10,8 +10,8 @@ This documentation provides a base for all the resources defined in the database
 import type { UserRole } from "./userRole";
 
 export interface User {
-	id?: number;
-	fullname?: string;
-	username?: string;
-	role?: UserRole;
+	id: number;
+	fullname: string;
+	username: string;
+	role: UserRole;
 }

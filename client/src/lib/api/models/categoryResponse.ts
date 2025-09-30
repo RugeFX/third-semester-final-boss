@@ -7,10 +7,7 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { Category } from "./category";
+import type { BaseResponse } from "./baseResponse";
+import type { CategoryResponseAllOf } from "./categoryResponseAllOf";
 
-export interface CategoryResponse {
-	success?: boolean;
-	message?: string;
-	data?: Category;
-}
+export type CategoryResponse = BaseResponse & CategoryResponseAllOf;

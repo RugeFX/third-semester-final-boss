@@ -9,5 +9,5 @@ This documentation provides a base for all the resources defined in the database
  */
 
 export type TokenResponseData = {
-	token?: string;
+	token: string;
 };

@@ -7,11 +7,6 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { SuccessResponseData } from "./successResponseData";
+import type { BaseResponse } from "./baseResponse";
 
-export interface SuccessResponse {
-	success?: boolean;
-	message?: string;
-	/** @nullable */
-	data?: SuccessResponseData;
-}
+export type SuccessResponse = BaseResponse;

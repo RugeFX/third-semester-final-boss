@@ -5,7 +5,10 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "node --import=tsx --watch src/index.ts"
+    "dev": "node --import=tsx --watch src/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "author": "",
   "license": "ISC",

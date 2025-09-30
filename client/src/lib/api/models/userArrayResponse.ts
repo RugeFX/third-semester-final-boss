@@ -7,10 +7,7 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { User } from "./user";
+import type { BaseResponse } from "./baseResponse";
+import type { UserArrayResponseAllOf } from "./userArrayResponseAllOf";
 
-export interface UserArrayResponse {
-	success?: boolean;
-	message?: string;
-	data?: User[];
-}
+export type UserArrayResponse = BaseResponse & UserArrayResponseAllOf;
