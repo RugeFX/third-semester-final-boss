@@ -18,8 +18,10 @@ import { Route as EntryIndexRouteImport } from './routes/entry/index'
 import { Route as CheckIndexRouteImport } from './routes/check/index'
 import { Route as EntrySuccessRouteImport } from './routes/entry/success'
 import { Route as AuthedARouteImport } from './routes/_authed.a'
-import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
+import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
+import { Route as AuthSignUpUpgradeRouteImport } from './routes/_auth/sign-up/upgrade'
+import { Route as AuthSignUpSuccessRouteImport } from './routes/_auth/sign-up/success'
 
 const AuthedRoute = AuthedRouteImport.update({
   id: '/_authed',
@@ -64,14 +66,24 @@ const AuthedARoute = AuthedARouteImport.update({
   path: '/a',
   getParentRoute: () => AuthedRoute,
 } as any)
-const AuthSignUpRoute = AuthSignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
+  id: '/sign-up/',
+  path: '/sign-up/',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSignUpUpgradeRoute = AuthSignUpUpgradeRouteImport.update({
+  id: '/sign-up/upgrade',
+  path: '/sign-up/upgrade',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSignUpSuccessRoute = AuthSignUpSuccessRouteImport.update({
+  id: '/sign-up/success',
+  path: '/sign-up/success',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
@@ -80,20 +92,24 @@ export interface FileRoutesByFullPath {
   '/check': typeof CheckRouteRouteWithChildren
   '/entry': typeof EntryRouteRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
-  '/sign-up': typeof AuthSignUpRoute
   '/a': typeof AuthedARoute
   '/entry/success': typeof EntrySuccessRoute
   '/check/': typeof CheckIndexRoute
   '/entry/': typeof EntryIndexRoute
+  '/sign-up/success': typeof AuthSignUpSuccessRoute
+  '/sign-up/upgrade': typeof AuthSignUpUpgradeRoute
+  '/sign-up': typeof AuthSignUpIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sign-in': typeof AuthSignInRoute
-  '/sign-up': typeof AuthSignUpRoute
   '/a': typeof AuthedARoute
   '/entry/success': typeof EntrySuccessRoute
   '/check': typeof CheckIndexRoute
   '/entry': typeof EntryIndexRoute
+  '/sign-up/success': typeof AuthSignUpSuccessRoute
+  '/sign-up/upgrade': typeof AuthSignUpUpgradeRoute
+  '/sign-up': typeof AuthSignUpIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -103,11 +119,13 @@ export interface FileRoutesById {
   '/entry': typeof EntryRouteRouteWithChildren
   '/_authed': typeof AuthedRouteWithChildren
   '/_auth/sign-in': typeof AuthSignInRoute
-  '/_auth/sign-up': typeof AuthSignUpRoute
   '/_authed/a': typeof AuthedARoute
   '/entry/success': typeof EntrySuccessRoute
   '/check/': typeof CheckIndexRoute
   '/entry/': typeof EntryIndexRoute
+  '/_auth/sign-up/success': typeof AuthSignUpSuccessRoute
+  '/_auth/sign-up/upgrade': typeof AuthSignUpUpgradeRoute
+  '/_auth/sign-up/': typeof AuthSignUpIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -116,20 +134,24 @@ export interface FileRouteTypes {
     | '/check'
     | '/entry'
     | '/sign-in'
-    | '/sign-up'
     | '/a'
     | '/entry/success'
     | '/check/'
     | '/entry/'
+    | '/sign-up/success'
+    | '/sign-up/upgrade'
+    | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/sign-in'
-    | '/sign-up'
     | '/a'
     | '/entry/success'
     | '/check'
     | '/entry'
+    | '/sign-up/success'
+    | '/sign-up/upgrade'
+    | '/sign-up'
   id:
     | '__root__'
     | '/'
@@ -138,11 +160,13 @@ export interface FileRouteTypes {
     | '/entry'
     | '/_authed'
     | '/_auth/sign-in'
-    | '/_auth/sign-up'
     | '/_authed/a'
     | '/entry/success'
     | '/check/'
     | '/entry/'
+    | '/_auth/sign-up/success'
+    | '/_auth/sign-up/upgrade'
+    | '/_auth/sign-up/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -218,13 +242,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedARouteImport
       parentRoute: typeof AuthedRoute
     }
-    '/_auth/sign-up': {
-      id: '/_auth/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof AuthSignUpRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
     '/_auth/sign-in': {
       id: '/_auth/sign-in'
       path: '/sign-in'
@@ -232,17 +249,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_auth/sign-up/': {
+      id: '/_auth/sign-up/'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof AuthSignUpIndexRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/sign-up/upgrade': {
+      id: '/_auth/sign-up/upgrade'
+      path: '/sign-up/upgrade'
+      fullPath: '/sign-up/upgrade'
+      preLoaderRoute: typeof AuthSignUpUpgradeRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/sign-up/success': {
+      id: '/_auth/sign-up/success'
+      path: '/sign-up/success'
+      fullPath: '/sign-up/success'
+      preLoaderRoute: typeof AuthSignUpSuccessRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
   }
 }
 
 interface AuthRouteRouteChildren {
   AuthSignInRoute: typeof AuthSignInRoute
-  AuthSignUpRoute: typeof AuthSignUpRoute
+  AuthSignUpSuccessRoute: typeof AuthSignUpSuccessRoute
+  AuthSignUpUpgradeRoute: typeof AuthSignUpUpgradeRoute
+  AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthSignInRoute: AuthSignInRoute,
-  AuthSignUpRoute: AuthSignUpRoute,
+  AuthSignUpSuccessRoute: AuthSignUpSuccessRoute,
+  AuthSignUpUpgradeRoute: AuthSignUpUpgradeRoute,
+  AuthSignUpIndexRoute: AuthSignUpIndexRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(

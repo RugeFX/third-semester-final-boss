@@ -1,6 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/base/buttons/button";
@@ -8,7 +7,7 @@ import { useAppForm } from "@/lib/form";
 import { wait } from "@/lib/utils";
 import { routeTitle } from "@/lib/utils/title";
 
-export const Route = createFileRoute("/_auth/sign-up")({
+export const Route = createFileRoute("/_auth/sign-up/")({
 	component: RouteComponent,
 	head: () => ({
 		meta: [routeTitle("Daftar")],
@@ -46,6 +45,8 @@ const signUpSchema = z
 type SignUpForm = z.infer<typeof signUpSchema>;
 
 function RouteComponent() {
+	const navigate = useNavigate();
+
 	const form = useAppForm({
 		defaultValues: {
 			fullName: "",
@@ -54,9 +55,9 @@ function RouteComponent() {
 			password: "",
 			confirmPassword: "",
 		} as SignUpForm,
-		onSubmit: async ({ value }) => {
+		onSubmit: async () => {
 			await wait(3000);
-			toast.info("Data", { description: JSON.stringify(value) });
+			navigate({ to: "/sign-up/upgrade" });
 		},
 		validators: {
 			onChange: signUpSchema,
