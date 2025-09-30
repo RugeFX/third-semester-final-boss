@@ -37,7 +37,6 @@ export const useAuthToken = () => useStore(authStore, (state) => state.token);
 export const useIsAuthenticated = () => useStore(authStore, (state) => !!state.token);
 export const useAuthActions = () => useStore(authStore, (state) => state.actions);
 
-export const useAuthStore = (selector: (state: AuthStore) => AuthStore) =>
-  useStore(authStore, selector);
+export const useAuthStore = <T>(selector: (state: AuthStore) => T) => useStore(authStore, selector);
 
 export default authStore;
