@@ -106,7 +106,11 @@ export const parkingLevelsRelations = relations(
   })
 );
 
-export const statusEnums = pgEnum("status", ["ENTRY", "EXIT"]);
+const statuses = ["ENTRY", "EXIT"] as const
+
+export type Status = (typeof statuses)[number]
+
+export const statusEnums = pgEnum("status", statuses);
 
 export const transactionsTable = pgTable("transactions", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
