@@ -8,7 +8,11 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
-export const roleEnums = pgEnum("role", ["admin", "member"]);
+const roles = ["admin", "member"] as const
+
+export type Role = (typeof roles)[number]
+
+export const roleEnums = pgEnum("role", roles);
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
