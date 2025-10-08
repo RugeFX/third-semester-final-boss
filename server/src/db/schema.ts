@@ -5,6 +5,7 @@ import {
   pgTable,
   varchar,
   timestamp,
+  boolean
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
@@ -88,6 +89,11 @@ export const pricesTable = pgTable("prices", {
   category_id: integer("category_id")
     .notNull()
     .references(() => categoriesTable.id),
+  type: varchar("type").notNull().default("BASE"),
+  block_hours: integer("block_hours"),
+  is_active: boolean("is_active").notNull().default(true),
+  valid_from: timestamp("valid_from", { withTimezone: true }),
+  valid_until: timestamp("valid_until", { withTimezone: true }),
 });
 
 export const pricesRelations = relations(pricesTable, ({ one }) => ({

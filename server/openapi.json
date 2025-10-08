@@ -161,19 +161,29 @@
       },
       "Price": {
         "type": "object",
-        "required": ["id", "categoryId", "amount"],
+        "required": ["id", "categoryId", "amount", "type", "isActive"],
         "properties": {
           "id": { "type": "integer", "example": 1 },
           "categoryId": { "type": "integer", "example": 1 },
-          "amount": { "type": "number", "format": "double", "description": "Price per hour for this category.", "example": 2.5 }
+          "amount": { "type": "number", "format": "double", "example": 5000 },
+          "type": { "type": "string", "description": "Business rule type for the price.", "example": "INITIAL_BLOCK" },
+          "blockHours": { "type": "integer", "nullable": true, "description": "Duration in hours for INITIAL_BLOCK type.", "example": 2 },
+          "isActive": { "type": "boolean", "default": true },
+          "validFrom": { "type": "string", "format": "date-time", "nullable": true },
+          "validUntil": { "type": "string", "format": "date-time", "nullable": true }
         }
       },
       "PriceCreate": {
         "type": "object",
-        "required": ["categoryId", "amount"],
+        "required": ["categoryId", "amount", "type"],
         "properties": {
-          "categoryId": { "type": "integer", "example": 4 },
-          "amount": { "type": "number", "format": "double", "example": 7.5 }
+          "categoryId": { "type": "integer", "example": 2 },
+          "amount": { "type": "number", "format": "double", "example": 10000 },
+          "type": { "type": "string", "description": "Business rule type for the price.", "example": "INITIAL_BLOCK" },
+          "blockHours": { "type": "integer", "nullable": true, "description": "Duration in hours for INITIAL_BLOCK type.", "example": 2 },
+          "isActive": { "type": "boolean", "default": true },
+          "validFrom": { "type": "string", "format": "date-time", "nullable": true },
+          "validUntil": { "type": "string", "format": "date-time", "nullable": true }
         }
       },
       "VehicleDetail": {

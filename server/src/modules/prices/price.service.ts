@@ -1,6 +1,6 @@
 import { db } from "../../db";
 import HttpError from "../common/exceptions/http.error";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import categoryService from "../categories/category.service";
 import { pricesTable } from "../../db/schema";
 
@@ -29,26 +29,60 @@ export const findPriceById = async (priceId: number) => {
     return price;
 };
 
+export const findActivePriceByCategoryAndType = async (category_id: number, type: string) => {
+    const price = await db.query.pricesTable.findFirst({
+        where: and(
+            eq(pricesTable.category_id, category_id),
+            eq(pricesTable.type, type),
+            eq(pricesTable.is_active, true)
+        )
+    });
+
+    return price;
+}
+
 // Create a new price
-export const createPrice = async (amount: number, category_id: number) => {
+export const createPrice = async (amount: number, category_id: number, type: string, blockHours?: number, isActive?: boolean, validFrom?: Date | null, validUntil?: Date | null) => {
     await categoryService.findCategoryById(category_id);
 
+    if (isActive !== false) {
+        if (await findActivePriceByCategoryAndType(category_id, type))
+            throw new HttpError(409, `Price with type '${type}' for this category already exists and is active`);
+    }
+
     const [ newPrice ] = await db.insert(pricesTable).values({
+        category_id: category_id,
         amount: amount.toString(),
-        category_id
+        type: type,
+        block_hours: blockHours,
+        is_active: isActive,
+        valid_from: validFrom,
+        valid_until: validUntil
     }).returning();
 
     return newPrice;
 };
 
 // Update a price
-export const updatePrice = async (priceId: number, amount: number, category_id: number) => {
+export const updatePrice = async (priceId: number, amount: number, category_id: number, type: string, blockHours?: number, isActive?: boolean, validFrom?: Date | null, validUntil?: Date | null) => {
     await findPriceById(priceId);
     await categoryService.findCategoryById(category_id);
 
+    if (isActive !== false) {
+        const existingPrice = await findActivePriceByCategoryAndType(category_id, type);
+
+        if (existingPrice && existingPrice.id !== priceId)
+            throw new HttpError(409, `Price with type '${type}' for this category already exists and is active`);
+    }
+
     const [ updatedPrice ] = await db.update(pricesTable).set({
         amount: amount.toString(),
-        category_id
+        category_id: category_id,
+        type: type,
+        block_hours: blockHours,
+        is_active: isActive,
+        valid_from: validFrom,
+        valid_until: validUntil
     }).where(eq(pricesTable.id, priceId)).returning();
 
     return updatedPrice;
@@ -58,7 +92,7 @@ export const updatePrice = async (priceId: number, amount: number, category_id: 
 export const deletePrice = async (priceId: number) => {
     await findPriceById(priceId);
 
-    const deletedPrice = await db.delete(pricesTable).where(eq(pricesTable.id, priceId));
+    const [ deletedPrice ]  = await db.delete(pricesTable).where(eq(pricesTable.id, priceId)).returning();
 
     return deletedPrice;
 };

@@ -90,8 +90,9 @@ async function seed() {
         username: "member1",
         password: hashedPassword,
         role: "member",
-      }
-    ]).returning();
+      },
+    ])
+    .returning();
 
   console.log(`✅ Seeded ${users.length} users.`);
 
@@ -116,12 +117,66 @@ async function seed() {
   console.log("🌱 Seeding tables with dependencies...");
 
   // Prices (tergantung Categories)
+  const farFutureDate = new Date("9999-12-31T23:59:59Z");
+  const pastDate = new Date("2020-01-01T00:00:00Z");
+
   const prices = await db
     .insert(schema.pricesTable)
     .values([
-      { category_id: categories[0].id, amount: "2000" }, // Motor
-      { category_id: categories[1].id, amount: "5000" }, // Mobil
-      { category_id: categories[2].id, amount: "10000" }, // Truk
+      // --- Sepeda Motor Prices ---
+      {
+        category_id: categories[0].id,
+        amount: "5000",
+        type: "INITIAL_BLOCK",
+        block_hours: 2,
+        is_active: true,
+        valid_from: pastDate,
+        valid_until: farFutureDate,
+      },
+      {
+        category_id: categories[0].id,
+        amount: "2000",
+        type: "SUBSEQUENT_HOUR",
+        is_active: true,
+        valid_from: pastDate,
+        valid_until: farFutureDate,
+      },
+      // --- Mobil Prices ---
+      {
+        category_id: categories[1].id,
+        amount: "10000",
+        type: "INITIAL_BLOCK",
+        block_hours: 2,
+        is_active: true,
+        valid_from: pastDate,
+        valid_until: farFutureDate,
+      },
+      {
+        category_id: categories[1].id,
+        amount: "3000",
+        type: "SUBSEQUENT_HOUR",
+        is_active: true,
+        valid_from: pastDate,
+        valid_until: farFutureDate,
+      },
+      // --- Truk Prices ---
+      {
+        category_id: categories[2].id,
+        amount: "20000",
+        type: "INITIAL_BLOCK",
+        block_hours: 2,
+        is_active: true,
+        valid_from: pastDate,
+        valid_until: farFutureDate,
+      },
+      {
+        category_id: categories[2].id,
+        amount: "7500",
+        type: "SUBSEQUENT_HOUR",
+        is_active: true,
+        valid_from: pastDate,
+        valid_until: farFutureDate,
+      },
     ])
     .returning();
   console.log(`✅ Seeded ${prices.length} prices.`);
