@@ -20,6 +20,11 @@ export const getAllTransactions = async () => {
 export const getTransactionById = async (transactionId: number) => {
     const transaction = await db.query.transactionsTable.findFirst({
         where: eq(transactionsTable.id, transactionId),
+        with: {
+            user: true,
+            vehicleDetail: true,
+            parkingLevel: true
+        }
     });
 
     if (!transaction) throw new HttpError(404, "Transaction not found");
@@ -31,6 +36,11 @@ export const getTransactionById = async (transactionId: number) => {
 export const getTransactionByAccessCode = async (accessCode: string) => {
     const transaction = await db.query.transactionsTable.findFirst({
         where: eq(transactionsTable.access_code, accessCode),
+        with: {
+            user: true,
+            vehicleDetail: true,
+            parkingLevel: true
+        }
     });
 
     if (!transaction) throw new HttpError(404, "Transaction not found");
@@ -71,13 +81,24 @@ export const updateTransaction = async (transactionId: number, status: Status, p
     return updatedTransaction;
 };
 
+export const processTransactionPayment = async (access_code: string, paid_amount: number) => {
+    await getTransactionByAccessCode(access_code);
+
+    const [ processedTransaction ] = await db.update(transactionsTable).set({
+        paid_amount: paid_amount.toString(),
+        updated_at: new Date(),
+    }).where(eq(transactionsTable.access_code, access_code)).returning();
+    
+    return processedTransaction;
+}
+
+
 // Update a transaction to EXIT
-export const updateTransactionToExit = async (access_code: string, paid_amount: number) => {
+export const updateTransactionToExit = async (access_code: string) => {
     await getTransactionByAccessCode(access_code);
 
     const [ updatedTransactionExit ] = await db.update(transactionsTable).set({
         status: "EXIT",
-        paid_amount: paid_amount.toString(),
         updated_at: new Date(),
     }).where(eq(transactionsTable.access_code, access_code)).returning();
     

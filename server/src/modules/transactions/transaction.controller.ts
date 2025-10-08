@@ -51,9 +51,8 @@ export const createTransactionEntry = async (req: Request, res: Response) => {
 
 export const updateTransactionExit = async (req: Request, res: Response) => {
     const { accessCode } = paramsSchema.parse(req.params);
-    const paidAmount = 2000;
 
-    const updatedTransaction = await transactionService.updateTransactionToExit(accessCode, paidAmount);
+    const updatedTransaction = await transactionService.updateTransactionToExit(accessCode);
 
     res.status(200).json({
         success: true,
