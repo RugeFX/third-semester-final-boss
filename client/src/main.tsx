@@ -2,10 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { useStore } from "zustand";
 
 import { routeTree } from "./routeTree.gen";
 import "./styles/globals.css";
-import { useAuthStore } from "./lib/store/auth";
+import authStore from "./lib/store/auth";
 
 const rootElement = document.getElementById("root");
 
@@ -26,7 +27,7 @@ declare module "@tanstack/react-router" {
 }
 
 function App() {
-	const auth = useAuthStore();
+	const auth = useStore(authStore);
 
 	return (
 		<QueryClientProvider client={queryClient}>
