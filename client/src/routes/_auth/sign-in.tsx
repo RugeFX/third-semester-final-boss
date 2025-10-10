@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/base/buttons/button";
-import MainIcon from "@/components/foundations/app-icons/main-icon";
 import { useLoginUser } from "@/lib/api/auth/auth";
 import { useAppForm } from "@/lib/form";
 import { useAuthActions } from "@/lib/store/auth";
@@ -22,16 +21,7 @@ const signInSchema = z.object({
 	username: z
 		.string()
 		.min(3, "Nama pengguna harus berisi setidaknya 3 karakter"),
-	password: z
-		.string()
-		.min(8, "Kata sandi harus berisi setidaknya 8 karakter")
-		.regex(/[A-Z]/, "Kata sandi harus berisi setidaknya satu huruf besar")
-		.regex(/[a-z]/, "Kata sandi harus berisi setidaknya satu huruf kecil")
-		.regex(/\d/, "Kata sandi harus berisi setidaknya satu angka")
-		.regex(
-			/[^\w\s]/,
-			"Kata sandi harus berisi setidaknya satu karakter khusus",
-		),
+	password: z.string().min(8, "Kata sandi harus berisi setidaknya 8 karakter"),
 });
 
 type SignInForm = z.infer<typeof signInSchema>;
@@ -95,8 +85,6 @@ function RouteComponent() {
 			}}
 		>
 			<div className="space-y-6">
-				<MainIcon className="size-24 fill-brand-500" />
-
 				<div className="space-y-3">
 					<h1 className="text-5xl font-bold leading-tight text-white">
 						Parkir lebih cepat,

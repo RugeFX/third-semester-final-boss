@@ -9,20 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthedRouteImport } from './routes/_authed'
+import { Route as MembersRouteRouteImport } from './routes/members/route'
 import { Route as EntryRouteRouteImport } from './routes/entry/route'
 import { Route as CheckRouteRouteImport } from './routes/check/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as RouteRouteImport } from './routes/route'
+import { Route as MembersIndexRouteImport } from './routes/members/index'
 import { Route as EntryIndexRouteImport } from './routes/entry/index'
 import { Route as CheckIndexRouteImport } from './routes/check/index'
 import { Route as EntrySuccessRouteImport } from './routes/entry/success'
-import { Route as AuthedARouteImport } from './routes/_authed.a'
-import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
+import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
+import { Route as AuthSignUpUpgradeRouteImport } from './routes/_auth/sign-up/upgrade'
+import { Route as AuthSignUpSuccessRouteImport } from './routes/_auth/sign-up/success'
 
-const AuthedRoute = AuthedRouteImport.update({
-  id: '/_authed',
+const MembersRouteRoute = MembersRouteRouteImport.update({
+  id: '/members',
+  path: '/members',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EntryRouteRoute = EntryRouteRouteImport.update({
@@ -39,10 +42,15 @@ const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const RouteRoute = RouteRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MembersIndexRoute = MembersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MembersRouteRoute,
 } as any)
 const EntryIndexRoute = EntryIndexRouteImport.update({
   id: '/',
@@ -59,55 +67,67 @@ const EntrySuccessRoute = EntrySuccessRouteImport.update({
   path: '/success',
   getParentRoute: () => EntryRouteRoute,
 } as any)
-const AuthedARoute = AuthedARouteImport.update({
-  id: '/a',
-  path: '/a',
-  getParentRoute: () => AuthedRoute,
-} as any)
-const AuthSignUpRoute = AuthSignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthSignUpIndexRoute = AuthSignUpIndexRouteImport.update({
+  id: '/sign-up/',
+  path: '/sign-up/',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSignUpUpgradeRoute = AuthSignUpUpgradeRouteImport.update({
+  id: '/sign-up/upgrade',
+  path: '/sign-up/upgrade',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthSignUpSuccessRoute = AuthSignUpSuccessRouteImport.update({
+  id: '/sign-up/success',
+  path: '/sign-up/success',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof RouteRoute
   '/check': typeof CheckRouteRouteWithChildren
   '/entry': typeof EntryRouteRouteWithChildren
+  '/members': typeof MembersRouteRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
-  '/sign-up': typeof AuthSignUpRoute
-  '/a': typeof AuthedARoute
   '/entry/success': typeof EntrySuccessRoute
   '/check/': typeof CheckIndexRoute
   '/entry/': typeof EntryIndexRoute
+  '/members/': typeof MembersIndexRoute
+  '/sign-up/success': typeof AuthSignUpSuccessRoute
+  '/sign-up/upgrade': typeof AuthSignUpUpgradeRoute
+  '/sign-up': typeof AuthSignUpIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof RouteRoute
   '/sign-in': typeof AuthSignInRoute
-  '/sign-up': typeof AuthSignUpRoute
-  '/a': typeof AuthedARoute
   '/entry/success': typeof EntrySuccessRoute
   '/check': typeof CheckIndexRoute
   '/entry': typeof EntryIndexRoute
+  '/members': typeof MembersIndexRoute
+  '/sign-up/success': typeof AuthSignUpSuccessRoute
+  '/sign-up/upgrade': typeof AuthSignUpUpgradeRoute
+  '/sign-up': typeof AuthSignUpIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/': typeof RouteRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/check': typeof CheckRouteRouteWithChildren
   '/entry': typeof EntryRouteRouteWithChildren
-  '/_authed': typeof AuthedRouteWithChildren
+  '/members': typeof MembersRouteRouteWithChildren
   '/_auth/sign-in': typeof AuthSignInRoute
-  '/_auth/sign-up': typeof AuthSignUpRoute
-  '/_authed/a': typeof AuthedARoute
   '/entry/success': typeof EntrySuccessRoute
   '/check/': typeof CheckIndexRoute
   '/entry/': typeof EntryIndexRoute
+  '/members/': typeof MembersIndexRoute
+  '/_auth/sign-up/success': typeof AuthSignUpSuccessRoute
+  '/_auth/sign-up/upgrade': typeof AuthSignUpUpgradeRoute
+  '/_auth/sign-up/': typeof AuthSignUpIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -115,51 +135,58 @@ export interface FileRouteTypes {
     | '/'
     | '/check'
     | '/entry'
+    | '/members'
     | '/sign-in'
-    | '/sign-up'
-    | '/a'
     | '/entry/success'
     | '/check/'
     | '/entry/'
+    | '/members/'
+    | '/sign-up/success'
+    | '/sign-up/upgrade'
+    | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/sign-in'
-    | '/sign-up'
-    | '/a'
     | '/entry/success'
     | '/check'
     | '/entry'
+    | '/members'
+    | '/sign-up/success'
+    | '/sign-up/upgrade'
+    | '/sign-up'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/check'
     | '/entry'
-    | '/_authed'
+    | '/members'
     | '/_auth/sign-in'
-    | '/_auth/sign-up'
-    | '/_authed/a'
     | '/entry/success'
     | '/check/'
     | '/entry/'
+    | '/members/'
+    | '/_auth/sign-up/success'
+    | '/_auth/sign-up/upgrade'
+    | '/_auth/sign-up/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  RouteRoute: typeof RouteRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   CheckRouteRoute: typeof CheckRouteRouteWithChildren
   EntryRouteRoute: typeof EntryRouteRouteWithChildren
-  AuthedRoute: typeof AuthedRouteWithChildren
+  MembersRouteRoute: typeof MembersRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_authed': {
-      id: '/_authed'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthedRouteImport
+    '/members': {
+      id: '/members'
+      path: '/members'
+      fullPath: '/members'
+      preLoaderRoute: typeof MembersRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entry': {
@@ -187,8 +214,15 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof RouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/members/': {
+      id: '/members/'
+      path: '/'
+      fullPath: '/members/'
+      preLoaderRoute: typeof MembersIndexRouteImport
+      parentRoute: typeof MembersRouteRoute
     }
     '/entry/': {
       id: '/entry/'
@@ -211,20 +245,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrySuccessRouteImport
       parentRoute: typeof EntryRouteRoute
     }
-    '/_authed/a': {
-      id: '/_authed/a'
-      path: '/a'
-      fullPath: '/a'
-      preLoaderRoute: typeof AuthedARouteImport
-      parentRoute: typeof AuthedRoute
-    }
-    '/_auth/sign-up': {
-      id: '/_auth/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof AuthSignUpRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
     '/_auth/sign-in': {
       id: '/_auth/sign-in'
       path: '/sign-in'
@@ -232,17 +252,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_auth/sign-up/': {
+      id: '/_auth/sign-up/'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof AuthSignUpIndexRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/sign-up/upgrade': {
+      id: '/_auth/sign-up/upgrade'
+      path: '/sign-up/upgrade'
+      fullPath: '/sign-up/upgrade'
+      preLoaderRoute: typeof AuthSignUpUpgradeRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/sign-up/success': {
+      id: '/_auth/sign-up/success'
+      path: '/sign-up/success'
+      fullPath: '/sign-up/success'
+      preLoaderRoute: typeof AuthSignUpSuccessRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
   }
 }
 
 interface AuthRouteRouteChildren {
   AuthSignInRoute: typeof AuthSignInRoute
-  AuthSignUpRoute: typeof AuthSignUpRoute
+  AuthSignUpSuccessRoute: typeof AuthSignUpSuccessRoute
+  AuthSignUpUpgradeRoute: typeof AuthSignUpUpgradeRoute
+  AuthSignUpIndexRoute: typeof AuthSignUpIndexRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthSignInRoute: AuthSignInRoute,
-  AuthSignUpRoute: AuthSignUpRoute,
+  AuthSignUpSuccessRoute: AuthSignUpSuccessRoute,
+  AuthSignUpUpgradeRoute: AuthSignUpUpgradeRoute,
+  AuthSignUpIndexRoute: AuthSignUpIndexRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
@@ -275,23 +320,24 @@ const EntryRouteRouteWithChildren = EntryRouteRoute._addFileChildren(
   EntryRouteRouteChildren,
 )
 
-interface AuthedRouteChildren {
-  AuthedARoute: typeof AuthedARoute
+interface MembersRouteRouteChildren {
+  MembersIndexRoute: typeof MembersIndexRoute
 }
 
-const AuthedRouteChildren: AuthedRouteChildren = {
-  AuthedARoute: AuthedARoute,
+const MembersRouteRouteChildren: MembersRouteRouteChildren = {
+  MembersIndexRoute: MembersIndexRoute,
 }
 
-const AuthedRouteWithChildren =
-  AuthedRoute._addFileChildren(AuthedRouteChildren)
+const MembersRouteRouteWithChildren = MembersRouteRoute._addFileChildren(
+  MembersRouteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  RouteRoute: RouteRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   CheckRouteRoute: CheckRouteRouteWithChildren,
   EntryRouteRoute: EntryRouteRouteWithChildren,
-  AuthedRoute: AuthedRouteWithChildren,
+  MembersRouteRoute: MembersRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
