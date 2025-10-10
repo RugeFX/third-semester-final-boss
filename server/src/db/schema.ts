@@ -5,10 +5,15 @@ import {
   pgTable,
   varchar,
   timestamp,
+  boolean
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
-export const roleEnums = pgEnum("role", ["admin", "member"]);
+const roles = ["admin", "member"] as const
+
+export type Role = (typeof roles)[number]
+
+export const roleEnums = pgEnum("role", roles);
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -84,6 +89,11 @@ export const pricesTable = pgTable("prices", {
   category_id: integer("category_id")
     .notNull()
     .references(() => categoriesTable.id),
+  type: varchar("type").notNull().default("BASE"),
+  block_hours: integer("block_hours"),
+  is_active: boolean("is_active").notNull().default(true),
+  valid_from: timestamp("valid_from", { withTimezone: true }),
+  valid_until: timestamp("valid_until", { withTimezone: true }),
 });
 
 export const pricesRelations = relations(pricesTable, ({ one }) => ({
@@ -106,7 +116,11 @@ export const parkingLevelsRelations = relations(
   })
 );
 
-export const statusEnums = pgEnum("status", ["ENTRY", "EXIT"]);
+const statuses = ["ENTRY", "EXIT"] as const
+
+export type Status = (typeof statuses)[number]
+
+export const statusEnums = pgEnum("status", statuses);
 
 export const transactionsTable = pgTable("transactions", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

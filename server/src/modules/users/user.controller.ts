@@ -1,25 +1,14 @@
 import { Request, Response } from "express";
+import userService from "./user.service";
+import { paramsSchema, createUserSchema, updateUserSchema } from "./user.schema";
+import HttpError from "../common/exceptions/http.error";
 
 // Get all users
 export const getAllUsers = async (req: Request, res: Response) => {
-    const users = [
-        {
-            id: 1,
-            name: "John Doe",
-            password: "password123",
-            role: "admin"
-        },
-        {
-            id: 2,
-            name: "Jane Doe",
-            password: "password456",
-            role: "member"  
-        }
-    ];
+    const users = await userService.getAllUsers();
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Users fetched successfully",
         data: users
     });
@@ -27,58 +16,63 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 // Get user by ID
 export const getUserById = async (req: Request, res: Response) => {
-    const user = {
-        id: 1,
-        name: "John Doe",
-        password: "password123",
-        role: "admin"
-    };
+    const { id } = paramsSchema.parse(req.params);
 
-    res.json({
+    const { id: userId, fullname, username, role } = await userService.findUserById(id);
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "User fetched successfully",
-        data: user
+        data: {
+            userId,
+            fullname,
+            username,
+            role
+        }
     });
 };
 
 // Create a new user
 export const createUser = async (req: Request, res: Response) => {
-    const { name, password, role } = req.body;
+    const { fullname, username, password, role } = createUserSchema.parse(req.body);
 
-    res.json({
+    const newUser = await userService.createUser(fullname, username, password, role);
+
+    if (!newUser) throw new HttpError(500, "Failed to create user");
+
+    res.status(201).json({
         success: true,
-        code: 200,
         message: "User created successfully",
-        data: {
-            name,
-            password,
-            role
-        }
+        data: newUser
     });
 };
 
 // Update a user
 export const updateUser = async (req: Request, res: Response) => {
-    const { name, password, role } = req.body;
+    const { id } = paramsSchema.parse(req.params);
+    const { fullname, username, role } = updateUserSchema.parse(req.body);
 
-    res.json({
+    const updatedUser = await userService.updateUser(id, fullname, username, role);
+
+    if (!updatedUser) throw new HttpError(500, "Failed to update user");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "User updated successfully",
-        data: {
-            name,
-            password,
-            role
-        }
+        data: updatedUser
     });
 };
 
 // Delete a user
 export const deleteUser = async (req: Request, res: Response) => {
-    res.json({
+    const { id } = paramsSchema.parse(req.params);
+
+    const deletedUser = await userService.deleteUser(id);
+
+    if (!deletedUser) throw new HttpError(500, "Failed to delete user");
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "User deleted successfully"
     });
 };
