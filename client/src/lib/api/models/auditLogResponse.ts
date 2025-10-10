@@ -7,15 +7,10 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
+import type { AuditLog } from "./auditLog";
 
-export interface Category {
-	id: number;
-	/** Name of the vehicle category. */
-	name: string;
-	/** Average weight of vehicles in this category. */
-	weight: number;
-	/** URL or identifier for the category icon. */
-	icon?: string;
-	/** URL or identifier for the category thumbnail image. */
-	thumbnail?: string;
+export interface AuditLogResponse {
+	success?: boolean;
+	message?: string;
+	data?: AuditLog;
 }

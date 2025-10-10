@@ -17,6 +17,12 @@ export default defineConfig({
 					path: "src/lib/api/mutator/custom-instance.ts",
 					name: "customInstance",
 				},
+				query: {
+					useQuery: true,
+					useInfinite: true,
+					useSuspenseQuery: true,
+					useSuspenseInfiniteQuery: true,
+				},
 			},
 		},
 		hooks: {

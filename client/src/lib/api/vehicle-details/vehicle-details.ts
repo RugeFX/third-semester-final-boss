@@ -11,18 +11,32 @@ This documentation provides a base for all the resources defined in the database
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
+	UseSuspenseQueryOptions,
+	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
@@ -53,6 +67,145 @@ export const getVehicleDetails = (
 export const getGetVehicleDetailsQueryKey = () => {
 	return [`/vehicle-details`] as const;
 };
+
+export const getGetVehicleDetailsInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof getVehicleDetails>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getVehicleDetails>>
+	> = ({ signal }) => getVehicleDetails(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getVehicleDetails>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVehicleDetailsInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getVehicleDetails>>
+>;
+export type GetVehicleDetailsInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetVehicleDetailsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getVehicleDetails>>,
+					TError,
+					Awaited<ReturnType<typeof getVehicleDetails>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getVehicleDetails>>,
+					TError,
+					Awaited<ReturnType<typeof getVehicleDetails>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all vehicle details
+ */
+
+export function useGetVehicleDetailsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetVehicleDetailsInfiniteQueryOptions(options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetVehicleDetailsQueryOptions = <
 	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
@@ -191,6 +344,257 @@ export function useGetVehicleDetails<
 	return query;
 }
 
+export const getGetVehicleDetailsSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseQueryOptions<
+			Awaited<ReturnType<typeof getVehicleDetails>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getVehicleDetails>>
+	> = ({ signal }) => getVehicleDetails(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getVehicleDetails>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVehicleDetailsSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getVehicleDetails>>
+>;
+export type GetVehicleDetailsSuspenseQueryError = ErrorType<unknown>;
+
+export function useGetVehicleDetailsSuspense<
+	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsSuspense<
+	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsSuspense<
+	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all vehicle details
+ */
+
+export function useGetVehicleDetailsSuspense<
+	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetVehicleDetailsSuspenseQueryOptions(options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetVehicleDetailsSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof getVehicleDetails>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getVehicleDetails>>
+	> = ({ signal }) => getVehicleDetails(requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getVehicleDetails>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVehicleDetailsSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getVehicleDetails>>
+>;
+export type GetVehicleDetailsSuspenseInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetVehicleDetailsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all vehicle details
+ */
+
+export function useGetVehicleDetailsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetails>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions =
+		getGetVehicleDetailsSuspenseInfiniteQueryOptions(options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
 /**
  * @summary Create a new vehicle detail
  */
@@ -299,6 +703,157 @@ export const getVehicleDetailsId = (
 export const getGetVehicleDetailsIdQueryKey = (id?: number) => {
 	return [`/vehicle-details/${id}`] as const;
 };
+
+export const getGetVehicleDetailsIdInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsIdQueryKey(id);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getVehicleDetailsId>>
+	> = ({ signal }) => getVehicleDetailsId(id, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		enabled: !!id,
+		...queryOptions,
+	} as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getVehicleDetailsId>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVehicleDetailsIdInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getVehicleDetailsId>>
+>;
+export type GetVehicleDetailsIdInfiniteQueryError = ErrorType<ApiErrorResponse>;
+
+export function useGetVehicleDetailsIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getVehicleDetailsId>>,
+					TError,
+					Awaited<ReturnType<typeof getVehicleDetailsId>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getVehicleDetailsId>>,
+					TError,
+					Awaited<ReturnType<typeof getVehicleDetailsId>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get vehicle detail by ID
+ */
+
+export function useGetVehicleDetailsIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetVehicleDetailsIdInfiniteQueryOptions(id, options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetVehicleDetailsIdQueryOptions = <
 	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
@@ -443,6 +998,274 @@ export function useGetVehicleDetailsId<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetVehicleDetailsIdSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsIdQueryKey(id);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getVehicleDetailsId>>
+	> = ({ signal }) => getVehicleDetailsId(id, requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getVehicleDetailsId>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVehicleDetailsIdSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getVehicleDetailsId>>
+>;
+export type GetVehicleDetailsIdSuspenseQueryError = ErrorType<ApiErrorResponse>;
+
+export function useGetVehicleDetailsIdSuspense<
+	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsIdSuspense<
+	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsIdSuspense<
+	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get vehicle detail by ID
+ */
+
+export function useGetVehicleDetailsIdSuspense<
+	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetVehicleDetailsIdSuspenseQueryOptions(id, options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetVehicleDetailsIdSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsIdQueryKey(id);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getVehicleDetailsId>>
+	> = ({ signal }) => getVehicleDetailsId(id, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getVehicleDetailsId>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetVehicleDetailsIdSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getVehicleDetailsId>>
+>;
+export type GetVehicleDetailsIdSuspenseInfiniteQueryError =
+	ErrorType<ApiErrorResponse>;
+
+export function useGetVehicleDetailsIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetVehicleDetailsIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get vehicle detail by ID
+ */
+
+export function useGetVehicleDetailsIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetVehicleDetailsIdSuspenseInfiniteQueryOptions(
+		id,
+		options,
+	);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

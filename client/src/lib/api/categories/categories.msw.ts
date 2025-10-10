@@ -34,6 +34,14 @@ export const getListCategoriesResponseMock = (): CategoryArrayResponse => ({
 				max: undefined,
 				fractionDigits: 2,
 			}),
+			icon: faker.helpers.arrayElement([
+				faker.string.alpha({ length: { min: 10, max: 20 } }),
+				undefined,
+			]),
+			thumbnail: faker.helpers.arrayElement([
+				faker.string.alpha({ length: { min: 10, max: 20 } }),
+				undefined,
+			]),
 		})),
 	},
 });
@@ -52,6 +60,14 @@ export const getCreateCategoryResponseMock = (): CategoryResponse => ({
 				max: undefined,
 				fractionDigits: 2,
 			}),
+			icon: faker.helpers.arrayElement([
+				faker.string.alpha({ length: { min: 10, max: 20 } }),
+				undefined,
+			]),
+			thumbnail: faker.helpers.arrayElement([
+				faker.string.alpha({ length: { min: 10, max: 20 } }),
+				undefined,
+			]),
 		},
 	},
 });
@@ -70,6 +86,14 @@ export const getGetCategoryByIdResponseMock = (): CategoryResponse => ({
 				max: undefined,
 				fractionDigits: 2,
 			}),
+			icon: faker.helpers.arrayElement([
+				faker.string.alpha({ length: { min: 10, max: 20 } }),
+				undefined,
+			]),
+			thumbnail: faker.helpers.arrayElement([
+				faker.string.alpha({ length: { min: 10, max: 20 } }),
+				undefined,
+			]),
 		},
 	},
 });
@@ -88,6 +112,14 @@ export const getUpdateCategoryResponseMock = (): CategoryResponse => ({
 				max: undefined,
 				fractionDigits: 2,
 			}),
+			icon: faker.helpers.arrayElement([
+				faker.string.alpha({ length: { min: 10, max: 20 } }),
+				undefined,
+			]),
+			thumbnail: faker.helpers.arrayElement([
+				faker.string.alpha({ length: { min: 10, max: 20 } }),
+				undefined,
+			]),
 		},
 	},
 });

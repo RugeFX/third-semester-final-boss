@@ -11,6 +11,7 @@ import CategoryFieldGroup from "@/components/entry/field-groups/category";
 import PlateNumberFieldGroup from "@/components/entry/field-groups/plate-number";
 import { useCreateEntryTransaction } from "@/lib/api/transactions/transactions";
 import { useAppForm } from "@/lib/form";
+import { useAuthActions } from "@/lib/store/auth";
 import { wait } from "@/lib/utils";
 import { cx } from "@/lib/utils/cx";
 import LoadingIndicator from "../base/loading-indicator";
@@ -58,6 +59,8 @@ export default function EntryForm() {
 	const navigate = useNavigate();
 	const [step, setStep] = useState(1);
 
+	const { signIn } = useAuthActions();
+
 	const { mutateAsync } = useCreateEntryTransaction({
 		mutation: {
 			onError: (error) => {
@@ -65,8 +68,12 @@ export default function EntryForm() {
 					description: error.message,
 				});
 			},
-			onSuccess: (data) => {
-				toast.info("Data", { description: JSON.stringify(data) });
+			onSuccess: ({ data }) => {
+				signIn(data.accessCode, "guest");
+
+				navigate({
+					to: "/entry/success",
+				});
 			},
 		},
 	});
@@ -74,6 +81,7 @@ export default function EntryForm() {
 	const form = useAppForm({
 		defaultValues: {
 			categoryId: categories[0].id,
+			parkingLevelId: null,
 			plateNumber: "",
 		} as EntryForm,
 		validators: {
@@ -82,20 +90,11 @@ export default function EntryForm() {
 		onSubmit: async ({ value }) => {
 			await wait(3000);
 
-			// await mutateAsync({
-			// 	data: {
-			// 		categoryId: value.categoryId,
-			// 		plateNumber: value.plateNumber,
-			// 		parkingLevelId: 1,
-			// 	},
-			// });
-
-			navigate({
-				to: "/entry/success",
-				search: {
-					accessCode: "123456",
+			await mutateAsync({
+				data: {
 					categoryId: value.categoryId,
 					plateNumber: value.plateNumber,
+					parkingLevelId: 1,
 				},
 			});
 		},

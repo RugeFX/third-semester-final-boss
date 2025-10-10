@@ -12,6 +12,7 @@ This documentation provides a base for all the resources defined in the database
  * Payload for creating a new transaction when a vehicle enters.
  */
 export interface TransactionCreate {
+	userId?: number;
 	plateNumber: string;
 	categoryId: number;
 	parkingLevelId: number;

@@ -8,9 +8,11 @@ This documentation provides a base for all the resources defined in the database
  * OpenAPI spec version: 1.0.0
  */
 
-export interface CategoryCreate {
-	name: string;
-	weight: number;
-	icon: string;
-	thumbnail: string;
-}
+export type TransactionUpdateStatus =
+	(typeof TransactionUpdateStatus)[keyof typeof TransactionUpdateStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TransactionUpdateStatus = {
+	ENTRY: "ENTRY",
+	EXIT: "EXIT",
+} as const;

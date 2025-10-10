@@ -4,19 +4,19 @@ import { motion } from "motion/react";
 import { Button } from "@/components/base/buttons/button";
 import { withFieldGroup } from "@/lib/form";
 
-type PlateNumberFieldGroupProps = {
+type ParkingLevelFieldGroupProps = {
 	name?: string;
 	onPreviousStep: () => void;
 };
 
-const PlateNumberFieldGroup = withFieldGroup({
+const ParkingLevelFieldGroup = withFieldGroup({
 	defaultValues: {
-		plateNumber: "",
+		packingLevelId: null as number | null,
 	},
 	props: {
 		name: "Unknown",
-		onPreviousStep: () => { },
-	} as PlateNumberFieldGroupProps,
+		onPreviousStep: () => {},
+	} as ParkingLevelFieldGroupProps,
 	render: function Render({ group, name, onPreviousStep }) {
 		return (
 			<motion.div
@@ -54,11 +54,11 @@ const PlateNumberFieldGroup = withFieldGroup({
 						Parkir {name?.toLowerCase()} ya!
 					</h1>
 					<h2 className="text-2xl font-semibold">
-						Sekarang, silahkan masukkan data plat nomor {name?.toLowerCase()}{" "}
+						Sekarang, silahkan pilih tempat parkir untuk {name?.toLowerCase()}{" "}
 						anda.
 					</h2>
 				</div>
-				<group.AppField name="plateNumber">
+				<group.AppField name="packingLevelId">
 					{(field) => (
 						<div>
 							<field.TextInput
@@ -77,4 +77,4 @@ const PlateNumberFieldGroup = withFieldGroup({
 	},
 });
 
-export default PlateNumberFieldGroup;
+export default ParkingLevelFieldGroup;

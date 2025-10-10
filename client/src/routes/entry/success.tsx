@@ -2,12 +2,15 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Copy01 } from "@untitledui/icons";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { toast } from "sonner";
-import { z } from "zod";
+
 import entryBackground from "@/assets/entry-banner-bg.png";
 import { Button } from "@/components/base/buttons/button";
 import { InputBase } from "@/components/base/input/input";
 import { PinInput } from "@/components/base/pin-input/pin-input";
-import { categories } from "@/components/entry/data";
+import {
+	getGetGuestTransactionByAccessCodeQueryOptions,
+	useGetGuestTransactionByAccessCodeSuspense,
+} from "@/lib/api/transactions/transactions";
 
 const bannerContainerVariants: Variants = {
 	initial: {
@@ -38,26 +41,21 @@ const bannerItemVariants: Variants = {
 };
 
 export const Route = createFileRoute("/entry/success")({
-	validateSearch: z.object({
-		accessCode: z.string(),
-		plateNumber: z.string(),
-		categoryId: z.number(),
-	}),
 	component: RouteComponent,
 	errorComponent: ErrorComponent,
-	loaderDeps: ({ search }) => ({
-		categoryId: search.categoryId,
-	}),
-	loader: ({ deps }) => {
-		const selectedCategory = categories.find(
-			(category) => category.id === deps.categoryId,
+	loader: ({ context }) => {
+		const accessCode = context.auth.token;
+		if (!accessCode) throw notFound();
+
+		context.queryClient.ensureQueryData(
+			getGetGuestTransactionByAccessCodeQueryOptions(accessCode),
 		);
 
-		if (!selectedCategory) throw notFound();
+		context.queryClient.ensureQueryData(
+			getGetGuestTransactionByAccessCodeQueryOptions(accessCode),
+		);
 
-		return {
-			selectedCategory,
-		};
+		return { accessCode };
 	},
 });
 
@@ -66,15 +64,25 @@ function ErrorComponent() {
 }
 
 function RouteComponent() {
-	const { accessCode, plateNumber } = Route.useSearch();
-	const { selectedCategory } = Route.useLoaderData();
+	const { accessCode } = Route.useLoaderData();
+
+	const {
+		data: { vehicleDetailId, parkingLevelId },
+	} = useGetGuestTransactionByAccessCodeSuspense(accessCode, {
+		query: { select: ({ data }) => data },
+	});
 
 	const onCopyAccessCode = () => {
 		navigator.clipboard.writeText(accessCode).then(() => {
 			toast.success("Kode akses berhasil disalin!", {
 				description:
 					"Anda dapat menggunakan kode akses ini untuk melihat status kendaraan anda.",
-				action: <Button size="sm">Cek Status</Button>,
+				action: (
+					<Button size="sm" className="flex-1">
+						Cek Status
+					</Button>
+				),
+				position: "top-center",
 			});
 		});
 	};

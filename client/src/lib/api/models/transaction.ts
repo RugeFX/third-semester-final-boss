@@ -7,11 +7,12 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
+import type { TransactionStatus } from "./transactionStatus";
 
 export interface Transaction {
 	id: number;
-	/** Current status of the transaction (e.g., ACTIVE, PAID, COMPLETED). */
-	status: string;
+	/** Status of the transaction, indicating vehicle entry or exit. */
+	status: TransactionStatus;
 	/** @nullable */
 	paidAmount: number | null;
 	/** Unique code for this transaction. */

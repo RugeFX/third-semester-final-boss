@@ -116,7 +116,7 @@ export const getGetCurrentMemberTransactionsResponseMock =
 				(_, i) => i + 1,
 			).map(() => ({
 				id: faker.number.int({ min: undefined, max: undefined }),
-				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				status: faker.helpers.arrayElement(["ENTRY", "EXIT"] as const),
 				paidAmount: faker.helpers.arrayElement([
 					faker.number.float({
 						min: undefined,

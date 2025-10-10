@@ -29,7 +29,7 @@ export const getListTransactionsResponseMock =
 				(_, i) => i + 1,
 			).map(() => ({
 				id: faker.number.int({ min: undefined, max: undefined }),
-				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				status: faker.helpers.arrayElement(["ENTRY", "EXIT"] as const),
 				paidAmount: faker.helpers.arrayElement([
 					faker.number.float({
 						min: undefined,
@@ -60,7 +60,7 @@ export const getCreateEntryTransactionResponseMock =
 		...{
 			data: {
 				id: faker.number.int({ min: undefined, max: undefined }),
-				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				status: faker.helpers.arrayElement(["ENTRY", "EXIT"] as const),
 				paidAmount: faker.helpers.arrayElement([
 					faker.number.float({
 						min: undefined,
@@ -91,7 +91,7 @@ export const getGetGuestTransactionByAccessCodeResponseMock =
 		...{
 			data: {
 				id: faker.number.int({ min: undefined, max: undefined }),
-				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				status: faker.helpers.arrayElement(["ENTRY", "EXIT"] as const),
 				paidAmount: faker.helpers.arrayElement([
 					faker.number.float({
 						min: undefined,
@@ -122,7 +122,7 @@ export const getProcessTransactionPaymentResponseMock =
 		...{
 			data: {
 				id: faker.number.int({ min: undefined, max: undefined }),
-				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				status: faker.helpers.arrayElement(["ENTRY", "EXIT"] as const),
 				paidAmount: faker.helpers.arrayElement([
 					faker.number.float({
 						min: undefined,
@@ -152,7 +152,7 @@ export const getCompleteTransactionResponseMock = (): TransactionResponse => ({
 	...{
 		data: {
 			id: faker.number.int({ min: undefined, max: undefined }),
-			status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+			status: faker.helpers.arrayElement(["ENTRY", "EXIT"] as const),
 			paidAmount: faker.helpers.arrayElement([
 				faker.number.float({
 					min: undefined,
@@ -183,7 +183,7 @@ export const getUpdateTransactionByIdResponseMock =
 		...{
 			data: {
 				id: faker.number.int({ min: undefined, max: undefined }),
-				status: faker.string.alpha({ length: { min: 10, max: 20 } }),
+				status: faker.helpers.arrayElement(["ENTRY", "EXIT"] as const),
 				paidAmount: faker.helpers.arrayElement([
 					faker.number.float({
 						min: undefined,
