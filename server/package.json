@@ -18,6 +18,7 @@
     "@faker-js/faker": "^10.0.0",
     "@scalar/express-api-reference": "^0.8.19",
     "@t3-oss/env-core": "^0.13.8",
+    "@tigrisdata/storage": "^1.6.2",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/faker": "^6.6.8",
