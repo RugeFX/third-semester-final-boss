@@ -9,6 +9,13 @@ export const Route = createFileRoute("/_auth/sign-up/success")({
 
 const MotionCheck = motion(Check);
 
+/**
+ * Render a styled success screen shown after a completed payment or sign-up flow.
+ *
+ * The UI displays an animated check icon inside a circular brand-styled container, a main heading ("Pembayaran Berhasil!"), a subheading inviting the user to enjoy the service, and a full-width button that navigates to the sign-in page.
+ *
+ * @returns A React element for the success screen.
+ */
 function RouteComponent() {
 	return (
 		<motion.main

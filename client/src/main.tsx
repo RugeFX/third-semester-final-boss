@@ -26,6 +26,11 @@ declare module "@tanstack/react-router" {
 	}
 }
 
+/**
+ * Root application component that supplies react-query and router context to the app.
+ *
+ * @returns The root React element tree containing `QueryClientProvider` and `RouterProvider` configured with `auth` and `queryClient`.
+ */
 function App() {
 	const auth = useStore(authStore);
 

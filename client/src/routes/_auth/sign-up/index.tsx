@@ -44,6 +44,14 @@ const signUpSchema = z
 
 type SignUpForm = z.infer<typeof signUpSchema>;
 
+/**
+ * Render the sign-up route UI with client-side validation and submission behavior.
+ *
+ * The form validates inputs on change according to the signUpSchema, waits three seconds on submit,
+ * then navigates to the "/sign-up/upgrade" route.
+ *
+ * @returns The sign-up route component's JSX element
+ */
 function RouteComponent() {
 	const navigate = useNavigate();
 

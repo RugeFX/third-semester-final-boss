@@ -26,6 +26,17 @@ const signInSchema = z.object({
 
 type SignInForm = z.infer<typeof signInSchema>;
 
+/**
+ * Render the sign-in form and manage the authentication flow.
+ *
+ * The component displays username and password fields, handles form validation and submission,
+ * and reacts to the authentication result: on success it stores the user token, invalidates
+ * router queries, navigates to the app root, and shows a success toast; on 401 it sets a
+ * form-level error indicating incorrect credentials; on other failures it shows an error toast
+ * with the server message.
+ *
+ * @returns A React element containing the sign-in UI.
+ */
 function RouteComponent() {
 	const router = useRouter();
 	const { signIn } = useAuthActions();

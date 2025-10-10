@@ -11,6 +11,11 @@ export const Route = createFileRoute("/members")({
 	},
 });
 
+/**
+ * Renders the UI for the "/members" route.
+ *
+ * @returns The React element displayed for the members route.
+ */
 function RouteComponent() {
 	return <div>Hello "/members"!</div>;
 }

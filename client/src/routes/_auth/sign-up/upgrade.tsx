@@ -14,6 +14,13 @@ const signUpSchema = z.object({
 
 type SignUpForm = z.infer<typeof signUpSchema>;
 
+/**
+ * Renders the sign-up upgrade route UI for initiating a membership payment.
+ *
+ * Displays headings, a read-only payment method field, payment summary, and a submit button that, when submitted, navigates to the sign-up success page.
+ *
+ * @returns The React element for the upgrade route UI.
+ */
 function RouteComponent() {
 	const navigate = useNavigate();
 

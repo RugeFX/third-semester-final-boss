@@ -23,6 +23,11 @@ export const Route = createFileRoute("/_auth")({
 	},
 });
 
+/**
+ * Renders the authentication header showing the app logo and title on the left and a back button on the right.
+ *
+ * @returns The header element containing a link to `/entry` with the app icon and name, and a primary-destructive back button linking to `/entry`.
+ */
 function Header() {
 	return (
 		<header className="container flex justify-between items-center px-6 py-7 mx-auto w-full sm:px-8 md:px-12 lg:px-16">
@@ -87,6 +92,13 @@ const scaleVariants: Variants = {
 	},
 };
 
+/**
+ * Renders the authentication page layout with a conditional header, main outlet, and an animated right-side banner that changes by pathname.
+ *
+ * The header and right-side banner are omitted when the current pathname is "/sign-up/success". For other paths, the banner shown depends on the exact pathname (e.g., "/sign-in", "/sign-up", "/sign-up/upgrade").
+ *
+ * @returns A JSX element containing the auth route layout
+ */
 function RouteComponent() {
 	const { pathname } = useLocation();
 
