@@ -97,4 +97,4 @@ export const deletePrice = async (priceId: number) => {
     return deletedPrice;
 };
 
-export default { getAllPrices, findPriceById, createPrice, updatePrice, deletePrice };
+export default { getAllPrices, findPriceById, findActivePriceByCategoryAndType, createPrice, updatePrice, deletePrice };

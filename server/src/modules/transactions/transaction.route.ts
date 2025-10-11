@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
     getAllTransactions,
     createTransactionEntry,
+    processTransactionPayment,
     updateTransactionExit,
     getTransactionByAccessCode,
     // createTransaction,
@@ -14,6 +15,7 @@ const router = Router();
 router.get("/", getAllTransactions);
 router.get("/:accessCode", getTransactionByAccessCode);
 router.post("/entry", createTransactionEntry);
+router.post("/:accessCode/payment", processTransactionPayment);
 router.post("/:accessCode/exit", updateTransactionExit);
 // router.put("/:id", updateTransaction);
 // router.delete("/:id", deleteTransaction);
