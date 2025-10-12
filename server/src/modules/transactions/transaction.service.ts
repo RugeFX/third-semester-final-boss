@@ -116,11 +116,11 @@ export const calculateParkingFee = async (transaction: TransactionWithDetails) =
     console.log(initialBlockPriceData, subsequentHourPriceData);
 
     if (!initialBlockPriceData || !subsequentHourPriceData) {
-        throw new Error(`Harga bertingkat tidak lengkap untuk kategori ID ${categoryId}`);
+        throw new HttpError(422, `Active pricing tiers are incomplete for category ID ${categoryId}`);
     }
 
     if (initialBlockPriceData.block_hours == null) {
-        throw new Error(`block_hours tidak terdefinisi untuk harga INITIAL_BLOCK kategori ID ${categoryId}`);
+        throw new HttpError(422, `INITIAL_BLOCK price for category ID ${categoryId} is missing block_hours`);
     }
 
     const initialBlockPrice = Number(initialBlockPriceData.amount);
