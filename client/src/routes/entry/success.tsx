@@ -7,6 +7,7 @@ import entryBackground from "@/assets/entry-banner-bg.png";
 import { Button } from "@/components/base/buttons/button";
 import { InputBase } from "@/components/base/input/input";
 import { PinInput } from "@/components/base/pin-input/pin-input";
+import { useGetCategoryByIdSuspense } from "@/lib/api/categories/categories";
 import {
 	getGetGuestTransactionByAccessCodeQueryOptions,
 	useGetGuestTransactionByAccessCodeSuspense,
@@ -43,13 +44,14 @@ const bannerItemVariants: Variants = {
 export const Route = createFileRoute("/entry/success")({
 	component: RouteComponent,
 	errorComponent: ErrorComponent,
+	pendingComponent: PendingComponent,
 	loader: ({ context }) => {
 		const accessCode = context.auth.token;
-		if (!accessCode) throw notFound();
-
-		context.queryClient.ensureQueryData(
-			getGetGuestTransactionByAccessCodeQueryOptions(accessCode),
-		);
+		if (!accessCode) {
+			console.error("Access code is missing in success page");
+			toast.error("Anda harus melakukan proses entry terlebih dahulu.");
+			throw notFound();
+		}
 
 		context.queryClient.ensureQueryData(
 			getGetGuestTransactionByAccessCodeQueryOptions(accessCode),
@@ -59,6 +61,10 @@ export const Route = createFileRoute("/entry/success")({
 	},
 });
 
+function PendingComponent() {
+	return <div>Loading...</div>;
+}
+
 function ErrorComponent() {
 	return <div>Error</div>;
 }
@@ -67,10 +73,19 @@ function RouteComponent() {
 	const { accessCode } = Route.useLoaderData();
 
 	const {
-		data: { vehicleDetailId, parkingLevelId },
+		data: { vehicleDetail, parkingLevel },
 	} = useGetGuestTransactionByAccessCodeSuspense(accessCode, {
 		query: { select: ({ data }) => data },
 	});
+
+	const { data: category } = useGetCategoryByIdSuspense(
+		vehicleDetail.category_id,
+		{
+			query: { select: ({ data }) => data },
+		},
+	);
+
+	console.log(vehicleDetail, parkingLevel, category);
 
 	const onCopyAccessCode = () => {
 		navigator.clipboard.writeText(accessCode).then(() => {

@@ -52,7 +52,7 @@ export const RadioButtonBase = ({
 };
 RadioButtonBase.displayName = "RadioButtonBase";
 
-interface RadioButtonProps extends AriaRadioProps {
+export interface RadioButtonProps extends AriaRadioProps {
 	size?: "sm" | "md";
 	label?: ReactNode;
 	hint?: ReactNode;
@@ -138,7 +138,9 @@ export const RadioButton = ({
 };
 RadioButton.displayName = "RadioButton";
 
-interface RadioGroupProps extends RadioGroupContextType, AriaRadioGroupProps {
+export interface RadioGroupProps
+	extends RadioGroupContextType,
+		AriaRadioGroupProps {
 	children: ReactNode;
 	className?: string;
 }

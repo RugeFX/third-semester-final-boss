@@ -12,5 +12,5 @@ export interface ParkingLevel {
 	id: number;
 	name: string;
 	/** Maximum allowed weight in kilograms for this level. */
-	maxWeight: number;
+	max_weight: number;
 }

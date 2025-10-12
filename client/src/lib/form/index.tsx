@@ -1,6 +1,7 @@
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { Eye, EyeOff } from "@untitledui/icons";
 import { useState } from "react";
+
 import { Button, type ButtonProps } from "@/components/base/buttons/button";
 import {
 	Input,
@@ -12,6 +13,12 @@ import {
 	InputGroup as InputGroupBase,
 	type InputGroupProps,
 } from "@/components/base/input/input-group";
+import {
+	RadioGroup as BaseRadioGroup,
+	RadioButton,
+	type RadioButtonProps,
+	type RadioGroupProps,
+} from "@/components/base/radio-buttons/radio-buttons";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
 	createFormHookContexts();
@@ -93,6 +100,40 @@ function PasswordInput({ groupProps, inputProps }: FormInputGroupProps) {
 	);
 }
 
+interface FormRadioGroupProps extends Omit<RadioGroupProps, "children"> {
+	items: {
+		label: string;
+		value: string;
+		hint?: string;
+	}[];
+	buttonProps?: Omit<RadioButtonProps, "label" | "value" | "hint">;
+}
+
+function RadioGroup({ items, buttonProps, ...props }: FormRadioGroupProps) {
+	const field = useFieldContext<string>();
+
+	return (
+		<BaseRadioGroup
+			name={field.name}
+			value={field.state.value}
+			onChange={field.handleChange}
+			onBlur={field.handleBlur}
+			isInvalid={field.state.meta.errors.length > 0}
+			{...props}
+		>
+			{items.map((item) => (
+				<RadioButton
+					key={item.value}
+					label={item.label}
+					hint={item.hint}
+					value={item.value}
+					{...buttonProps}
+				/>
+			))}
+		</BaseRadioGroup>
+	);
+}
+
 function SubmitButton(props: ButtonProps) {
 	const form = useFormContext();
 
@@ -165,6 +206,7 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
 		InputGroup,
 		TextInput,
 		PasswordInput,
+		RadioGroup,
 		Errors: FieldErrors,
 	},
 	formComponents: {

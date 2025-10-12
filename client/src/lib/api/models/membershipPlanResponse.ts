@@ -7,8 +7,7 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
+import type { BaseResponse } from "./baseResponse";
+import type { MembershipPlanResponseAllOf } from "./membershipPlanResponseAllOf";
 
-export type ApiErrorResponseDataErrorMetaItem = {
-	field?: string;
-	issue?: string;
-};
+export type MembershipPlanResponse = BaseResponse & MembershipPlanResponseAllOf;

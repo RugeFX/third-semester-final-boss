@@ -7,8 +7,8 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
+import type { MembershipPlan } from "./membershipPlan";
 
-/**
- * @nullable
- */
-export type SuccessResponseData = { [key: string]: unknown } | null;
+export type MembershipPlanArrayResponseAllOf = {
+	data: MembershipPlan[];
+};

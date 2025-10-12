@@ -69,11 +69,11 @@
       },
       "ParkingLevel": {
         "type": "object",
-        "required": ["id", "name", "maxWeight"],
+        "required": ["id", "name", "max_weight"],
         "properties": {
           "id": { "type": "integer", "example": 1 },
           "name": { "type": "string", "example": "Level A1" },
-          "maxWeight": { "type": "number", "format": "double", "description": "Maximum allowed weight in kilograms for this level.", "example": 2500.5 }
+          "max_weight": { "type": "number", "format": "double", "description": "Maximum allowed weight in kilograms for this level.", "example": 2500.5 }
         }
       },
       "ParkingLevelCreate": {
@@ -86,12 +86,12 @@
       },
       "Member": {
         "type": "object",
-        "required": ["id", "userId", "joinedAt", "endedAt"],
+        "required": ["id", "user_id", "joined_at", "ended_at"],
         "properties": {
           "id": { "type": "integer", "example": 101 },
-          "userId": { "type": "integer", "example": 1 },
-          "joinedAt": { "type": "string", "format": "date-time" },
-          "endedAt": { "type": "string", "format": "date-time" }
+          "user_id": { "type": "integer", "example": 1 },
+          "joined_at": { "type": "string", "format": "date-time" },
+          "ended_at": { "type": "string", "format": "date-time" }
         }
       },
       "MemberCreate": {
@@ -161,16 +161,16 @@
       },
       "Price": {
         "type": "object",
-        "required": ["id", "categoryId", "amount", "type", "isActive"],
+        "required": ["id", "category_id", "amount", "type", "is_active"],
         "properties": {
           "id": { "type": "integer", "example": 1 },
-          "categoryId": { "type": "integer", "example": 1 },
+          "category_id": { "type": "integer", "example": 1 },
           "amount": { "type": "number", "format": "double", "example": 5000 },
           "type": { "type": "string", "description": "Business rule type for the price.", "example": "INITIAL_BLOCK" },
-          "blockHours": { "type": "integer", "nullable": true, "description": "Duration in hours for INITIAL_BLOCK type.", "example": 2 },
-          "isActive": { "type": "boolean", "default": true },
-          "validFrom": { "type": "string", "format": "date-time", "nullable": true },
-          "validUntil": { "type": "string", "format": "date-time", "nullable": true }
+          "block_hours": { "type": "integer", "nullable": true, "description": "Duration in hours for INITIAL_BLOCK type.", "example": 2 },
+          "is_active": { "type": "boolean", "default": true },
+          "valid_from": { "type": "string", "format": "date-time", "nullable": true },
+          "valid_until": { "type": "string", "format": "date-time", "nullable": true }
         }
       },
       "PriceCreate": {
@@ -188,11 +188,11 @@
       },
       "VehicleDetail": {
         "type": "object",
-        "required": ["id", "plateNumber", "categoryId"],
+        "required": ["id", "plate_number", "category_id"],
         "properties": {
           "id": { "type": "integer", "example": 501 },
-          "plateNumber": { "type": "string", "example": "B1234XYZ" },
-          "categoryId": { "type": "integer", "example": 2 }
+          "plate_number": { "type": "string", "example": "B1234XYZ" },
+          "category_id": { "type": "integer", "example": 2 }
         }
       },
       "VehicleDetailCreate": {
@@ -212,17 +212,30 @@
       },
       "Transaction": {
         "type": "object",
-        "required": ["id", "status", "accessCode", "vehicleDetailId", "parkingLevelId", "createdAt", "updatedAt"],
+        "required": ["id", "status", "access_code", "vehicle_detail_id", "parking_level_id", "vehicleDetail", "parkingLevel", "created_at", "updated_at"],
         "properties": {
           "id": { "type": "integer", "example": 1001 },
           "status": { "type": "string", "description": "Status of the transaction, indicating vehicle entry or exit.", "enum": ["ENTRY", "EXIT"], "example": "ENTRY" },
-          "paidAmount": { "type": "number", "format": "double", "nullable": true },
-          "accessCode": { "type": "string", "description": "Unique code for this transaction.", "example": "a1b2c3d4-e5f6-7890-1234-567890abcdef" },
-          "userId": { "type": "integer", "nullable": true },
-          "vehicleDetailId": { "type": "integer" },
-          "parkingLevelId": { "type": "integer" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" }
+          "paid_amount": { "type": "number", "format": "double", "nullable": true },
+          "access_code": { "type": "string", "description": "Unique code for this transaction.", "example": "a1b2c3d4-e5f6-7890-1234-567890abcdef" },
+          "user_id": { "type": "integer", "nullable": true },
+          "user": {
+            "$ref": "#/components/schemas/User",
+            "nullable": true,
+            "description": "Expanded user information when available."
+          },
+          "vehicle_detail_id": { "type": "integer" },
+          "vehicleDetail": {
+            "$ref": "#/components/schemas/VehicleDetail",
+            "description": "Vehicle detail associated to this transaction."
+          },
+          "parking_level_id": { "type": "integer" },
+          "parkingLevel": {
+            "$ref": "#/components/schemas/ParkingLevel",
+            "description": "Parking level information for this transaction."
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
         }
       },
       "TransactionCreate": {
@@ -250,8 +263,8 @@
           "id": { "type": "integer", "example": 1 },
           "context": { "type": "string", "example": "USER_LOGIN_SUCCESS" },
           "type": { "type": "string", "example": "AUTHENTICATION" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "createdBy": { "type": "integer", "example": 1 }
+          "created_at": { "type": "string", "format": "date-time" },
+          "created_by": { "type": "integer", "example": 1 }
         }
       },
       "LoginMember": {

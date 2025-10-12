@@ -2,15 +2,19 @@ import { useStore } from "@tanstack/react-form";
 import { motion } from "motion/react";
 
 import { Button } from "@/components/base/buttons/button";
+import { RemoteSVG } from "@/components/svg/remote-svg";
+import type { Category } from "@/lib/api/models";
 import { withFieldGroup } from "@/lib/form";
 import { cx } from "@/lib/utils/cx";
-import { categories } from "../data";
 
 const CategoryFieldGroup = withFieldGroup({
+	props: {
+		categories: [] as Category[],
+	},
 	defaultValues: {
 		categoryId: null as number | null,
 	},
-	render: function Render({ group }) {
+	render: function Render({ group, categories }) {
 		const categoryId = useStore(
 			group.store,
 			(state) => state.values.categoryId,
@@ -51,7 +55,7 @@ const CategoryFieldGroup = withFieldGroup({
 						<>
 							<div className="flex gap-4">
 								{categories.map((category) => {
-									const { id, name, icon: Icon } = category;
+									const { id, name, icon } = category;
 									const isSelected = categoryId === id;
 
 									return (
@@ -65,14 +69,16 @@ const CategoryFieldGroup = withFieldGroup({
 											)}
 											onClick={() => field.handleChange(id)}
 										>
-											<Icon
+											<div
 												className={cx(
-													"transition-inherit-all size-14 fill-gray-400 group-hover:fill-bg-brand-solid",
+													"grid place-items-center **:transition-colors **:fill-gray-400 group-hover:**:fill-bg-brand-solid",
 													isSelected &&
-														"fill-gray-500 group-hover:fill-gray-600",
+														"**:fill-gray-500 group-hover:**:fill-gray-600",
 												)}
-											/>
-											<span className="sr-only">{name}</span>
+											>
+												{icon && <RemoteSVG url={icon} className="*:size-14" />}
+											</div>
+											<span className={cx(icon && "sr-only")}>{name}</span>
 										</Button>
 									);
 								})}

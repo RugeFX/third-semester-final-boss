@@ -41,10 +41,9 @@ import {
 import type {
 	ApiErrorResponse,
 	BaseResponse,
-	VehicleDetailArrayResponse,
-	VehicleDetailCreate,
-	VehicleDetailResponse,
-	VehicleDetailUpdate,
+	MembershipPlanArrayResponse,
+	MembershipPlanCreate,
+	MembershipPlanResponse,
 } from ".././models";
 import type { BodyType, ErrorType } from ".././mutator/custom-instance";
 import { customInstance } from ".././mutator/custom-instance";
@@ -52,29 +51,30 @@ import { customInstance } from ".././mutator/custom-instance";
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * @summary List all vehicle details (Admin only)
+ * Returns a list of all available membership plans.
+ * @summary List all membership plans
  */
-export const getVehicleDetails = (
+export const listMembershipPlans = (
 	options?: SecondParameter<typeof customInstance>,
 	signal?: AbortSignal,
 ) => {
-	return customInstance<VehicleDetailArrayResponse>(
-		{ url: `/vehicle-details`, method: "GET", signal },
+	return customInstance<MembershipPlanArrayResponse>(
+		{ url: `/membership-plans`, method: "GET", signal },
 		options,
 	);
 };
 
-export const getGetVehicleDetailsQueryKey = () => {
-	return [`/vehicle-details`] as const;
+export const getListMembershipPlansQueryKey = () => {
+	return [`/membership-plans`] as const;
 };
 
-export const getGetVehicleDetailsInfiniteQueryOptions = <
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export const getListMembershipPlansInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(options?: {
 	query?: Partial<
 		UseInfiniteQueryOptions<
-			Awaited<ReturnType<typeof getVehicleDetails>>,
+			Awaited<ReturnType<typeof listMembershipPlans>>,
 			TError,
 			TData
 		>
@@ -83,41 +83,41 @@ export const getGetVehicleDetailsInfiniteQueryOptions = <
 }) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getListMembershipPlansQueryKey();
 
 	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getVehicleDetails>>
-	> = ({ signal }) => getVehicleDetails(requestOptions, signal);
+		Awaited<ReturnType<typeof listMembershipPlans>>
+	> = ({ signal }) => listMembershipPlans(requestOptions, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
-		Awaited<ReturnType<typeof getVehicleDetails>>,
+		Awaited<ReturnType<typeof listMembershipPlans>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetVehicleDetailsInfiniteQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getVehicleDetails>>
+export type ListMembershipPlansInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembershipPlans>>
 >;
-export type GetVehicleDetailsInfiniteQueryError = ErrorType<unknown>;
+export type ListMembershipPlansInfiniteQueryError = ErrorType<unknown>;
 
-export function useGetVehicleDetailsInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export function useListMembershipPlansInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(
 	options: {
 		query: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getVehicleDetails>>,
+					Awaited<ReturnType<typeof listMembershipPlans>>,
 					TError,
-					Awaited<ReturnType<typeof getVehicleDetails>>
+					Awaited<ReturnType<typeof listMembershipPlans>>
 				>,
 				"initialData"
 			>;
@@ -127,23 +127,23 @@ export function useGetVehicleDetailsInfinite<
 ): DefinedUseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export function useListMembershipPlansInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getVehicleDetails>>,
+					Awaited<ReturnType<typeof listMembershipPlans>>,
 					TError,
-					Awaited<ReturnType<typeof getVehicleDetails>>
+					Awaited<ReturnType<typeof listMembershipPlans>>
 				>,
 				"initialData"
 			>;
@@ -153,14 +153,14 @@ export function useGetVehicleDetailsInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export function useListMembershipPlansInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -172,17 +172,17 @@ export function useGetVehicleDetailsInfinite<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary List all vehicle details (Admin only)
+ * @summary List all membership plans
  */
 
-export function useGetVehicleDetailsInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export function useListMembershipPlansInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -193,7 +193,7 @@ export function useGetVehicleDetailsInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetVehicleDetailsInfiniteQueryOptions(options);
+	const queryOptions = getListMembershipPlansInfiniteQueryOptions(options);
 
 	const query = useInfiniteQuery(
 		queryOptions,
@@ -207,13 +207,13 @@ export function useGetVehicleDetailsInfinite<
 	return query;
 }
 
-export const getGetVehicleDetailsQueryOptions = <
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export const getListMembershipPlansQueryOptions = <
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(options?: {
 	query?: Partial<
 		UseQueryOptions<
-			Awaited<ReturnType<typeof getVehicleDetails>>,
+			Awaited<ReturnType<typeof listMembershipPlans>>,
 			TError,
 			TData
 		>
@@ -222,41 +222,41 @@ export const getGetVehicleDetailsQueryOptions = <
 }) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getListMembershipPlansQueryKey();
 
 	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getVehicleDetails>>
-	> = ({ signal }) => getVehicleDetails(requestOptions, signal);
+		Awaited<ReturnType<typeof listMembershipPlans>>
+	> = ({ signal }) => listMembershipPlans(requestOptions, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof getVehicleDetails>>,
+		Awaited<ReturnType<typeof listMembershipPlans>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetVehicleDetailsQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getVehicleDetails>>
+export type ListMembershipPlansQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembershipPlans>>
 >;
-export type GetVehicleDetailsQueryError = ErrorType<unknown>;
+export type ListMembershipPlansQueryError = ErrorType<unknown>;
 
-export function useGetVehicleDetails<
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export function useListMembershipPlans<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(
 	options: {
 		query: Partial<
 			UseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getVehicleDetails>>,
+					Awaited<ReturnType<typeof listMembershipPlans>>,
 					TError,
-					Awaited<ReturnType<typeof getVehicleDetails>>
+					Awaited<ReturnType<typeof listMembershipPlans>>
 				>,
 				"initialData"
 			>;
@@ -266,23 +266,23 @@ export function useGetVehicleDetails<
 ): DefinedUseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetails<
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export function useListMembershipPlans<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getVehicleDetails>>,
+					Awaited<ReturnType<typeof listMembershipPlans>>,
 					TError,
-					Awaited<ReturnType<typeof getVehicleDetails>>
+					Awaited<ReturnType<typeof listMembershipPlans>>
 				>,
 				"initialData"
 			>;
@@ -292,14 +292,14 @@ export function useGetVehicleDetails<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetails<
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export function useListMembershipPlans<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -311,17 +311,17 @@ export function useGetVehicleDetails<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary List all vehicle details (Admin only)
+ * @summary List all membership plans
  */
 
-export function useGetVehicleDetails<
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export function useListMembershipPlans<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -332,7 +332,7 @@ export function useGetVehicleDetails<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetVehicleDetailsQueryOptions(options);
+	const queryOptions = getListMembershipPlansQueryOptions(options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
 		TData,
@@ -344,13 +344,13 @@ export function useGetVehicleDetails<
 	return query;
 }
 
-export const getGetVehicleDetailsSuspenseQueryOptions = <
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export const getListMembershipPlansSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(options?: {
 	query?: Partial<
 		UseSuspenseQueryOptions<
-			Awaited<ReturnType<typeof getVehicleDetails>>,
+			Awaited<ReturnType<typeof listMembershipPlans>>,
 			TError,
 			TData
 		>
@@ -359,32 +359,32 @@ export const getGetVehicleDetailsSuspenseQueryOptions = <
 }) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getListMembershipPlansQueryKey();
 
 	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getVehicleDetails>>
-	> = ({ signal }) => getVehicleDetails(requestOptions, signal);
+		Awaited<ReturnType<typeof listMembershipPlans>>
+	> = ({ signal }) => listMembershipPlans(requestOptions, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-		Awaited<ReturnType<typeof getVehicleDetails>>,
+		Awaited<ReturnType<typeof listMembershipPlans>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetVehicleDetailsSuspenseQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getVehicleDetails>>
+export type ListMembershipPlansSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembershipPlans>>
 >;
-export type GetVehicleDetailsSuspenseQueryError = ErrorType<unknown>;
+export type ListMembershipPlansSuspenseQueryError = ErrorType<unknown>;
 
-export function useGetVehicleDetailsSuspense<
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export function useListMembershipPlansSuspense<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(
 	options: {
 		query: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -395,14 +395,14 @@ export function useGetVehicleDetailsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsSuspense<
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export function useListMembershipPlansSuspense<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -413,14 +413,14 @@ export function useGetVehicleDetailsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsSuspense<
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export function useListMembershipPlansSuspense<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -432,17 +432,17 @@ export function useGetVehicleDetailsSuspense<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary List all vehicle details (Admin only)
+ * @summary List all membership plans
  */
 
-export function useGetVehicleDetailsSuspense<
-	TData = Awaited<ReturnType<typeof getVehicleDetails>>,
+export function useListMembershipPlansSuspense<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -453,7 +453,7 @@ export function useGetVehicleDetailsSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetVehicleDetailsSuspenseQueryOptions(options);
+	const queryOptions = getListMembershipPlansSuspenseQueryOptions(options);
 
 	const query = useSuspenseQuery(
 		queryOptions,
@@ -467,13 +467,13 @@ export function useGetVehicleDetailsSuspense<
 	return query;
 }
 
-export const getGetVehicleDetailsSuspenseInfiniteQueryOptions = <
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export const getListMembershipPlansSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(options?: {
 	query?: Partial<
 		UseSuspenseInfiniteQueryOptions<
-			Awaited<ReturnType<typeof getVehicleDetails>>,
+			Awaited<ReturnType<typeof listMembershipPlans>>,
 			TError,
 			TData
 		>
@@ -482,36 +482,36 @@ export const getGetVehicleDetailsSuspenseInfiniteQueryOptions = <
 }) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getListMembershipPlansQueryKey();
 
 	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getVehicleDetails>>
-	> = ({ signal }) => getVehicleDetails(requestOptions, signal);
+		Awaited<ReturnType<typeof listMembershipPlans>>
+	> = ({ signal }) => listMembershipPlans(requestOptions, signal);
 
 	return {
 		queryKey,
 		queryFn,
 		...queryOptions,
 	} as UseSuspenseInfiniteQueryOptions<
-		Awaited<ReturnType<typeof getVehicleDetails>>,
+		Awaited<ReturnType<typeof listMembershipPlans>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetVehicleDetailsSuspenseInfiniteQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getVehicleDetails>>
+export type ListMembershipPlansSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembershipPlans>>
 >;
-export type GetVehicleDetailsSuspenseInfiniteQueryError = ErrorType<unknown>;
+export type ListMembershipPlansSuspenseInfiniteQueryError = ErrorType<unknown>;
 
-export function useGetVehicleDetailsSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export function useListMembershipPlansSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(
 	options: {
 		query: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -522,14 +522,14 @@ export function useGetVehicleDetailsSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export function useListMembershipPlansSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -540,14 +540,14 @@ export function useGetVehicleDetailsSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export function useListMembershipPlansSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -559,17 +559,17 @@ export function useGetVehicleDetailsSuspenseInfinite<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary List all vehicle details (Admin only)
+ * @summary List all membership plans
  */
 
-export function useGetVehicleDetailsSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetails>>>,
+export function useListMembershipPlansSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
 	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetails>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -581,7 +581,7 @@ export function useGetVehicleDetailsSuspenseInfinite<
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
 	const queryOptions =
-		getGetVehicleDetailsSuspenseInfiniteQueryOptions(options);
+		getListMembershipPlansSuspenseInfiniteQueryOptions(options);
 
 	const query = useSuspenseInfiniteQuery(
 		queryOptions,
@@ -596,43 +596,44 @@ export function useGetVehicleDetailsSuspenseInfinite<
 }
 
 /**
- * @summary Create a new vehicle detail (Admin only)
+ * Creates a new membership plan. Restricted to admins.
+ * @summary Create a membership plan (Admin only)
  */
-export const postVehicleDetails = (
-	vehicleDetailCreate: BodyType<VehicleDetailCreate>,
+export const createMembershipPlan = (
+	membershipPlanCreate: BodyType<MembershipPlanCreate>,
 	options?: SecondParameter<typeof customInstance>,
 	signal?: AbortSignal,
 ) => {
-	return customInstance<VehicleDetailResponse>(
+	return customInstance<MembershipPlanResponse>(
 		{
-			url: `/vehicle-details`,
+			url: `/membership-plans`,
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			data: vehicleDetailCreate,
+			data: membershipPlanCreate,
 			signal,
 		},
 		options,
 	);
 };
 
-export const getPostVehicleDetailsMutationOptions = <
-	TError = ErrorType<unknown>,
+export const getCreateMembershipPlanMutationOptions = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof postVehicleDetails>>,
+		Awaited<ReturnType<typeof createMembershipPlan>>,
 		TError,
-		{ data: BodyType<VehicleDetailCreate> },
+		{ data: BodyType<MembershipPlanCreate> },
 		TContext
 	>;
 	request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-	Awaited<ReturnType<typeof postVehicleDetails>>,
+	Awaited<ReturnType<typeof createMembershipPlan>>,
 	TError,
-	{ data: BodyType<VehicleDetailCreate> },
+	{ data: BodyType<MembershipPlanCreate> },
 	TContext
 > => {
-	const mutationKey = ["postVehicleDetails"];
+	const mutationKey = ["createMembershipPlan"];
 	const { mutation: mutationOptions, request: requestOptions } = options
 		? options.mutation &&
 			"mutationKey" in options.mutation &&
@@ -642,77 +643,80 @@ export const getPostVehicleDetailsMutationOptions = <
 		: { mutation: { mutationKey }, request: undefined };
 
 	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof postVehicleDetails>>,
-		{ data: BodyType<VehicleDetailCreate> }
+		Awaited<ReturnType<typeof createMembershipPlan>>,
+		{ data: BodyType<MembershipPlanCreate> }
 	> = (props) => {
 		const { data } = props ?? {};
 
-		return postVehicleDetails(data, requestOptions);
+		return createMembershipPlan(data, requestOptions);
 	};
 
 	return { mutationFn, ...mutationOptions };
 };
 
-export type PostVehicleDetailsMutationResult = NonNullable<
-	Awaited<ReturnType<typeof postVehicleDetails>>
+export type CreateMembershipPlanMutationResult = NonNullable<
+	Awaited<ReturnType<typeof createMembershipPlan>>
 >;
-export type PostVehicleDetailsMutationBody = BodyType<VehicleDetailCreate>;
-export type PostVehicleDetailsMutationError = ErrorType<unknown>;
+export type CreateMembershipPlanMutationBody = BodyType<MembershipPlanCreate>;
+export type CreateMembershipPlanMutationError = ErrorType<
+	ApiErrorResponse | ApiErrorResponse
+>;
 
 /**
- * @summary Create a new vehicle detail (Admin only)
+ * @summary Create a membership plan (Admin only)
  */
-export const usePostVehicleDetails = <
-	TError = ErrorType<unknown>,
+export const useCreateMembershipPlan = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(
 	options?: {
 		mutation?: UseMutationOptions<
-			Awaited<ReturnType<typeof postVehicleDetails>>,
+			Awaited<ReturnType<typeof createMembershipPlan>>,
 			TError,
-			{ data: BodyType<VehicleDetailCreate> },
+			{ data: BodyType<MembershipPlanCreate> },
 			TContext
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
 	queryClient?: QueryClient,
 ): UseMutationResult<
-	Awaited<ReturnType<typeof postVehicleDetails>>,
+	Awaited<ReturnType<typeof createMembershipPlan>>,
 	TError,
-	{ data: BodyType<VehicleDetailCreate> },
+	{ data: BodyType<MembershipPlanCreate> },
 	TContext
 > => {
-	const mutationOptions = getPostVehicleDetailsMutationOptions(options);
+	const mutationOptions = getCreateMembershipPlanMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };
 /**
- * @summary Get vehicle detail by ID (Admin only)
+ * Retrieves details for a specific membership plan.
+ * @summary Get membership plan by ID
  */
-export const getVehicleDetailsId = (
+export const getMembershipPlanById = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 	signal?: AbortSignal,
 ) => {
-	return customInstance<VehicleDetailResponse>(
-		{ url: `/vehicle-details/${id}`, method: "GET", signal },
+	return customInstance<MembershipPlanResponse>(
+		{ url: `/membership-plans/${id}`, method: "GET", signal },
 		options,
 	);
 };
 
-export const getGetVehicleDetailsIdQueryKey = (id?: number) => {
-	return [`/vehicle-details/${id}`] as const;
+export const getGetMembershipPlanByIdQueryKey = (id?: number) => {
+	return [`/membership-plans/${id}`] as const;
 };
 
-export const getGetVehicleDetailsIdInfiniteQueryOptions = <
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export const getGetMembershipPlanByIdInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -722,11 +726,12 @@ export const getGetVehicleDetailsIdInfiniteQueryOptions = <
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsIdQueryKey(id);
+	const queryKey =
+		queryOptions?.queryKey ?? getGetMembershipPlanByIdQueryKey(id);
 
 	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getVehicleDetailsId>>
-	> = ({ signal }) => getVehicleDetailsId(id, requestOptions, signal);
+		Awaited<ReturnType<typeof getMembershipPlanById>>
+	> = ({ signal }) => getMembershipPlanById(id, requestOptions, signal);
 
 	return {
 		queryKey,
@@ -734,35 +739,36 @@ export const getGetVehicleDetailsIdInfiniteQueryOptions = <
 		enabled: !!id,
 		...queryOptions,
 	} as UseInfiniteQueryOptions<
-		Awaited<ReturnType<typeof getVehicleDetailsId>>,
+		Awaited<ReturnType<typeof getMembershipPlanById>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetVehicleDetailsIdInfiniteQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getVehicleDetailsId>>
+export type GetMembershipPlanByIdInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMembershipPlanById>>
 >;
-export type GetVehicleDetailsIdInfiniteQueryError = ErrorType<ApiErrorResponse>;
+export type GetMembershipPlanByIdInfiniteQueryError =
+	ErrorType<ApiErrorResponse>;
 
-export function useGetVehicleDetailsIdInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export function useGetMembershipPlanByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options: {
 		query: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getVehicleDetailsId>>,
+					Awaited<ReturnType<typeof getMembershipPlanById>>,
 					TError,
-					Awaited<ReturnType<typeof getVehicleDetailsId>>
+					Awaited<ReturnType<typeof getMembershipPlanById>>
 				>,
 				"initialData"
 			>;
@@ -772,24 +778,24 @@ export function useGetVehicleDetailsIdInfinite<
 ): DefinedUseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsIdInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export function useGetMembershipPlanByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getVehicleDetailsId>>,
+					Awaited<ReturnType<typeof getMembershipPlanById>>,
 					TError,
-					Awaited<ReturnType<typeof getVehicleDetailsId>>
+					Awaited<ReturnType<typeof getMembershipPlanById>>
 				>,
 				"initialData"
 			>;
@@ -799,15 +805,15 @@ export function useGetVehicleDetailsIdInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsIdInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export function useGetMembershipPlanByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -819,18 +825,18 @@ export function useGetVehicleDetailsIdInfinite<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get vehicle detail by ID (Admin only)
+ * @summary Get membership plan by ID
  */
 
-export function useGetVehicleDetailsIdInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export function useGetMembershipPlanByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -841,7 +847,10 @@ export function useGetVehicleDetailsIdInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetVehicleDetailsIdInfiniteQueryOptions(id, options);
+	const queryOptions = getGetMembershipPlanByIdInfiniteQueryOptions(
+		id,
+		options,
+	);
 
 	const query = useInfiniteQuery(
 		queryOptions,
@@ -855,15 +864,15 @@ export function useGetVehicleDetailsIdInfinite<
 	return query;
 }
 
-export const getGetVehicleDetailsIdQueryOptions = <
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export const getGetMembershipPlanByIdQueryOptions = <
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -873,11 +882,12 @@ export const getGetVehicleDetailsIdQueryOptions = <
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsIdQueryKey(id);
+	const queryKey =
+		queryOptions?.queryKey ?? getGetMembershipPlanByIdQueryKey(id);
 
 	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getVehicleDetailsId>>
-	> = ({ signal }) => getVehicleDetailsId(id, requestOptions, signal);
+		Awaited<ReturnType<typeof getMembershipPlanById>>
+	> = ({ signal }) => getMembershipPlanById(id, requestOptions, signal);
 
 	return {
 		queryKey,
@@ -885,35 +895,35 @@ export const getGetVehicleDetailsIdQueryOptions = <
 		enabled: !!id,
 		...queryOptions,
 	} as UseQueryOptions<
-		Awaited<ReturnType<typeof getVehicleDetailsId>>,
+		Awaited<ReturnType<typeof getMembershipPlanById>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetVehicleDetailsIdQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getVehicleDetailsId>>
+export type GetMembershipPlanByIdQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMembershipPlanById>>
 >;
-export type GetVehicleDetailsIdQueryError = ErrorType<ApiErrorResponse>;
+export type GetMembershipPlanByIdQueryError = ErrorType<ApiErrorResponse>;
 
-export function useGetVehicleDetailsId<
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export function useGetMembershipPlanById<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options: {
 		query: Partial<
 			UseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getVehicleDetailsId>>,
+					Awaited<ReturnType<typeof getMembershipPlanById>>,
 					TError,
-					Awaited<ReturnType<typeof getVehicleDetailsId>>
+					Awaited<ReturnType<typeof getMembershipPlanById>>
 				>,
 				"initialData"
 			>;
@@ -923,24 +933,24 @@ export function useGetVehicleDetailsId<
 ): DefinedUseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsId<
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export function useGetMembershipPlanById<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getVehicleDetailsId>>,
+					Awaited<ReturnType<typeof getMembershipPlanById>>,
 					TError,
-					Awaited<ReturnType<typeof getVehicleDetailsId>>
+					Awaited<ReturnType<typeof getMembershipPlanById>>
 				>,
 				"initialData"
 			>;
@@ -950,15 +960,15 @@ export function useGetVehicleDetailsId<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsId<
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export function useGetMembershipPlanById<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -970,18 +980,18 @@ export function useGetVehicleDetailsId<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get vehicle detail by ID (Admin only)
+ * @summary Get membership plan by ID
  */
 
-export function useGetVehicleDetailsId<
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export function useGetMembershipPlanById<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -992,7 +1002,7 @@ export function useGetVehicleDetailsId<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetVehicleDetailsIdQueryOptions(id, options);
+	const queryOptions = getGetMembershipPlanByIdQueryOptions(id, options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
 		TData,
@@ -1004,15 +1014,15 @@ export function useGetVehicleDetailsId<
 	return query;
 }
 
-export const getGetVehicleDetailsIdSuspenseQueryOptions = <
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export const getGetMembershipPlanByIdSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1022,33 +1032,35 @@ export const getGetVehicleDetailsIdSuspenseQueryOptions = <
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsIdQueryKey(id);
+	const queryKey =
+		queryOptions?.queryKey ?? getGetMembershipPlanByIdQueryKey(id);
 
 	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getVehicleDetailsId>>
-	> = ({ signal }) => getVehicleDetailsId(id, requestOptions, signal);
+		Awaited<ReturnType<typeof getMembershipPlanById>>
+	> = ({ signal }) => getMembershipPlanById(id, requestOptions, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-		Awaited<ReturnType<typeof getVehicleDetailsId>>,
+		Awaited<ReturnType<typeof getMembershipPlanById>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetVehicleDetailsIdSuspenseQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getVehicleDetailsId>>
+export type GetMembershipPlanByIdSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMembershipPlanById>>
 >;
-export type GetVehicleDetailsIdSuspenseQueryError = ErrorType<ApiErrorResponse>;
+export type GetMembershipPlanByIdSuspenseQueryError =
+	ErrorType<ApiErrorResponse>;
 
-export function useGetVehicleDetailsIdSuspense<
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export function useGetMembershipPlanByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options: {
 		query: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1059,15 +1071,15 @@ export function useGetVehicleDetailsIdSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsIdSuspense<
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export function useGetMembershipPlanByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1078,15 +1090,15 @@ export function useGetVehicleDetailsIdSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsIdSuspense<
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export function useGetMembershipPlanByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1098,18 +1110,18 @@ export function useGetVehicleDetailsIdSuspense<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get vehicle detail by ID (Admin only)
+ * @summary Get membership plan by ID
  */
 
-export function useGetVehicleDetailsIdSuspense<
-	TData = Awaited<ReturnType<typeof getVehicleDetailsId>>,
+export function useGetMembershipPlanByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1120,7 +1132,10 @@ export function useGetVehicleDetailsIdSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetVehicleDetailsIdSuspenseQueryOptions(id, options);
+	const queryOptions = getGetMembershipPlanByIdSuspenseQueryOptions(
+		id,
+		options,
+	);
 
 	const query = useSuspenseQuery(
 		queryOptions,
@@ -1134,15 +1149,15 @@ export function useGetVehicleDetailsIdSuspense<
 	return query;
 }
 
-export const getGetVehicleDetailsIdSuspenseInfiniteQueryOptions = <
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export const getGetMembershipPlanByIdSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1152,38 +1167,39 @@ export const getGetVehicleDetailsIdSuspenseInfiniteQueryOptions = <
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetVehicleDetailsIdQueryKey(id);
+	const queryKey =
+		queryOptions?.queryKey ?? getGetMembershipPlanByIdQueryKey(id);
 
 	const queryFn: QueryFunction<
-		Awaited<ReturnType<typeof getVehicleDetailsId>>
-	> = ({ signal }) => getVehicleDetailsId(id, requestOptions, signal);
+		Awaited<ReturnType<typeof getMembershipPlanById>>
+	> = ({ signal }) => getMembershipPlanById(id, requestOptions, signal);
 
 	return {
 		queryKey,
 		queryFn,
 		...queryOptions,
 	} as UseSuspenseInfiniteQueryOptions<
-		Awaited<ReturnType<typeof getVehicleDetailsId>>,
+		Awaited<ReturnType<typeof getMembershipPlanById>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetVehicleDetailsIdSuspenseInfiniteQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getVehicleDetailsId>>
+export type GetMembershipPlanByIdSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMembershipPlanById>>
 >;
-export type GetVehicleDetailsIdSuspenseInfiniteQueryError =
+export type GetMembershipPlanByIdSuspenseInfiniteQueryError =
 	ErrorType<ApiErrorResponse>;
 
-export function useGetVehicleDetailsIdSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export function useGetMembershipPlanByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options: {
 		query: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1194,15 +1210,15 @@ export function useGetVehicleDetailsIdSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsIdSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export function useGetMembershipPlanByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1213,15 +1229,15 @@ export function useGetVehicleDetailsIdSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetVehicleDetailsIdSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export function useGetMembershipPlanByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1233,18 +1249,18 @@ export function useGetVehicleDetailsIdSuspenseInfinite<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get vehicle detail by ID (Admin only)
+ * @summary Get membership plan by ID
  */
 
-export function useGetVehicleDetailsIdSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getVehicleDetailsId>>>,
+export function useGetMembershipPlanByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
 	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getVehicleDetailsId>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1255,7 +1271,7 @@ export function useGetVehicleDetailsIdSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetVehicleDetailsIdSuspenseInfiniteQueryOptions(
+	const queryOptions = getGetMembershipPlanByIdSuspenseInfiniteQueryOptions(
 		id,
 		options,
 	);
@@ -1273,42 +1289,43 @@ export function useGetVehicleDetailsIdSuspenseInfinite<
 }
 
 /**
- * @summary Update a vehicle detail (Admin only)
+ * Updates a membership plan. Restricted to admins.
+ * @summary Update a membership plan (Admin only)
  */
-export const putVehicleDetailsId = (
+export const updateMembershipPlan = (
 	id: number,
-	vehicleDetailUpdate: BodyType<VehicleDetailUpdate>,
+	membershipPlanCreate: BodyType<MembershipPlanCreate>,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<VehicleDetailResponse>(
+	return customInstance<MembershipPlanResponse>(
 		{
-			url: `/vehicle-details/${id}`,
+			url: `/membership-plans/${id}`,
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
-			data: vehicleDetailUpdate,
+			data: membershipPlanCreate,
 		},
 		options,
 	);
 };
 
-export const getPutVehicleDetailsIdMutationOptions = <
-	TError = ErrorType<unknown>,
+export const getUpdateMembershipPlanMutationOptions = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof putVehicleDetailsId>>,
+		Awaited<ReturnType<typeof updateMembershipPlan>>,
 		TError,
-		{ id: number; data: BodyType<VehicleDetailUpdate> },
+		{ id: number; data: BodyType<MembershipPlanCreate> },
 		TContext
 	>;
 	request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-	Awaited<ReturnType<typeof putVehicleDetailsId>>,
+	Awaited<ReturnType<typeof updateMembershipPlan>>,
 	TError,
-	{ id: number; data: BodyType<VehicleDetailUpdate> },
+	{ id: number; data: BodyType<MembershipPlanCreate> },
 	TContext
 > => {
-	const mutationKey = ["putVehicleDetailsId"];
+	const mutationKey = ["updateMembershipPlan"];
 	const { mutation: mutationOptions, request: requestOptions } = options
 		? options.mutation &&
 			"mutationKey" in options.mutation &&
@@ -1318,81 +1335,84 @@ export const getPutVehicleDetailsIdMutationOptions = <
 		: { mutation: { mutationKey }, request: undefined };
 
 	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof putVehicleDetailsId>>,
-		{ id: number; data: BodyType<VehicleDetailUpdate> }
+		Awaited<ReturnType<typeof updateMembershipPlan>>,
+		{ id: number; data: BodyType<MembershipPlanCreate> }
 	> = (props) => {
 		const { id, data } = props ?? {};
 
-		return putVehicleDetailsId(id, data, requestOptions);
+		return updateMembershipPlan(id, data, requestOptions);
 	};
 
 	return { mutationFn, ...mutationOptions };
 };
 
-export type PutVehicleDetailsIdMutationResult = NonNullable<
-	Awaited<ReturnType<typeof putVehicleDetailsId>>
+export type UpdateMembershipPlanMutationResult = NonNullable<
+	Awaited<ReturnType<typeof updateMembershipPlan>>
 >;
-export type PutVehicleDetailsIdMutationBody = BodyType<VehicleDetailUpdate>;
-export type PutVehicleDetailsIdMutationError = ErrorType<unknown>;
+export type UpdateMembershipPlanMutationBody = BodyType<MembershipPlanCreate>;
+export type UpdateMembershipPlanMutationError = ErrorType<
+	ApiErrorResponse | ApiErrorResponse | ApiErrorResponse
+>;
 
 /**
- * @summary Update a vehicle detail (Admin only)
+ * @summary Update a membership plan (Admin only)
  */
-export const usePutVehicleDetailsId = <
-	TError = ErrorType<unknown>,
+export const useUpdateMembershipPlan = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(
 	options?: {
 		mutation?: UseMutationOptions<
-			Awaited<ReturnType<typeof putVehicleDetailsId>>,
+			Awaited<ReturnType<typeof updateMembershipPlan>>,
 			TError,
-			{ id: number; data: BodyType<VehicleDetailUpdate> },
+			{ id: number; data: BodyType<MembershipPlanCreate> },
 			TContext
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
 	queryClient?: QueryClient,
 ): UseMutationResult<
-	Awaited<ReturnType<typeof putVehicleDetailsId>>,
+	Awaited<ReturnType<typeof updateMembershipPlan>>,
 	TError,
-	{ id: number; data: BodyType<VehicleDetailUpdate> },
+	{ id: number; data: BodyType<MembershipPlanCreate> },
 	TContext
 > => {
-	const mutationOptions = getPutVehicleDetailsIdMutationOptions(options);
+	const mutationOptions = getUpdateMembershipPlanMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };
 /**
- * @summary Delete a vehicle detail (Admin only)
+ * Deletes a membership plan. Restricted to admins.
+ * @summary Delete a membership plan (Admin only)
  */
-export const deleteVehicleDetailsId = (
+export const deleteMembershipPlan = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
 	return customInstance<BaseResponse>(
-		{ url: `/vehicle-details/${id}`, method: "DELETE" },
+		{ url: `/membership-plans/${id}`, method: "DELETE" },
 		options,
 	);
 };
 
-export const getDeleteVehicleDetailsIdMutationOptions = <
-	TError = ErrorType<ApiErrorResponse>,
+export const getDeleteMembershipPlanMutationOptions = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof deleteVehicleDetailsId>>,
+		Awaited<ReturnType<typeof deleteMembershipPlan>>,
 		TError,
 		{ id: number },
 		TContext
 	>;
 	request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-	Awaited<ReturnType<typeof deleteVehicleDetailsId>>,
+	Awaited<ReturnType<typeof deleteMembershipPlan>>,
 	TError,
 	{ id: number },
 	TContext
 > => {
-	const mutationKey = ["deleteVehicleDetailsId"];
+	const mutationKey = ["deleteMembershipPlan"];
 	const { mutation: mutationOptions, request: requestOptions } = options
 		? options.mutation &&
 			"mutationKey" in options.mutation &&
@@ -1402,33 +1422,35 @@ export const getDeleteVehicleDetailsIdMutationOptions = <
 		: { mutation: { mutationKey }, request: undefined };
 
 	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof deleteVehicleDetailsId>>,
+		Awaited<ReturnType<typeof deleteMembershipPlan>>,
 		{ id: number }
 	> = (props) => {
 		const { id } = props ?? {};
 
-		return deleteVehicleDetailsId(id, requestOptions);
+		return deleteMembershipPlan(id, requestOptions);
 	};
 
 	return { mutationFn, ...mutationOptions };
 };
 
-export type DeleteVehicleDetailsIdMutationResult = NonNullable<
-	Awaited<ReturnType<typeof deleteVehicleDetailsId>>
+export type DeleteMembershipPlanMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteMembershipPlan>>
 >;
 
-export type DeleteVehicleDetailsIdMutationError = ErrorType<ApiErrorResponse>;
+export type DeleteMembershipPlanMutationError = ErrorType<
+	ApiErrorResponse | ApiErrorResponse
+>;
 
 /**
- * @summary Delete a vehicle detail (Admin only)
+ * @summary Delete a membership plan (Admin only)
  */
-export const useDeleteVehicleDetailsId = <
-	TError = ErrorType<ApiErrorResponse>,
+export const useDeleteMembershipPlan = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(
 	options?: {
 		mutation?: UseMutationOptions<
-			Awaited<ReturnType<typeof deleteVehicleDetailsId>>,
+			Awaited<ReturnType<typeof deleteMembershipPlan>>,
 			TError,
 			{ id: number },
 			TContext
@@ -1437,12 +1459,12 @@ export const useDeleteVehicleDetailsId = <
 	},
 	queryClient?: QueryClient,
 ): UseMutationResult<
-	Awaited<ReturnType<typeof deleteVehicleDetailsId>>,
+	Awaited<ReturnType<typeof deleteMembershipPlan>>,
 	TError,
 	{ id: number },
 	TContext
 > => {
-	const mutationOptions = getDeleteVehicleDetailsIdMutationOptions(options);
+	const mutationOptions = getDeleteMembershipPlanMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };

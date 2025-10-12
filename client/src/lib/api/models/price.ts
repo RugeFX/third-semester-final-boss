@@ -10,7 +10,18 @@ This documentation provides a base for all the resources defined in the database
 
 export interface Price {
 	id: number;
-	categoryId: number;
-	/** Price per hour for this category. */
+	category_id: number;
 	amount: number;
+	/** Business rule type for the price. */
+	type: string;
+	/**
+	 * Duration in hours for INITIAL_BLOCK type.
+	 * @nullable
+	 */
+	block_hours?: number | null;
+	is_active: boolean;
+	/** @nullable */
+	valid_from?: string | null;
+	/** @nullable */
+	valid_until?: string | null;
 }

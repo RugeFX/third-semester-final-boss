@@ -12,6 +12,6 @@ export interface AuditLog {
 	id?: number;
 	context?: string;
 	type?: string;
-	createdAt?: string;
-	createdBy?: number;
+	created_at?: string;
+	created_by?: number;
 }

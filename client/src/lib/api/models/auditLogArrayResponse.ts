@@ -7,10 +7,8 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
-import type { AuditLog } from "./auditLog";
 
-export interface AuditLogArrayResponse {
-	success?: boolean;
-	message?: string;
-	data?: AuditLog[];
-}
+import type { AuditLogArrayResponseAllOf } from "./auditLogArrayResponseAllOf";
+import type { BaseResponse } from "./baseResponse";
+
+export type AuditLogArrayResponse = BaseResponse & AuditLogArrayResponseAllOf;

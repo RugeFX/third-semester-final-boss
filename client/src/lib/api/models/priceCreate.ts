@@ -11,4 +11,16 @@ This documentation provides a base for all the resources defined in the database
 export interface PriceCreate {
 	categoryId: number;
 	amount: number;
+	/** Business rule type for the price. */
+	type: string;
+	/**
+	 * Duration in hours for INITIAL_BLOCK type.
+	 * @nullable
+	 */
+	blockHours?: number | null;
+	isActive?: boolean;
+	/** @nullable */
+	validFrom?: string | null;
+	/** @nullable */
+	validUntil?: string | null;
 }

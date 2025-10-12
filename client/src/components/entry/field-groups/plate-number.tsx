@@ -15,7 +15,7 @@ const PlateNumberFieldGroup = withFieldGroup({
 	},
 	props: {
 		name: "Unknown",
-		onPreviousStep: () => { },
+		onPreviousStep: () => {},
 	} as PlateNumberFieldGroupProps,
 	render: function Render({ group, name, onPreviousStep }) {
 		return (

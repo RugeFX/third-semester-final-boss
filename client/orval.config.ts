@@ -8,10 +8,10 @@ export default defineConfig({
 	api: {
 		output: {
 			mode: "tags-split",
-			target: "src/lib/api/index.ts",
+			target: "src/lib/api",
 			schemas: "src/lib/api/models",
 			client: "react-query",
-			mock: true,
+			mock: false,
 			override: {
 				mutator: {
 					path: "src/lib/api/mutator/custom-instance.ts",

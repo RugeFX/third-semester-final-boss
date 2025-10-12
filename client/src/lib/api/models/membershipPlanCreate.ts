@@ -8,12 +8,7 @@ This documentation provides a base for all the resources defined in the database
  * OpenAPI spec version: 1.0.0
  */
 
-/**
- * Payload for renewing a membership by referencing a specific plan.
- */
-export interface MembershipRenewal {
-	/** The ID of the membership plan to renew. */
-	membershipPlanId: number;
-	/** The amount paid for the renewal. */
-	amountPaid: number;
+export interface MembershipPlanCreate {
+	cost: number;
+	period: number;
 }

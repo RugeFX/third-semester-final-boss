@@ -2,10 +2,13 @@ import { ChevronLeft } from "@untitledui/icons";
 import { motion } from "motion/react";
 
 import { Button } from "@/components/base/buttons/button";
+import type { ParkingLevel } from "@/lib/api/models";
 import { withFieldGroup } from "@/lib/form";
+import { cx } from "@/lib/utils/cx";
 
 type ParkingLevelFieldGroupProps = {
 	name?: string;
+	parkingLevels: ParkingLevel[];
 	onPreviousStep: () => void;
 };
 
@@ -15,9 +18,10 @@ const ParkingLevelFieldGroup = withFieldGroup({
 	},
 	props: {
 		name: "Unknown",
+		parkingLevels: [],
 		onPreviousStep: () => {},
 	} as ParkingLevelFieldGroupProps,
-	render: function Render({ group, name, onPreviousStep }) {
+	render: function Render({ group, name, parkingLevels, onPreviousStep }) {
 		return (
 			<motion.div
 				initial={{
@@ -61,10 +65,20 @@ const ParkingLevelFieldGroup = withFieldGroup({
 				<group.AppField name="packingLevelId">
 					{(field) => (
 						<div>
-							<field.TextInput
+							<field.RadioGroup
+								aria-label="Pilih Lantai Parkir"
+								items={parkingLevels.map((level) => ({
+									label: level.name,
+									value: level.id.toString(),
+								}))}
+								buttonProps={{
+									size: "md",
+									className: cx(
+										"w-full cursor-pointer ring ring-gray-400 rounded-lg p-4 data-selected:ring-bg-brand-solid data-selected:ring-2 hover:ring-2 hover:ring-gray-300 transition text-lg font-medium",
+									),
+								}}
+								defaultValue={parkingLevels[0]?.id.toString()}
 								isRequired
-								label="Plat Nomor"
-								placeholder="Masukkan Plat Nomor Anda"
 								className="w-full"
 								size="md"
 							/>
