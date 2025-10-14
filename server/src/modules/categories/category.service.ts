@@ -1,20 +1,19 @@
-import { db } from "../../db";
-import { categoriesTable } from "../../db/schema";
-import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { createCategorySchema, updateCategorySchema } from "./category.schema";
+import categoryRepository from "./category.repository";
 import HttpError from "../common/exceptions/http.error";
+
+type createCategoryInput = z.infer<typeof createCategorySchema>;
+type updateCategoryInput = z.infer<typeof updateCategorySchema>;
 
 // Get all categories
 export const getAllCategories = async () => {
-    const categories = await db.query.categoriesTable.findMany();
-
-    return categories;
+    return await categoryRepository.findAll();
 };
 
 // Find category by ID
 export const findCategoryById = async (categoryId: number) => {
-    const category = await db.query.categoriesTable.findFirst({
-        where: eq(categoriesTable.id, categoryId)
-    });
+    const category = await categoryRepository.findById(categoryId);
 
     if (!category) throw new HttpError(404, "Category not found");
 
@@ -22,38 +21,22 @@ export const findCategoryById = async (categoryId: number) => {
 };
 
 // Create a category
-export const createCategory = async (name: string, weight: number, icon: string, thumbnail: string) => {
-    const [ newCategory ] = await db.insert(categoriesTable).values({
-        name,
-        weight: weight.toString(),
-        icon,
-        thumbnail
-    }).returning();
-
-    return newCategory;
+export const createCategory = async (categoryData: createCategoryInput) => {
+    return await categoryRepository.create(categoryData);
 };
 
 // Update a category
-export const updateCategory = async (categoryId: number, name: string, weight: number, icon: string, thumbnail: string) => {
+export const updateCategory = async (categoryId: number, categoryData: updateCategoryInput) => {
     await findCategoryById(categoryId);
 
-    const [ updatedCategory ] = await db.update(categoriesTable).set({
-        name,
-        weight: weight.toString(),
-        icon,
-        thumbnail
-    }).where(eq(categoriesTable.id, categoryId)).returning();
-
-    return updatedCategory;
+    return await categoryRepository.update(categoryId, categoryData);
 };
 
 // Delete a category
 export const deleteCategory = async (categoryId: number) => {
     await findCategoryById(categoryId);
 
-    const deletedCategory = await db.delete(categoriesTable).where(eq(categoriesTable.id, categoryId));
-
-    return deletedCategory;
+    return await categoryRepository.remove(categoryId);
 };
 
 export default { getAllCategories, findCategoryById, createCategory, updateCategory, deleteCategory };
