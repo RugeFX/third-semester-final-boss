@@ -29,9 +29,9 @@ export const getParkingLevelById = async (req: Request, res: Response) => {
 
 // Create a new parking level
 export const createParkingLevel = async (req: Request, res: Response) => {
-    const { name, maxWeight } = createParkingLevelSchema.parse(req.body);
+    const parkingLevelData = createParkingLevelSchema.parse(req.body);
 
-    const newParkingLevel = await parkingLevelService.createParkingLevel(name, maxWeight);
+    const newParkingLevel = await parkingLevelService.createParkingLevel(parkingLevelData);
 
     if (!newParkingLevel) throw new HttpError(500, "Failed to create parking level");
 
@@ -45,9 +45,9 @@ export const createParkingLevel = async (req: Request, res: Response) => {
 // Update a parking level
 export const updateParkingLevel = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
-    const { name, maxWeight } = updateParkingLevelSchema.parse(req.body);
+    const parkingLevelData = updateParkingLevelSchema.parse(req.body);
 
-    const updatedParkingLevel = await parkingLevelService.updateParkingLevel(id, name, maxWeight);
+    const updatedParkingLevel = await parkingLevelService.updateParkingLevel(id, parkingLevelData);
 
     if (!updatedParkingLevel) throw new HttpError(500, "Failed to update parking level");
 
