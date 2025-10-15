@@ -4,7 +4,7 @@ import { paramsSchema, createVehicleDetailSchema, updateVehicleDetailSchema } fr
 import HttpError from "../common/exceptions/http.error";
 
 // Get all vehicle details
-export const getAllVehicleDetails = async (req: Request, res: Response) => {
+export const getAllVehicleDetails = async (_req: Request, res: Response) => {
     const vehicleDetails = await vehicleDetailService.getAllVehicleDetails();
 
     res.status(200).json({
@@ -29,9 +29,9 @@ export const getVehicleDetailById = async (req: Request, res: Response) => {
 
 // Create a vehicle detail
 export const createVehicleDetail = async (req: Request, res: Response) => {
-    const { plateNumber, categoryId } = createVehicleDetailSchema.parse(req.body);
+    const vehicleDetailData = createVehicleDetailSchema.parse(req.body);
 
-    const newVehicleDetail = await vehicleDetailService.createVehicleDetail(plateNumber, categoryId);
+    const newVehicleDetail = await vehicleDetailService.createVehicleDetail(vehicleDetailData);
 
     if (!newVehicleDetail) throw new HttpError(500, "Failed to create vehicle detail");    
 
@@ -45,9 +45,9 @@ export const createVehicleDetail = async (req: Request, res: Response) => {
 // Update a vehicle detail
 export const updateVehicleDetail = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
-    const { plateNumber, categoryId } = updateVehicleDetailSchema.parse(req.body);
+    const vehicleDetailData = updateVehicleDetailSchema.parse(req.body);
 
-    const updatedVehicleDetail = await vehicleDetailService.updateVehicleDetail(id, plateNumber, categoryId);
+    const updatedVehicleDetail = await vehicleDetailService.updateVehicleDetail(id, vehicleDetailData);
 
     if (!updatedVehicleDetail) throw new HttpError(500, "Failed to update vehicle detail");
 
