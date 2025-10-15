@@ -33,7 +33,8 @@ function RouteComponent() {
 	const { mutateAsync: signInUser, isPending } = useLoginUser({
 		mutation: {
 			onSuccess: (data) => {
-				signIn(data.data.token, "user");
+				// TODO: fix roles
+				signIn({ token: data.data.token, type: "user", role: "member" });
 				router.invalidate().finally(() => {
 					router.navigate({ to: "/" });
 					toast.success(`Selamat datang di ${APP_NAME}!`);

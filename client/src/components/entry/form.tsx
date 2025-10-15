@@ -1,5 +1,6 @@
 import { useStore } from "@tanstack/react-form";
 import { useNavigate, useRouter } from "@tanstack/react-router";
+import { ChevronLeft } from "@untitledui/icons";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -46,6 +47,29 @@ const bannerItemVariants: Variants = {
 	},
 };
 
+const fieldGroupVariants: Variants = {
+	enter: (direction: number) => ({
+		x: direction > 0 ? "20%" : "-20%",
+		opacity: 0,
+	}),
+	animate: {
+		x: 0,
+		opacity: 1,
+		transition: {
+			duration: 0.3,
+			ease: "easeOut",
+		},
+	},
+	exit: (direction: number) => ({
+		x: direction < 0 ? "20%" : "-20%",
+		opacity: 0,
+		transition: {
+			duration: 0.3,
+			ease: "easeIn",
+		},
+	}),
+};
+
 const entryFormSchema = z.object({
 	categoryId: z
 		.number()
@@ -60,12 +84,14 @@ const entryFormSchema = z.object({
 
 type EntryForm = z.infer<typeof entryFormSchema>;
 
+const TOTAL_STEPS = 3;
+
+const MotionButton = motion.create(Button);
+
 interface EntryFormProps {
 	categories: Category[];
 	parkingLevels: ParkingLevel[];
 }
-
-const TOTAL_STEPS = 3;
 
 export default function EntryForm({
 	categories,
@@ -73,7 +99,9 @@ export default function EntryForm({
 }: EntryFormProps) {
 	const router = useRouter();
 	const navigate = useNavigate();
+
 	const [step, setStep] = useState(1);
+	const [direction, setDirection] = useState<1 | -1>(1);
 
 	const { signIn } = useAuthActions();
 
@@ -85,7 +113,7 @@ export default function EntryForm({
 				});
 			},
 			onSuccess: ({ data }) => {
-				signIn(data.access_code, "guest");
+				signIn({ token: data.access_code, type: "guest" });
 
 				router.invalidate().finally(() => {
 					navigate({
@@ -124,15 +152,18 @@ export default function EntryForm({
 		form.store,
 		(state) => state.values.categoryId,
 	);
+
 	const selectedCategory = categories.find(
 		(category) => category.id === selectedCategoryId,
 	);
 
 	const handleNextStep = () => {
+		setDirection(1);
 		if (step < TOTAL_STEPS) setStep((prev) => prev + 1);
 	};
 
 	const handlePreviousStep = () => {
+		setDirection(-1);
 		if (step > 1) setStep((prev) => prev - 1);
 	};
 
@@ -171,7 +202,24 @@ export default function EntryForm({
 			</motion.div>
 
 			<main className="flex flex-col gap-8 justify-center ml-auto max-w-lg">
-				<AnimatePresence mode="wait" initial={false}>
+				<AnimatePresence>
+					{step > 1 && !isSubmitting ? (
+						<MotionButton
+							key="back-button"
+							onClick={handlePreviousStep}
+							size="xl"
+							color="secondary"
+							className={"w-max aspect-square"}
+							initial={{ opacity: 0, x: -50 }}
+							animate={{ opacity: 1, x: 0 }}
+							exit={{ opacity: 0, x: -50 }}
+							transition={{ duration: 0.3, ease: "easeOut" }}
+							iconLeading={<ChevronLeft className="size-8" />}
+						/>
+					) : null}
+				</AnimatePresence>
+
+				<AnimatePresence mode="wait" initial={false} custom={direction}>
 					{isSubmitting ? (
 						<motion.div
 							className="flex flex-col gap-8 justify-center items-center text-center"
@@ -194,15 +242,18 @@ export default function EntryForm({
 							form={form}
 							fields={{ categoryId: "categoryId" }}
 							categories={categories}
+							variants={fieldGroupVariants}
+							direction={direction}
 						/>
 					) : step === 2 ? (
 						<ParkingLevelFieldGroup
 							key={2}
-							parkingLevels={parkingLevels}
 							form={form}
 							fields={{ packingLevelId: "parkingLevelId" }}
 							name={selectedCategory?.name}
-							onPreviousStep={handlePreviousStep}
+							parkingLevels={parkingLevels}
+							variants={fieldGroupVariants}
+							direction={direction}
 						/>
 					) : step === 3 ? (
 						<PlateNumberFieldGroup
@@ -210,7 +261,8 @@ export default function EntryForm({
 							form={form}
 							fields={{ plateNumber: "plateNumber" }}
 							name={selectedCategory?.name}
-							onPreviousStep={handlePreviousStep}
+							variants={fieldGroupVariants}
+							direction={direction}
 						/>
 					) : (
 						<div className="flex flex-col gap-8 justify-center">

@@ -1,5 +1,5 @@
 import { useStore } from "@tanstack/react-form";
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 
 import { Button } from "@/components/base/buttons/button";
 import { RemoteSVG } from "@/components/svg/remote-svg";
@@ -7,14 +7,22 @@ import type { Category } from "@/lib/api/models";
 import { withFieldGroup } from "@/lib/form";
 import { cx } from "@/lib/utils/cx";
 
+type CategoryFieldGroupProps = {
+	categories: Category[];
+	variants: Variants;
+	direction: 1 | -1;
+};
+
 const CategoryFieldGroup = withFieldGroup({
 	props: {
-		categories: [] as Category[],
-	},
+		categories: [],
+		variants: {},
+		direction: 1,
+	} as CategoryFieldGroupProps,
 	defaultValues: {
 		categoryId: null as number | null,
 	},
-	render: function Render({ group, categories }) {
+	render: function Render({ group, categories, variants, direction }) {
 		const categoryId = useStore(
 			group.store,
 			(state) => state.values.categoryId,
@@ -22,26 +30,11 @@ const CategoryFieldGroup = withFieldGroup({
 
 		return (
 			<motion.div
-				initial={{
-					x: "-20%",
-					opacity: 0,
-				}}
-				animate={{
-					x: 0,
-					opacity: 1,
-					transition: {
-						duration: 0.3,
-						ease: "easeOut",
-					},
-				}}
-				exit={{
-					x: "-20%",
-					opacity: 0,
-					transition: {
-						duration: 0.3,
-						ease: "easeIn",
-					},
-				}}
+				custom={direction}
+				variants={variants}
+				initial="enter"
+				animate="animate"
+				exit="exit"
 				className="flex flex-col gap-8 justify-center ml-auto max-w-lg"
 			>
 				<div className="space-y-4">
@@ -73,7 +66,7 @@ const CategoryFieldGroup = withFieldGroup({
 												className={cx(
 													"grid place-items-center **:transition-colors **:fill-gray-400 group-hover:**:fill-bg-brand-solid",
 													isSelected &&
-														"**:fill-gray-500 group-hover:**:fill-gray-600",
+													"**:fill-gray-500 group-hover:**:fill-gray-600",
 												)}
 											>
 												{icon && <RemoteSVG url={icon} className="*:size-14" />}

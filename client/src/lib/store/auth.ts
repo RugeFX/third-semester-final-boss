@@ -3,12 +3,19 @@ import { persist } from "zustand/middleware";
 
 /** TODO: still a bit iffy on the auth types */
 type AuthType = "user" | "guest";
+type AuthRole = "admin" | "member";
 
 export interface AuthStore {
 	token: string | null;
 	type: AuthType | null;
+	role: AuthRole | null;
 	actions: {
-		signIn: (token: string, type: AuthType) => void;
+		signIn: (
+			data: { token: string } & (
+				| { type: "guest"; role?: undefined }
+				| { type: "user"; role: AuthRole }
+			),
+		) => void;
 		signOut: () => void;
 	};
 }
@@ -16,6 +23,7 @@ export interface AuthStore {
 const initialState: Omit<AuthStore, "actions"> = {
 	token: null,
 	type: null,
+	role: null,
 };
 
 const authStore = create<AuthStore>()(
@@ -23,7 +31,7 @@ const authStore = create<AuthStore>()(
 		(set) => ({
 			...initialState,
 			actions: {
-				signIn: (token, type) => set({ token, type }),
+				signIn: ({ token, type, role }) => set({ token, type, role }),
 				signOut: () => set(initialState),
 			},
 		}),
@@ -37,6 +45,8 @@ const authStore = create<AuthStore>()(
 export const useAuthToken = () => useStore(authStore, (state) => state.token);
 export const useIsAuthenticated = () =>
 	useStore(authStore, (state) => !!state.token);
+export const useAuthType = () => useStore(authStore, (state) => state.type);
+export const useAuthRole = () => useStore(authStore, (state) => state.role);
 export const useAuthActions = () =>
 	useStore(authStore, (state) => state.actions);
 

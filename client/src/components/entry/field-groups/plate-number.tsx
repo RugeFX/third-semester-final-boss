@@ -1,12 +1,11 @@
-import { ChevronLeft } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 
-import { Button } from "@/components/base/buttons/button";
 import { withFieldGroup } from "@/lib/form";
 
 type PlateNumberFieldGroupProps = {
 	name?: string;
-	onPreviousStep: () => void;
+	variants: Variants;
+	direction: 1 | -1;
 };
 
 const PlateNumberFieldGroup = withFieldGroup({
@@ -15,40 +14,19 @@ const PlateNumberFieldGroup = withFieldGroup({
 	},
 	props: {
 		name: "Unknown",
-		onPreviousStep: () => {},
+		variants: {},
+		direction: 1,
 	} as PlateNumberFieldGroupProps,
-	render: function Render({ group, name, onPreviousStep }) {
+	render: function Render({ group, name, variants, direction }) {
 		return (
 			<motion.div
-				initial={{
-					x: "20%",
-					opacity: 0,
-				}}
-				animate={{
-					x: 0,
-					opacity: 1,
-					transition: {
-						duration: 0.3,
-						ease: "easeOut",
-					},
-				}}
-				exit={{
-					x: "20%",
-					opacity: 0,
-					transition: {
-						duration: 0.3,
-						ease: "easeIn",
-					},
-				}}
+				custom={direction}
+				variants={variants}
+				initial="enter"
+				animate="animate"
+				exit="exit"
 				className="flex flex-col gap-8 justify-center ml-auto max-w-lg"
 			>
-				<Button
-					onClick={onPreviousStep}
-					size="xl"
-					color="secondary"
-					className="w-max aspect-square"
-					iconLeading={<ChevronLeft className="size-8" />}
-				/>
 				<div className="space-y-4">
 					<h1 className="text-5xl font-bold">
 						Parkir {name?.toLowerCase()} ya!

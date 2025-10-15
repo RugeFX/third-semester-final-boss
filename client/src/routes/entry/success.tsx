@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Copy01 } from "@untitledui/icons";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { toast } from "sonner";
@@ -46,11 +46,12 @@ export const Route = createFileRoute("/entry/success")({
 	errorComponent: ErrorComponent,
 	pendingComponent: PendingComponent,
 	loader: ({ context }) => {
-		const accessCode = context.auth.token;
-		if (!accessCode) {
-			console.error("Access code is missing in success page");
-			toast.error("Anda harus melakukan proses entry terlebih dahulu.");
-			throw notFound();
+		const { token: accessCode, type } = context.auth;
+		if (!accessCode || type !== "guest") {
+			toast.error("Akses ditolak", {
+				description: "Anda belum melakukan proses registrasi.",
+			});
+			throw redirect({ to: "/entry" });
 		}
 
 		context.queryClient.ensureQueryData(

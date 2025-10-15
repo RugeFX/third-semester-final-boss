@@ -1,7 +1,5 @@
-import { ChevronLeft } from "@untitledui/icons";
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 
-import { Button } from "@/components/base/buttons/button";
 import type { ParkingLevel } from "@/lib/api/models";
 import { withFieldGroup } from "@/lib/form";
 import { cx } from "@/lib/utils/cx";
@@ -9,7 +7,8 @@ import { cx } from "@/lib/utils/cx";
 type ParkingLevelFieldGroupProps = {
 	name?: string;
 	parkingLevels: ParkingLevel[];
-	onPreviousStep: () => void;
+	variants: Variants;
+	direction: 1 | -1;
 };
 
 const ParkingLevelFieldGroup = withFieldGroup({
@@ -19,40 +18,19 @@ const ParkingLevelFieldGroup = withFieldGroup({
 	props: {
 		name: "Unknown",
 		parkingLevels: [],
-		onPreviousStep: () => {},
+		variants: {},
+		direction: 1,
 	} as ParkingLevelFieldGroupProps,
-	render: function Render({ group, name, parkingLevels, onPreviousStep }) {
+	render: function Render({ group, name, parkingLevels, variants, direction }) {
 		return (
 			<motion.div
-				initial={{
-					x: "20%",
-					opacity: 0,
-				}}
-				animate={{
-					x: 0,
-					opacity: 1,
-					transition: {
-						duration: 0.3,
-						ease: "easeOut",
-					},
-				}}
-				exit={{
-					x: "20%",
-					opacity: 0,
-					transition: {
-						duration: 0.3,
-						ease: "easeIn",
-					},
-				}}
+				custom={direction}
+				variants={variants}
+				initial="enter"
+				animate="animate"
+				exit="exit"
 				className="flex flex-col gap-8 justify-center ml-auto max-w-lg"
 			>
-				<Button
-					onClick={onPreviousStep}
-					size="xl"
-					color="secondary"
-					className="w-max aspect-square"
-					iconLeading={<ChevronLeft className="size-8" />}
-				/>
 				<div className="space-y-4">
 					<h1 className="text-5xl font-bold">
 						Parkir {name?.toLowerCase()} ya!
@@ -77,7 +55,7 @@ const ParkingLevelFieldGroup = withFieldGroup({
 										"w-full cursor-pointer ring ring-gray-400 rounded-lg p-4 data-selected:ring-bg-brand-solid data-selected:ring-2 hover:ring-2 hover:ring-gray-300 transition text-lg font-medium",
 									),
 								}}
-								defaultValue={parkingLevels[0]?.id.toString()}
+								defaultValue={parkingLevels[0].id.toString()}
 								isRequired
 								className="w-full"
 								size="md"
