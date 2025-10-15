@@ -1,27 +1,21 @@
-import { db } from "../../db";
-import { eq } from "drizzle-orm";
-import { membersTable } from "../../db/schema";
 import HttpError from "../common/exceptions/http.error";
+import { createMemberSchema, updateMemberSchema } from "./member.schema";
+import memberRepository from "./member.repository";
+import { z } from "zod";
+
+type createMemberInput = z.infer<typeof createMemberSchema>;
+type updateMemberInput = z.infer<typeof updateMemberSchema>;
 
 // Get all members
 export const getAllMembers = async () => {
-    const members = await db.query.membersTable.findMany({
-        with: {
-            user: true
-        }
-    });
+    const members = await memberRepository.findAll();
 
     return members;
 };
 
 // Get member by ID
 export const findMemberById = async (id: number) => {
-    const member = await db.query.membersTable.findFirst({
-        where: eq(membersTable.id, id),
-        with: {
-            user: true
-        }
-    });
+    const member = await memberRepository.findById(id);
 
     if (!member) throw new HttpError(404, "Member not found");
 
@@ -43,32 +37,22 @@ export const findMemberById = async (id: number) => {
 // };
 
 // Create a new member
-export const createMember = async (joinedAt: Date, endedAt: Date, userId: number) => {
-    const [ newMember ] = await db.insert(membersTable).values({ 
-        joined_at: joinedAt, ended_at: endedAt, user_id: userId 
-    }).returning();
-
-    return newMember;
+export const createMember = async (memberData: createMemberInput) => {
+    return await memberRepository.create(memberData);
 };
 
 // Update a member
-export const updateMember = async (memberId: number, endedAt: Date) => {
+export const updateMember = async (memberId: number, memberData: updateMemberInput) => {
     await findMemberById(memberId);
 
-    const [ updatedMember ] = await db.update(membersTable).set({ 
-        ended_at: endedAt 
-    }).where(eq(membersTable.id, memberId)).returning();
-
-    return updatedMember;
+    return await memberRepository.update(memberId, memberData);
 };
 
 // Delete a member
 export const deleteMember = async (memberId: number) => {
     await findMemberById(memberId);
 
-    const deletedMember = await db.delete(membersTable).where(eq(membersTable.id, memberId));
-
-    return deletedMember;
+    return await memberRepository.remove(memberId);
 };
 
 export default { getAllMembers, findMemberById, createMember, updateMember, deleteMember };
