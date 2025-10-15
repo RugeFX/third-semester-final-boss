@@ -29,17 +29,9 @@ export const getPriceById = async (req: Request, res: Response) => {
 
 // Create a new price
 export const createPrice = async (req: Request, res: Response) => {
-    const { amount, categoryId, type, blockHours, isActive, validFrom, validUntil } = createPriceSchema.parse(req.body);
+    const priceData = createPriceSchema.parse(req.body);
 
-    const newPrice = await priceService.createPrice(
-        amount, 
-        categoryId,
-        type,
-        blockHours,
-        isActive,
-        validFrom,
-        validUntil
-    );
+    const newPrice = await priceService.createPrice(priceData);
 
     if (!newPrice) throw new HttpError(500, "Failed to create price");
 
@@ -53,18 +45,9 @@ export const createPrice = async (req: Request, res: Response) => {
 // Update a price
 export const updatePrice = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
-    const { amount, categoryId, type, blockHours, isActive, validFrom, validUntil } = updatePriceSchema.parse(req.body);
+    const priceData = updatePriceSchema.parse(req.body);
 
-    const updatedPrice = await priceService.updatePrice(
-        id, 
-        amount, 
-        categoryId,
-        type,
-        blockHours,
-        isActive,
-        validFrom,
-        validUntil
-    );
+    const updatedPrice = await priceService.updatePrice(id, priceData);
 
     if (!updatedPrice) throw new HttpError(500, "Failed to update price");
 
