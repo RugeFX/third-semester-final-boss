@@ -34,9 +34,9 @@ export const getUserById = async (req: Request, res: Response) => {
 
 // Create a new user
 export const createUser = async (req: Request, res: Response) => {
-    const { fullname, username, password, role } = createUserSchema.parse(req.body);
+    const userData = createUserSchema.parse(req.body);
 
-    const newUser = await userService.createUser(fullname, username, password, role);
+    const newUser = await userService.createUser(userData);
 
     if (!newUser) throw new HttpError(500, "Failed to create user");
 
@@ -50,9 +50,9 @@ export const createUser = async (req: Request, res: Response) => {
 // Update a user
 export const updateUser = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
-    const { fullname, username, role } = updateUserSchema.parse(req.body);
+    const userData = updateUserSchema.parse(req.body);
 
-    const updatedUser = await userService.updateUser(id, fullname, username, role);
+    const updatedUser = await userService.updateUser(id, userData);
 
     if (!updatedUser) throw new HttpError(500, "Failed to update user");
 

@@ -1,20 +1,19 @@
-import { db } from "../../db";
 import HttpError from "../common/exceptions/http.error";
-import { eq } from "drizzle-orm";
-import { Role, usersTable } from "../../db/schema";
+import userRepository from "./user.repository";
+import { createUserSchema, updateUserSchema } from "./user.schema";
+import { z } from "zod";
+
+type createUserInput = z.infer<typeof createUserSchema>;
+type updateUserInput = z.infer<typeof updateUserSchema>;
 
 // Get all users
 export const getAllUsers = async () => {
-    const users = await db.query.usersTable.findMany();
-
-    return users;
+    return await userRepository.findAll();
 };
 
 // Find user by ID
 export const findUserById = async (userId: number) => {
-    const user = await db.query.usersTable.findFirst({
-        where: eq(usersTable.id, userId),
-    });
+    const user = await userRepository.findById(userId);
 
     if (!user) throw new HttpError(404, "User not found");
 
@@ -22,32 +21,22 @@ export const findUserById = async (userId: number) => {
 };
 
 // Create a new user
-export const createUser = async (fullname: string, username: string, password: string, role: Role) => {
-    const [newUser] = await db.insert(usersTable).values({
-        fullname, username, password, role
-    }).returning();
-
-    return newUser;
+export const createUser = async (userData: createUserInput) => {
+    return await userRepository.create(userData);
 };
 
 // Update a user
-export const updateUser = async (userId: number, fullname: string, username: string, role: Role) => {
+export const updateUser = async (userId: number, userData: updateUserInput) => {
     await findUserById(userId);
 
-    const [updatedUser] = await db.update(usersTable).set({
-        fullname, username, role
-    }).where(eq(usersTable.id, userId)).returning();
-
-    return updatedUser;
+    return await userRepository.update(userId, userData);
 };
 
 // Delete a user
 export const deleteUser = async (userId: number) => {
     await findUserById(userId);
 
-    const deletedUser = await db.delete(usersTable).where(eq(usersTable.id, userId));
-
-    return deletedUser;
+    return await userRepository.remove(userId);
 };
 
 export default { getAllUsers, findUserById, createUser, updateUser, deleteUser };
