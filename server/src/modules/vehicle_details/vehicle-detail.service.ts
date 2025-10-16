@@ -1,8 +1,11 @@
+import { db } from "../../db";
 import HttpError from "../common/exceptions/http.error";
 import vehicleDetailRepository from "./vehicle-detail.repository";
 import { createVehicleDetailSchema, updateVehicleDetailSchema } from "./vehicle-detail.schema";
 import categoryService from "../categories/category.service";
 import { z } from "zod";
+
+type TransactionDB = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 type createVehicleDetailInput = z.infer<typeof createVehicleDetailSchema>;
 type updateVehicleDetailInput = z.infer<typeof updateVehicleDetailSchema>;
@@ -21,25 +24,11 @@ export const findVehicleDetailById = async (vehicleDetailId: number) => {
     return vehicleDetail;
 };
 
-// Find vehicle detail by plate number
-// export const findVehicleDetailByPlateNumber = async (plate_number: string) => {
-//     const vehicleDetail = await db.query.vehicleDetailsTable.findFirst({
-//         where: eq(vehicleDetailsTable.plate_number, plate_number),
-//         with: {
-//             category: true
-//         }
-//     });
-
-//     if (!vehicleDetail) throw new HttpError(404, "Vehicle detail not found");
-
-//     return vehicleDetail;
-// };
-
 // Create a new vehicle detail
-export const createVehicleDetail = async (vehicleDetailData: createVehicleDetailInput) => {
+export const createVehicleDetail = async (vehicleDetailData: createVehicleDetailInput, tx?: TransactionDB) => {
     await categoryService.findCategoryById(vehicleDetailData.categoryId);
 
-    return await vehicleDetailRepository.create(vehicleDetailData);
+    return await vehicleDetailRepository.create(vehicleDetailData, tx);
 };
 
 // Update a vehicle detail

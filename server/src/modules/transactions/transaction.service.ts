@@ -1,10 +1,24 @@
 import { db } from "../../db";
-import { eq, InferSelectModel } from "drizzle-orm";
-import { Status, transactionsTable, vehicleDetailsTable, categoriesTable } from "../../db/schema";
+import { InferSelectModel } from "drizzle-orm";
+import { generateShortCode } from "../common/utils/generate-short-code";
 import HttpError from "../common/exceptions/http.error";
-import priceService from "../prices/price.service";
+import { z } from "zod";
 
-// Define types for better clarity
+import categoryService from "../categories/category.service";
+import parkingLevelService from "../parking_levels/parking-level.service";
+import vehicleDetailService from "../vehicle_details/vehicle-detail.service";
+import transactionRepository from "./transaction.repository";
+import priceRepository from "../prices/price.repository";
+import { transactionsTable, vehicleDetailsTable, categoriesTable } from "../../db/schema";
+import { createTransactionSchema, updateTransactionSchema, processPaymentSchema, entryTransactionSchema } from "./transaction.schema";
+
+// Define types for input schemas
+type createTransactionInput = z.infer<typeof createTransactionSchema>;
+type entryTransactionInput = z.infer<typeof entryTransactionSchema>;
+type processPaymentInput = z.infer<typeof processPaymentSchema>;
+type updateTransactionInput = z.infer<typeof updateTransactionSchema>;
+
+// Define types for database models
 type Transaction = InferSelectModel<typeof transactionsTable>;
 type VehicleDetail = InferSelectModel<typeof vehicleDetailsTable>;
 type Category = InferSelectModel<typeof categoriesTable>;
@@ -16,29 +30,44 @@ export type TransactionWithDetails = Transaction & {
   };
 };
 
+type TransactionDB = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
+
+/**
+ * Helper function to generate a unique access code by checking against the database.
+ * It will retry up to 10 times before throwing an error.
+ * @param {TransactionDB} tx - The Drizzle transaction instance.
+ * @returns {Promise<string>} A unique access code.
+ */
+const generateUniqueAccessCode = async (tx: TransactionDB): Promise<string> => {
+    let retries = 0;
+    const maxRetries = 10;
+
+    while (retries < maxRetries) {
+        const candidateCode = generateShortCode();
+        
+        // Check if the generated code already exists in the database
+        const existingTransaction = await transactionRepository.findByAccessCode(candidateCode, tx);
+
+        if (!existingTransaction) {
+            // If the code is unique, return it
+            return candidateCode;
+        }
+
+        retries++;
+    }
+
+    // If the loop completes without finding a unique code, throw an error
+    throw new HttpError(500, "Failed to generate a unique access code after several attempts.");
+};
+
 // Get all transactions
 export const getAllTransactions = async () => {
-    const transactions = await db.query.transactionsTable.findMany({
-        with: {
-            user: true,
-            vehicleDetail: true,
-            parkingLevel: true,
-        },
-    });
-
-    return transactions;
+    return await transactionRepository.findAll();
 };
 
 // Get transaction by ID
 export const getTransactionById = async (transactionId: number) => {
-    const transaction = await db.query.transactionsTable.findFirst({
-        where: eq(transactionsTable.id, transactionId),
-        with: {
-            user: true,
-            vehicleDetail: true,
-            parkingLevel: true
-        }
-    });
+    const transaction = await transactionRepository.findById(transactionId);
 
     if (!transaction) throw new HttpError(404, "Transaction not found");
 
@@ -47,18 +76,7 @@ export const getTransactionById = async (transactionId: number) => {
 
 // Get transaction by Access Code
 export const getTransactionByAccessCode = async (accessCode: string): Promise<TransactionWithDetails> => {
-    const transaction = await db.query.transactionsTable.findFirst({
-        where: eq(transactionsTable.access_code, accessCode),
-        with: {
-            user: true,
-            vehicleDetail: {
-                with: {
-                    category: true
-                }
-            },
-            parkingLevel: true
-        }
-    });
+    const transaction = await transactionRepository.findByAccessCode(accessCode);
 
     if (!transaction) throw new HttpError(404, "Transaction not found");
 
@@ -66,36 +84,47 @@ export const getTransactionByAccessCode = async (accessCode: string): Promise<Tr
 };
 
 // Create a new transaction
-export const createTransaction = async (status: Status, paid_amount: number, access_code: string, user_id: number | null | undefined, vehicle_detail_id: number, parking_level_id: number) => {
-    const [newTransaction] = await db.insert(transactionsTable).values({
-        status,
-        paid_amount: paid_amount.toString(),
-        access_code,
-        user_id,
-        vehicle_detail_id,
-        parking_level_id,
-        created_at: new Date(),
-        updated_at: new Date(),
-    }).returning();
-
-    return newTransaction;
+export const createTransaction = async (transactionData: createTransactionInput) => {
+    return await transactionRepository.create(transactionData);
 };
 
+export const createEntryTransaction = async (entryData: entryTransactionInput) => {
+    const newTransactionResult = await db.transaction(async (tx) => {
+        await categoryService.findCategoryById(entryData.categoryId);
+        await parkingLevelService.findParkingLevelById(entryData.parkingLevelId);
+
+        const newVehicleDetail = await vehicleDetailService.createVehicleDetail({
+            plateNumber: entryData.plateNumber,
+            categoryId: entryData.categoryId
+        }, tx);
+
+        // Handle potential failure in vehicle detail creation
+        if (!newVehicleDetail) {
+            throw new HttpError(500, "Failed to create vehicle detail");
+        }
+
+        // Generate a unique access code
+        const accessCode = await generateUniqueAccessCode(tx);
+
+        const newTransaction = await transactionRepository.create({
+            status: "ENTRY",
+            accessCode: accessCode,
+            userId: entryData.userId,
+            vehicleDetailId: newVehicleDetail.id,
+            parkingLevelId: entryData.parkingLevelId
+        }, tx);
+
+        return newTransaction;
+    });
+
+    return newTransactionResult;
+}
+
 // Update a transaction
-export const updateTransaction = async (transactionId: number, status: Status, paid_amount: number, access_code: string, user_id: number, vehicle_detail_id: number, parking_level_id: number) => {
-    await getTransactionById(transactionId);
+export const updateTransaction = async (accessCode: string, transactionData: updateTransactionInput) => {
+    await getTransactionByAccessCode(accessCode);
 
-    const [updatedTransaction] = await db.update(transactionsTable).set({
-        status,
-        paid_amount: paid_amount.toString(),
-        access_code,
-        user_id,
-        vehicle_detail_id,
-        parking_level_id,
-        updated_at: new Date(),
-    }).where(eq(transactionsTable.id, transactionId)).returning();
-
-    return updatedTransaction;
+    return await transactionRepository.update(accessCode, transactionData);
 };
 
 // Calculate parking fee based on duration and pricing rules
@@ -108,10 +137,10 @@ export const calculateParkingFee = async (transaction: TransactionWithDetails) =
     const categoryId = transaction.vehicleDetail.category.id;
 
     // Fetch initial block price details for the category
-    const initialBlockPriceData = await priceService.findActivePriceByCategoryAndType(categoryId, 'INITIAL_BLOCK');
+    const initialBlockPriceData = await priceRepository.findActivePriceByCategoryAndType(categoryId, 'INITIAL_BLOCK');
     
     // Fetch subsequent hour price details for the category
-    const subsequentHourPriceData = await priceService.findActivePriceByCategoryAndType(categoryId, 'SUBSEQUENT_HOUR');
+    const subsequentHourPriceData = await priceRepository.findActivePriceByCategoryAndType(categoryId, 'SUBSEQUENT_HOUR');
 
     console.log(initialBlockPriceData, subsequentHourPriceData);
 
@@ -147,52 +176,52 @@ export const calculateParkingFee = async (transaction: TransactionWithDetails) =
 }
 
 // Process payment for a transaction
-export const processTransactionPayment = async (access_code: string, paid_amount: number) => {
-    const transaction = await getTransactionByAccessCode(access_code);
+export const processTransactionPayment = async (accessCode: string, paymentData: processPaymentInput) => {
+    const transaction = await getTransactionByAccessCode(accessCode);
 
     // Validate transaction status
     if (transaction.status !== "ENTRY") {
         throw new HttpError(400, "Transaction is not in ENTRY status");
     }
 
-    // Important!
-    // if (transaction.paid_amount !== null) {
-    //     throw new HttpError(409, "Transaction has already been paid");
-    // }
+    // Check if already paid even though status is ENTRY and paid_amount is zero
+    if (transaction.paid_amount !== null) {
+        throw new HttpError(409, "Transaction has already been paid");
+    }
 
     let totalFee = await calculateParkingFee(transaction);
 
     // Validate payment amount
-    if (paid_amount < totalFee) {
+    if (paymentData.paidAmount < totalFee) {
         throw new HttpError(400, "Pembayaran tidak mencukupi, total yang harus dibayar adalah " + totalFee);
     }
 
-    const [ processedTransaction ] = await db.update(transactionsTable).set({
-        paid_amount: paid_amount.toString(),
-    }).where(eq(transactionsTable.access_code, access_code)).returning();
-
-    return processedTransaction;
+    return await transactionRepository.updatePaidAmount(accessCode, paymentData.paidAmount);
 }
 
 
-// Update a transaction to EXIT
-export const updateTransactionToExit = async (access_code: string) => {
-    await getTransactionByAccessCode(access_code);
+// Update transaction status to EXIT
+export const updateTransactionToExit = async (accessCode: string) => {
+    const transaction = await getTransactionByAccessCode(accessCode);
 
-    const [updatedTransactionExit] = await db.update(transactionsTable).set({
-        status: "EXIT",
-    }).where(eq(transactionsTable.access_code, access_code)).returning();
+    if (transaction.status === "EXIT") {
+        throw new HttpError(400, "Transaction has already been completed.");
+    }
 
-    return updatedTransactionExit;
+    if (transaction.paid_amount === null) {
+        throw new HttpError(400, "Transaction has not been paid yet.");
+    }
+
+    return await transactionRepository.updateToExit(accessCode);
 };
 
 // Delete a transaction
-export const deleteTransaction = async (transactionId: number) => {
-    await getTransactionById(transactionId);
+export const deleteTransaction = async (accessCode: string) => {
+    await getTransactionByAccessCode(accessCode);
 
-    const deletedTransaction = await db.delete(transactionsTable).where(eq(transactionsTable.id, transactionId));
+    const deletedTransaction = await transactionRepository.remove(accessCode);
 
     return deletedTransaction;
 };
 
-export default { getAllTransactions, getTransactionById, getTransactionByAccessCode, createTransaction, processTransactionPayment, updateTransaction, updateTransactionToExit, deleteTransaction };
+export default { getAllTransactions, getTransactionById, getTransactionByAccessCode, createTransaction, createEntryTransaction, processTransactionPayment, updateTransaction, updateTransactionToExit, deleteTransaction };
