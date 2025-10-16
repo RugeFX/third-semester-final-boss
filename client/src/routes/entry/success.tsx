@@ -7,7 +7,11 @@ import entryBackground from "@/assets/entry-banner-bg.png";
 import { Button } from "@/components/base/buttons/button";
 import { InputBase } from "@/components/base/input/input";
 import { PinInput } from "@/components/base/pin-input/pin-input";
-import { useGetCategoryByIdSuspense } from "@/lib/api/categories/categories";
+import { RemoteSVG } from "@/components/svg/remote-svg";
+import {
+	getGetCategoryByIdSuspenseQueryOptions,
+	useGetCategoryByIdSuspense,
+} from "@/lib/api/categories/categories";
 import {
 	getGetGuestTransactionByAccessCodeQueryOptions,
 	useGetGuestTransactionByAccessCodeSuspense,
@@ -44,8 +48,7 @@ const bannerItemVariants: Variants = {
 export const Route = createFileRoute("/entry/success")({
 	component: RouteComponent,
 	errorComponent: ErrorComponent,
-	pendingComponent: PendingComponent,
-	loader: ({ context }) => {
+	beforeLoad: ({ context }) => {
 		const { token: accessCode, type } = context.auth;
 		if (!accessCode || type !== "guest") {
 			toast.error("Akses ditolak", {
@@ -54,17 +57,22 @@ export const Route = createFileRoute("/entry/success")({
 			throw redirect({ to: "/entry" });
 		}
 
-		context.queryClient.ensureQueryData(
+		return { accessCode };
+	},
+	loader: async ({ context }) => {
+		const { accessCode } = context;
+
+		const { data } = await context.queryClient.ensureQueryData(
 			getGetGuestTransactionByAccessCodeQueryOptions(accessCode),
+		);
+
+		await context.queryClient.ensureQueryData(
+			getGetCategoryByIdSuspenseQueryOptions(data.vehicleDetail.category_id),
 		);
 
 		return { accessCode };
 	},
 });
-
-function PendingComponent() {
-	return <div>Loading...</div>;
-}
 
 function ErrorComponent() {
 	return <div>Error</div>;
@@ -86,19 +94,21 @@ function RouteComponent() {
 		},
 	);
 
-	console.log(vehicleDetail, parkingLevel, category);
-
 	const onCopyAccessCode = () => {
 		navigator.clipboard.writeText(accessCode).then(() => {
-			toast.success("Kode akses berhasil disalin!", {
+			const id = toast.success("Kode akses berhasil disalin!", {
 				description:
 					"Anda dapat menggunakan kode akses ini untuk melihat status kendaraan anda.",
 				action: (
-					<Button size="sm" className="flex-1">
+					<Button
+						size="sm"
+						className="flex-1"
+						to="/check"
+						onClick={() => toast.dismiss(id)}
+					>
 						Cek Status
 					</Button>
 				),
-				position: "top-center",
 			});
 		});
 	};
@@ -121,13 +131,13 @@ function RouteComponent() {
 				}}
 			>
 				<div className="absolute inset-0 pt-12 pl-12 z-2">
-					<h2 className="text-5xl font-bold">{selectedCategory.name}</h2>
+					<h2 className="text-5xl font-bold">{category.name}</h2>
 				</div>
 				<AnimatePresence>
 					<motion.img
-						key={selectedCategory.id}
+						key={category.id}
 						className="object-contain object-right-bottom absolute top-0 left-0 w-full h-full z-1"
-						src={selectedCategory.image}
+						src={category.thumbnail}
 						variants={bannerItemVariants}
 					/>
 				</AnimatePresence>
@@ -147,8 +157,8 @@ function RouteComponent() {
 						size="xl"
 						className="flex-1 w-full h-26 max-w-24 group disabled:cursor-default disabled:opacity-100"
 					>
-						<selectedCategory.icon className="size-14" />
-						<span className="sr-only">{selectedCategory.name}</span>
+						{!!category.icon && <RemoteSVG url={category.icon} />}
+						<span className="sr-only">{category.name}</span>
 					</Button>
 
 					<div className="flex flex-col flex-1 gap-2 justify-between">
@@ -157,8 +167,8 @@ function RouteComponent() {
 							size="xl"
 							wrapperClassName="flex-1 h-full bg-gray-500"
 							inputClassName="text-primary pointer-events-none"
-							value={selectedCategory.name}
-							isDisabled
+							value={category.name}
+							isReadOnly
 						/>
 					</div>
 
@@ -168,18 +178,17 @@ function RouteComponent() {
 							size="xl"
 							wrapperClassName="flex-1 h-full bg-gray-500"
 							inputClassName="text-primary pointer-events-none"
-							value={plateNumber}
-							isDisabled
+							value={vehicleDetail.plate_number}
+							isReadOnly
 						/>
 					</div>
 				</div>
 
 				<div className="space-y-2 w-full">
-					<PinInput size="lg" disabled className="w-full">
+					<PinInput size="lg" className="w-full">
 						<PinInput.Group
 							maxLength={6}
 							value={accessCode}
-							disabled
 							readOnly
 							inputClassName="disabled:cursor-default"
 						>
