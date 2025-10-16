@@ -66,7 +66,7 @@ const CategoryFieldGroup = withFieldGroup({
 												className={cx(
 													"grid place-items-center **:transition-colors **:fill-gray-400 group-hover:**:fill-bg-brand-solid",
 													isSelected &&
-													"**:fill-gray-500 group-hover:**:fill-gray-600",
+														"**:fill-gray-500 group-hover:**:fill-gray-600",
 												)}
 											>
 												{icon && <RemoteSVG url={icon} className="*:size-14" />}

@@ -103,19 +103,19 @@ function PasswordInput({ groupProps, inputProps }: FormInputGroupProps) {
 interface FormRadioGroupProps extends Omit<RadioGroupProps, "children"> {
 	items: {
 		label: string;
-		value: string;
+		value: string | number;
 		hint?: string;
 	}[];
 	buttonProps?: Omit<RadioButtonProps, "label" | "value" | "hint">;
 }
 
 function RadioGroup({ items, buttonProps, ...props }: FormRadioGroupProps) {
-	const field = useFieldContext<string>();
+	const field = useFieldContext<string | number>();
 
 	return (
 		<BaseRadioGroup
 			name={field.name}
-			value={field.state.value}
+			value={String(field.state.value)}
 			onChange={field.handleChange}
 			onBlur={field.handleBlur}
 			isInvalid={field.state.meta.errors.length > 0}
@@ -126,7 +126,7 @@ function RadioGroup({ items, buttonProps, ...props }: FormRadioGroupProps) {
 					key={item.value}
 					label={item.label}
 					hint={item.hint}
-					value={item.value}
+					value={String(item.value)}
 					{...buttonProps}
 				/>
 			))}

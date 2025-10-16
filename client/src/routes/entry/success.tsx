@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Copy01 } from "@untitledui/icons";
 import { AnimatePresence, motion, type Variants } from "motion/react";
+import { Fragment } from "react";
 import { toast } from "sonner";
 
 import entryBackground from "@/assets/entry-banner-bg.png";
@@ -33,7 +34,7 @@ const bannerContainerVariants: Variants = {
 const bannerItemVariants: Variants = {
 	initial: {
 		opacity: 1,
-		x: "100%",
+		x: "400%",
 	},
 	animate: {
 		opacity: 1,
@@ -49,28 +50,29 @@ export const Route = createFileRoute("/entry/success")({
 	component: RouteComponent,
 	errorComponent: ErrorComponent,
 	beforeLoad: ({ context }) => {
-		const { token: accessCode, type } = context.auth;
-		if (!accessCode || type !== "guest") {
+		const { token, user } = context.auth;
+		// TODO: maybe revisit this logic later
+		if (!token || user?.type !== "guest") {
 			toast.error("Akses ditolak", {
 				description: "Anda belum melakukan proses registrasi.",
 			});
 			throw redirect({ to: "/entry" });
 		}
 
-		return { accessCode };
+		return { token };
 	},
 	loader: async ({ context }) => {
-		const { accessCode } = context;
+		const { token } = context;
 
 		const { data } = await context.queryClient.ensureQueryData(
-			getGetGuestTransactionByAccessCodeQueryOptions(accessCode),
+			getGetGuestTransactionByAccessCodeQueryOptions(token),
 		);
 
 		await context.queryClient.ensureQueryData(
 			getGetCategoryByIdSuspenseQueryOptions(data.vehicleDetail.category_id),
 		);
 
-		return { accessCode };
+		return { accessCode: token };
 	},
 });
 
@@ -136,7 +138,7 @@ function RouteComponent() {
 				<AnimatePresence>
 					<motion.img
 						key={category.id}
-						className="object-contain object-right-bottom absolute top-0 left-0 w-full h-full z-1"
+						className="object-contain object-right-bottom absolute top-20 left-0 size-full scale-120 z-1"
 						src={category.thumbnail}
 						variants={bannerItemVariants}
 					/>
@@ -187,36 +189,24 @@ function RouteComponent() {
 				<div className="space-y-2 w-full">
 					<PinInput size="lg" className="w-full">
 						<PinInput.Group
-							maxLength={6}
+							maxLength={accessCode.length}
 							value={accessCode}
 							readOnly
 							inputClassName="disabled:cursor-default"
 						>
-							<PinInput.Slot
-								index={0}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Slot
-								index={1}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Slot
-								index={2}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Separator className="text-gray-400" />
-							<PinInput.Slot
-								index={3}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Slot
-								index={4}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Slot
-								index={5}
-								className="w-full bg-gray-500 text-primary"
-							/>
+							{Array(accessCode.length)
+								.fill(0)
+								.map((_, i) => (
+									<Fragment key={`slot-${i + 1}`}>
+										{i === Math.floor(accessCode.length / 2) && (
+											<PinInput.Separator className="text-gray-400" />
+										)}
+										<PinInput.Slot
+											index={i}
+											className="w-full bg-gray-500 text-primary ring-0 data-focused:bg-primary_hover"
+										/>
+									</Fragment>
+								))}
 						</PinInput.Group>
 					</PinInput>
 

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import EntryForm from "@/components/entry/form";
 import {
@@ -16,6 +16,12 @@ export const Route = createFileRoute("/entry/")({
 	head: () => ({
 		meta: [routeTitle("Masuk Kendaraan")],
 	}),
+	beforeLoad: ({ context }) => {
+		if (context.auth.token)
+			throw redirect({
+				to: "/",
+			});
+	},
 	loader: ({ context }) => {
 		context.queryClient
 			.ensureQueryData(getListCategoriesQueryOptions())

@@ -7,7 +7,6 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import LoadingIndicator from "@/components/base/loading-indicator";
 import { Toaster } from "@/components/base/toast";
 import type { AuthStore } from "@/lib/store/auth";
 import { routeTitle } from "@/lib/utils/title";

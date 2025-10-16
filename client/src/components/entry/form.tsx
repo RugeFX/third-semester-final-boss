@@ -103,7 +103,7 @@ export default function EntryForm({
 	const [step, setStep] = useState(1);
 	const [direction, setDirection] = useState<1 | -1>(1);
 
-	const { signIn } = useAuthActions();
+	const { signInAsGuest } = useAuthActions();
 
 	const { mutateAsync } = useCreateEntryTransaction({
 		mutation: {
@@ -113,7 +113,7 @@ export default function EntryForm({
 				});
 			},
 			onSuccess: ({ data }) => {
-				signIn({ token: data.access_code, type: "guest" });
+				signInAsGuest(data.access_code);
 
 				router.invalidate().finally(() => {
 					navigate({
@@ -134,6 +134,7 @@ export default function EntryForm({
 			onChange: entryFormSchema,
 		},
 		onSubmit: async ({ value }) => {
+			// TODO: should remove this at some point
 			await wait(3000);
 
 			await mutateAsync({

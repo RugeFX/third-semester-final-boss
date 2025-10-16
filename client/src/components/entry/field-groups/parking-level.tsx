@@ -55,7 +55,6 @@ const ParkingLevelFieldGroup = withFieldGroup({
 										"w-full cursor-pointer ring ring-gray-400 rounded-lg p-4 data-selected:ring-bg-brand-solid data-selected:ring-2 hover:ring-2 hover:ring-gray-300 transition text-lg font-medium",
 									),
 								}}
-								defaultValue={parkingLevels[0].id.toString()}
 								isRequired
 								className="w-full"
 								size="md"
