@@ -1,5 +1,5 @@
 import { useStore } from "@tanstack/react-form";
-import { useNavigate, useRouter } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import { ChevronLeft } from "@untitledui/icons";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useState } from "react";
@@ -98,7 +98,6 @@ export default function EntryForm({
 	parkingLevels,
 }: EntryFormProps) {
 	const router = useRouter();
-	const navigate = useNavigate();
 
 	const [step, setStep] = useState(1);
 	const [direction, setDirection] = useState<1 | -1>(1);
@@ -116,7 +115,7 @@ export default function EntryForm({
 				signInAsGuest(data.access_code);
 
 				router.invalidate().finally(() => {
-					navigate({
+					router.navigate({
 						to: "/entry/success",
 					});
 				});

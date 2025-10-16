@@ -1,6 +1,6 @@
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { Eye, EyeOff } from "@untitledui/icons";
-import { useState } from "react";
+import { type ComponentProps, Fragment, useState } from "react";
 
 import { Button, type ButtonProps } from "@/components/base/buttons/button";
 import {
@@ -13,6 +13,11 @@ import {
 	InputGroup as InputGroupBase,
 	type InputGroupProps,
 } from "@/components/base/input/input-group";
+import {
+	PinInput as BasePinInput,
+	type PinInputProps as BasePinInputProps,
+	type PinInputGroupProps,
+} from "@/components/base/pin-input/pin-input";
 import {
 	RadioGroup as BaseRadioGroup,
 	RadioButton,
@@ -134,6 +139,45 @@ function RadioGroup({ items, buttonProps, ...props }: FormRadioGroupProps) {
 	);
 }
 
+interface PinInputProps {
+	length: number;
+	pinInputProps?: Omit<BasePinInputProps, "children">;
+	groupProps?: Omit<PinInputGroupProps, "children" | "render" | "maxLength">;
+	slotProps?: ComponentProps<"div">;
+}
+
+function PinInput({
+	length,
+	pinInputProps,
+	groupProps,
+	slotProps,
+}: PinInputProps) {
+	const field = useFieldContext<string>();
+
+	return (
+		<BasePinInput size="lg" {...pinInputProps}>
+			<BasePinInput.Group
+				maxLength={length}
+				value={field.state.value}
+				onChange={field.handleChange}
+				onBlur={field.handleBlur}
+				{...groupProps}
+			>
+				{Array(length)
+					.fill(0)
+					.map((_, i) => (
+						<Fragment key={`slot-${i + 1}`}>
+							{i === Math.floor(length / 2) && (
+								<BasePinInput.Separator className="text-gray-400" />
+							)}
+							<BasePinInput.Slot index={i} {...slotProps} />
+						</Fragment>
+					))}
+			</BasePinInput.Group>
+		</BasePinInput>
+	);
+}
+
 function SubmitButton(props: ButtonProps) {
 	const form = useFormContext();
 
@@ -207,6 +251,7 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
 		TextInput,
 		PasswordInput,
 		RadioGroup,
+		PinInput,
 		Errors: FieldErrors,
 	},
 	formComponents: {
