@@ -1,4 +1,3 @@
-import { useStore } from "@tanstack/react-form";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { toast } from "sonner";
 import z from "zod";
@@ -67,8 +66,6 @@ export default function CheckForm() {
 		},
 	});
 
-	const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
-
 	return (
 		<div className="grid grid-cols-2 gap-12 items-center size-full">
 			<motion.div
@@ -92,63 +89,67 @@ export default function CheckForm() {
 			</motion.div>
 
 			<main className="ml-auto max-w-lg">
-				<AnimatePresence mode="wait">
-					{isSubmitting ? (
-						<motion.div
-							key="loading"
-							className="flex flex-col gap-8 justify-center items-center text-center"
-							variants={containerVariants}
-							initial="initial"
-							animate="animate"
-							exit="exit"
-						>
-							<LoadingIndicator />
-							<h1 className="text-5xl font-bold">Lagi Diperiksa...</h1>
-							<h2 className="text-2xl font-semibold">
-								Kendaraan anda sedang kami periksa, mohon ditunggu ya!
-							</h2>
-						</motion.div>
-					) : (
-						<motion.div
-							key="main-form"
-							className="flex flex-col gap-4 justify-center w-fulg"
-							variants={containerVariants}
-							initial="initial"
-							animate="animate"
-							exit="exit"
-						>
-							{/* TODO: change "pagi" to current time (dynamically) */}
-							<h1 className="text-5xl font-bold">Halo, Selamat Pagi!</h1>
-							<h2 className="text-2xl font-semibold">
-								Silahkan masukkan kode akses untuk melihat Status Kendaraan.
-							</h2>
-							<form.AppField name="accessCode">
-								{(field) => (
-									<div className="mt-4">
-										<field.PinInput
-											length={6}
-											pinInputProps={{
-												size: "sm",
-											}}
-											groupProps={{
-												containerClassName: "h-20",
-												onChange: (value) =>
-													field.setValue(value.toUpperCase()),
-											}}
-											slotProps={{ className: "size-full" }}
-										/>
-										<field.Errors firstOnly />
-									</div>
-								)}
-							</form.AppField>
-							<form.AppForm>
-								<form.SubmitButton className="w-full" showTextWhileLoading>
-									Periksa Kendaraan
-								</form.SubmitButton>
-							</form.AppForm>
-						</motion.div>
+				<form.Subscribe selector={(state) => state.isSubmitting}>
+					{(isSubmitting) => (
+						<AnimatePresence mode="wait">
+							{isSubmitting ? (
+								<motion.div
+									key="loading"
+									className="flex flex-col gap-8 justify-center items-center text-center"
+									variants={containerVariants}
+									initial="initial"
+									animate="animate"
+									exit="exit"
+								>
+									<LoadingIndicator />
+									<h1 className="text-5xl font-bold">Lagi Diperiksa...</h1>
+									<h2 className="text-2xl font-semibold">
+										Kendaraan anda sedang kami periksa, mohon ditunggu ya!
+									</h2>
+								</motion.div>
+							) : (
+								<motion.div
+									key="main-form"
+									className="flex flex-col gap-4 justify-center w-fulg"
+									variants={containerVariants}
+									initial="initial"
+									animate="animate"
+									exit="exit"
+								>
+									{/* TODO: change "pagi" to current time (dynamically) */}
+									<h1 className="text-5xl font-bold">Halo, Selamat Pagi!</h1>
+									<h2 className="text-2xl font-semibold">
+										Silahkan masukkan kode akses untuk melihat Status Kendaraan.
+									</h2>
+									<form.AppField name="accessCode">
+										{(field) => (
+											<div className="mt-4">
+												<field.PinInput
+													length={6}
+													pinInputProps={{
+														size: "sm",
+													}}
+													groupProps={{
+														containerClassName: "h-20",
+														onChange: (value) =>
+															field.setValue(value.toUpperCase()),
+													}}
+													slotProps={{ className: "size-full" }}
+												/>
+												<field.Errors firstOnly />
+											</div>
+										)}
+									</form.AppField>
+									<form.AppForm>
+										<form.SubmitButton className="w-full" showTextWhileLoading>
+											Periksa Kendaraan
+										</form.SubmitButton>
+									</form.AppForm>
+								</motion.div>
+							)}
+						</AnimatePresence>
 					)}
-				</AnimatePresence>
+				</form.Subscribe>
 			</main>
 		</div>
 	);
