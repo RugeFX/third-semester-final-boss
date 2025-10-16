@@ -249,7 +249,7 @@ export default function EntryForm({
 						<ParkingLevelFieldGroup
 							key={2}
 							form={form}
-							fields={{ packingLevelId: "parkingLevelId" }}
+							fields={{ parkingLevelId: "parkingLevelId" }}
 							name={selectedCategory?.name}
 							parkingLevels={parkingLevels}
 							variants={fieldGroupVariants}

@@ -13,7 +13,7 @@ type ParkingLevelFieldGroupProps = {
 
 const ParkingLevelFieldGroup = withFieldGroup({
 	defaultValues: {
-		packingLevelId: null as number | null,
+		parkingLevelId: null as number | null,
 	},
 	props: {
 		name: "Unknown",
@@ -40,7 +40,7 @@ const ParkingLevelFieldGroup = withFieldGroup({
 						anda.
 					</h2>
 				</div>
-				<group.AppField name="packingLevelId">
+				<group.AppField name="parkingLevelId">
 					{(field) => (
 						<div>
 							<field.RadioGroup

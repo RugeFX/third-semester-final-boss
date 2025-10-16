@@ -29,7 +29,7 @@ const checkFormSchema = z.object({
 	accessCode: z
 		.string()
 		.length(6, "Kode akses harus terdiri dari 6 karakter")
-		.nonempty("Plat nomor kendaraan harus diisi")
+		.min(1, "Kode akses harus diisi")
 		.regex(
 			/^[a-zA-Z0-9]+$/,
 			"Kode akses hanya boleh mengandung huruf dan angka",
@@ -110,7 +110,7 @@ export default function CheckForm() {
 							) : (
 								<motion.div
 									key="main-form"
-									className="flex flex-col gap-4 justify-center w-fulg"
+									className="flex flex-col gap-4 justify-center w-full"
 									variants={containerVariants}
 									initial="initial"
 									animate="animate"
