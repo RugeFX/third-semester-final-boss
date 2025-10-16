@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { toast } from "sonner";
-import z from "zod";
+import { z } from "zod";
 
 import checkStaff from "@/assets/check-staff.png";
 import background from "@/assets/entry-banner-bg.png";

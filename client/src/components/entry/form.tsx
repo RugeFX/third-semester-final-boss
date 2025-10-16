@@ -4,7 +4,7 @@ import { ChevronLeft } from "@untitledui/icons";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import z from "zod";
+import { z } from "zod";
 
 import entryBackground from "@/assets/entry-banner-bg.png";
 import { Button } from "@/components/base/buttons/button";
