@@ -7,11 +7,12 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
+import type { TransactionUpdateStatus } from "./transactionUpdateStatus";
 
 /**
  * Payload for an admin to manually update a transaction.
  */
 export interface TransactionUpdate {
-	status?: string;
+	status?: TransactionUpdateStatus;
 	paidAmount?: number;
 }

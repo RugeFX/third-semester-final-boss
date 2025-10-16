@@ -8,18 +8,32 @@ This documentation provides a base for all the resources defined in the database
  * OpenAPI spec version: 1.0.0
  */
 
+import type { ParkingLevel } from "./parkingLevel";
+import type { TransactionStatus } from "./transactionStatus";
+import type { User } from "./user";
+import type { VehicleDetail } from "./vehicleDetail";
+
 export interface Transaction {
 	id: number;
-	/** Current status of the transaction (e.g., ACTIVE, PAID, COMPLETED). */
-	status: string;
+	/** Status of the transaction, indicating vehicle entry or exit. */
+	status: TransactionStatus;
 	/** @nullable */
-	paidAmount: number | null;
+	paid_amount?: number | null;
 	/** Unique code for this transaction. */
-	accessCode: string;
+	access_code: string;
 	/** @nullable */
-	userId: number | null;
-	vehicleDetailId: number;
-	parkingLevelId: number;
-	createdAt: string;
-	updatedAt: string;
+	user_id?: number | null;
+	/**
+	 * Expanded user information when available.
+	 * @nullable
+	 */
+	user?: User;
+	vehicle_detail_id: number;
+	/** Vehicle detail associated to this transaction. */
+	vehicleDetail: VehicleDetail;
+	parking_level_id: number;
+	/** Parking level information for this transaction. */
+	parkingLevel: ParkingLevel;
+	created_at: string;
+	updated_at: string;
 }

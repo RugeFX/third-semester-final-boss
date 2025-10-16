@@ -28,12 +28,12 @@ type SignInForm = z.infer<typeof signInSchema>;
 
 function RouteComponent() {
 	const router = useRouter();
-	const { signIn } = useAuthActions();
+	const { signInAsUser } = useAuthActions();
 
 	const { mutateAsync: signInUser, isPending } = useLoginUser({
 		mutation: {
 			onSuccess: (data) => {
-				signIn(data.data.token, "user");
+				signInAsUser(data.data.token, "member");
 				router.invalidate().finally(() => {
 					router.navigate({ to: "/" });
 					toast.success(`Selamat datang di ${APP_NAME}!`);

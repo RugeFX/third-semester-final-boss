@@ -11,15 +11,28 @@ This documentation provides a base for all the resources defined in the database
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
+	UseSuspenseQueryOptions,
+	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 
 import type { DashboardSummaryResponse } from ".././models";
 import type { ErrorType } from ".././mutator/custom-instance";
@@ -44,6 +57,145 @@ export const getDashboardSummary = (
 export const getGetDashboardSummaryQueryKey = () => {
 	return [`/dashboard/summary`] as const;
 };
+
+export const getGetDashboardSummaryInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof getDashboardSummary>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetDashboardSummaryQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getDashboardSummary>>
+	> = ({ signal }) => getDashboardSummary(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getDashboardSummary>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDashboardSummaryInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDashboardSummary>>
+>;
+export type GetDashboardSummaryInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetDashboardSummaryInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDashboardSummary>>,
+					TError,
+					Awaited<ReturnType<typeof getDashboardSummary>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDashboardSummaryInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getDashboardSummary>>,
+					TError,
+					Awaited<ReturnType<typeof getDashboardSummary>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDashboardSummaryInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get dashboard summary
+ */
+
+export function useGetDashboardSummaryInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetDashboardSummaryInfiniteQueryOptions(options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetDashboardSummaryQueryOptions = <
 	TData = Awaited<ReturnType<typeof getDashboardSummary>>,
@@ -176,6 +328,257 @@ export function useGetDashboardSummary<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetDashboardSummarySuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getDashboardSummary>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseQueryOptions<
+			Awaited<ReturnType<typeof getDashboardSummary>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetDashboardSummaryQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getDashboardSummary>>
+	> = ({ signal }) => getDashboardSummary(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getDashboardSummary>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDashboardSummarySuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDashboardSummary>>
+>;
+export type GetDashboardSummarySuspenseQueryError = ErrorType<unknown>;
+
+export function useGetDashboardSummarySuspense<
+	TData = Awaited<ReturnType<typeof getDashboardSummary>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDashboardSummarySuspense<
+	TData = Awaited<ReturnType<typeof getDashboardSummary>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDashboardSummarySuspense<
+	TData = Awaited<ReturnType<typeof getDashboardSummary>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get dashboard summary
+ */
+
+export function useGetDashboardSummarySuspense<
+	TData = Awaited<ReturnType<typeof getDashboardSummary>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetDashboardSummarySuspenseQueryOptions(options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetDashboardSummarySuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof getDashboardSummary>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetDashboardSummaryQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getDashboardSummary>>
+	> = ({ signal }) => getDashboardSummary(requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getDashboardSummary>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetDashboardSummarySuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getDashboardSummary>>
+>;
+export type GetDashboardSummarySuspenseInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetDashboardSummarySuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDashboardSummarySuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetDashboardSummarySuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get dashboard summary
+ */
+
+export function useGetDashboardSummarySuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getDashboardSummary>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getDashboardSummary>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions =
+		getGetDashboardSummarySuspenseInfiniteQueryOptions(options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

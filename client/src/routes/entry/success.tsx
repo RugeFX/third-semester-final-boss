@@ -1,13 +1,22 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Copy01 } from "@untitledui/icons";
 import { AnimatePresence, motion, type Variants } from "motion/react";
+import { Fragment } from "react";
 import { toast } from "sonner";
-import { z } from "zod";
+
 import entryBackground from "@/assets/entry-banner-bg.png";
 import { Button } from "@/components/base/buttons/button";
 import { InputBase } from "@/components/base/input/input";
 import { PinInput } from "@/components/base/pin-input/pin-input";
-import { categories } from "@/components/entry/data";
+import { RemoteSVG } from "@/components/svg/remote-svg";
+import {
+	getGetCategoryByIdSuspenseQueryOptions,
+	useGetCategoryByIdSuspense,
+} from "@/lib/api/categories/categories";
+import {
+	getGetGuestTransactionByAccessCodeQueryOptions,
+	useGetGuestTransactionByAccessCodeSuspense,
+} from "@/lib/api/transactions/transactions";
 
 const bannerContainerVariants: Variants = {
 	initial: {
@@ -25,7 +34,7 @@ const bannerContainerVariants: Variants = {
 const bannerItemVariants: Variants = {
 	initial: {
 		opacity: 1,
-		x: "100%",
+		x: "400%",
 	},
 	animate: {
 		opacity: 1,
@@ -38,26 +47,32 @@ const bannerItemVariants: Variants = {
 };
 
 export const Route = createFileRoute("/entry/success")({
-	validateSearch: z.object({
-		accessCode: z.string(),
-		plateNumber: z.string(),
-		categoryId: z.number(),
-	}),
 	component: RouteComponent,
 	errorComponent: ErrorComponent,
-	loaderDeps: ({ search }) => ({
-		categoryId: search.categoryId,
-	}),
-	loader: ({ deps }) => {
-		const selectedCategory = categories.find(
-			(category) => category.id === deps.categoryId,
+	beforeLoad: ({ context }) => {
+		const { token, user } = context.auth;
+		// TODO: maybe revisit this logic later
+		if (!token || user?.type !== "guest") {
+			toast.error("Akses ditolak", {
+				description: "Anda belum melakukan proses registrasi.",
+			});
+			throw redirect({ to: "/entry" });
+		}
+
+		return { token };
+	},
+	loader: async ({ context }) => {
+		const { token } = context;
+
+		const { data } = await context.queryClient.ensureQueryData(
+			getGetGuestTransactionByAccessCodeQueryOptions(token),
 		);
 
-		if (!selectedCategory) throw notFound();
+		await context.queryClient.ensureQueryData(
+			getGetCategoryByIdSuspenseQueryOptions(data.vehicleDetail.category_id),
+		);
 
-		return {
-			selectedCategory,
-		};
+		return { accessCode: token };
 	},
 });
 
@@ -66,15 +81,36 @@ function ErrorComponent() {
 }
 
 function RouteComponent() {
-	const { accessCode, plateNumber } = Route.useSearch();
-	const { selectedCategory } = Route.useLoaderData();
+	const { accessCode } = Route.useLoaderData();
+
+	const {
+		data: { vehicleDetail, parkingLevel },
+	} = useGetGuestTransactionByAccessCodeSuspense(accessCode, {
+		query: { select: ({ data }) => data },
+	});
+
+	const { data: category } = useGetCategoryByIdSuspense(
+		vehicleDetail.category_id,
+		{
+			query: { select: ({ data }) => data },
+		},
+	);
 
 	const onCopyAccessCode = () => {
 		navigator.clipboard.writeText(accessCode).then(() => {
-			toast.success("Kode akses berhasil disalin!", {
+			const id = toast.success("Kode akses berhasil disalin!", {
 				description:
 					"Anda dapat menggunakan kode akses ini untuk melihat status kendaraan anda.",
-				action: <Button size="sm">Cek Status</Button>,
+				action: (
+					<Button
+						size="sm"
+						className="flex-1"
+						to="/check"
+						onClick={() => toast.dismiss(id)}
+					>
+						Cek Status
+					</Button>
+				),
 			});
 		});
 	};
@@ -97,13 +133,13 @@ function RouteComponent() {
 				}}
 			>
 				<div className="absolute inset-0 pt-12 pl-12 z-2">
-					<h2 className="text-5xl font-bold">{selectedCategory.name}</h2>
+					<h2 className="text-5xl font-bold">{category.name}</h2>
 				</div>
 				<AnimatePresence>
 					<motion.img
-						key={selectedCategory.id}
-						className="object-contain object-right-bottom absolute top-0 left-0 w-full h-full z-1"
-						src={selectedCategory.image}
+						key={category.id}
+						className="object-contain object-right-bottom absolute top-20 left-0 size-full scale-120 z-1"
+						src={category.thumbnail}
 						variants={bannerItemVariants}
 					/>
 				</AnimatePresence>
@@ -123,8 +159,8 @@ function RouteComponent() {
 						size="xl"
 						className="flex-1 w-full h-26 max-w-24 group disabled:cursor-default disabled:opacity-100"
 					>
-						<selectedCategory.icon className="size-14" />
-						<span className="sr-only">{selectedCategory.name}</span>
+						{!!category.icon && <RemoteSVG url={category.icon} />}
+						<span className="sr-only">{category.name}</span>
 					</Button>
 
 					<div className="flex flex-col flex-1 gap-2 justify-between">
@@ -133,8 +169,8 @@ function RouteComponent() {
 							size="xl"
 							wrapperClassName="flex-1 h-full bg-gray-500"
 							inputClassName="text-primary pointer-events-none"
-							value={selectedCategory.name}
-							isDisabled
+							value={category.name}
+							isReadOnly
 						/>
 					</div>
 
@@ -144,46 +180,33 @@ function RouteComponent() {
 							size="xl"
 							wrapperClassName="flex-1 h-full bg-gray-500"
 							inputClassName="text-primary pointer-events-none"
-							value={plateNumber}
-							isDisabled
+							value={vehicleDetail.plate_number}
+							isReadOnly
 						/>
 					</div>
 				</div>
 
 				<div className="space-y-2 w-full">
-					<PinInput size="lg" disabled className="w-full">
+					<PinInput size="lg" className="w-full">
 						<PinInput.Group
-							maxLength={6}
+							maxLength={accessCode.length}
 							value={accessCode}
-							disabled
 							readOnly
 							inputClassName="disabled:cursor-default"
 						>
-							<PinInput.Slot
-								index={0}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Slot
-								index={1}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Slot
-								index={2}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Separator className="text-gray-400" />
-							<PinInput.Slot
-								index={3}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Slot
-								index={4}
-								className="w-full bg-gray-500 text-primary"
-							/>
-							<PinInput.Slot
-								index={5}
-								className="w-full bg-gray-500 text-primary"
-							/>
+							{Array(accessCode.length)
+								.fill(0)
+								.map((_, i) => (
+									<Fragment key={`slot-${i + 1}`}>
+										{i === Math.floor(accessCode.length / 2) && (
+											<PinInput.Separator className="text-gray-400" />
+										)}
+										<PinInput.Slot
+											index={i}
+											className="w-full bg-gray-500 text-primary ring-0 data-focused:bg-primary_hover"
+										/>
+									</Fragment>
+								))}
 						</PinInput.Group>
 					</PinInput>
 

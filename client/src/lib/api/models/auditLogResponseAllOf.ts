@@ -7,7 +7,8 @@ This documentation provides a base for all the resources defined in the database
 
  * OpenAPI spec version: 1.0.0
  */
+import type { AuditLog } from "./auditLog";
 
-export type TokenResponseData = {
-	token: string;
+export type AuditLogResponseAllOf = {
+	data: AuditLog;
 };

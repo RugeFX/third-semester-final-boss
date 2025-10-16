@@ -11,18 +11,32 @@ This documentation provides a base for all the resources defined in the database
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
+	UseSuspenseQueryOptions,
+	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
@@ -55,6 +69,145 @@ export const listTransactions = (
 export const getListTransactionsQueryKey = () => {
 	return [`/transactions`] as const;
 };
+
+export const getListTransactionsInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(options?: {
+	query?: Partial<
+		UseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof listTransactions>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListTransactionsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof listTransactions>>
+	> = ({ signal }) => listTransactions(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof listTransactions>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListTransactionsInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listTransactions>>
+>;
+export type ListTransactionsInfiniteQueryError = ErrorType<ApiErrorResponse>;
+
+export function useListTransactionsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof listTransactions>>,
+					TError,
+					Awaited<ReturnType<typeof listTransactions>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListTransactionsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof listTransactions>>,
+					TError,
+					Awaited<ReturnType<typeof listTransactions>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListTransactionsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all transactions (Admin only)
+ */
+
+export function useListTransactionsInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListTransactionsInfiniteQueryOptions(options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getListTransactionsQueryOptions = <
 	TData = Awaited<ReturnType<typeof listTransactions>>,
@@ -189,6 +342,257 @@ export function useListTransactions<
 	return query;
 }
 
+export const getListTransactionsSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof listTransactions>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseQueryOptions<
+			Awaited<ReturnType<typeof listTransactions>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListTransactionsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof listTransactions>>
+	> = ({ signal }) => listTransactions(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof listTransactions>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListTransactionsSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listTransactions>>
+>;
+export type ListTransactionsSuspenseQueryError = ErrorType<ApiErrorResponse>;
+
+export function useListTransactionsSuspense<
+	TData = Awaited<ReturnType<typeof listTransactions>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListTransactionsSuspense<
+	TData = Awaited<ReturnType<typeof listTransactions>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListTransactionsSuspense<
+	TData = Awaited<ReturnType<typeof listTransactions>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all transactions (Admin only)
+ */
+
+export function useListTransactionsSuspense<
+	TData = Awaited<ReturnType<typeof listTransactions>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListTransactionsSuspenseQueryOptions(options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getListTransactionsSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof listTransactions>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListTransactionsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof listTransactions>>
+	> = ({ signal }) => listTransactions(requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof listTransactions>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListTransactionsSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listTransactions>>
+>;
+export type ListTransactionsSuspenseInfiniteQueryError =
+	ErrorType<ApiErrorResponse>;
+
+export function useListTransactionsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListTransactionsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListTransactionsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all transactions (Admin only)
+ */
+
+export function useListTransactionsSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listTransactions>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListTransactionsSuspenseInfiniteQueryOptions(options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
 /**
  * This endpoint is called when a vehicle enters the parking facility. It creates a vehicle detail and a new transaction record.
  * @summary Create a new transaction (vehicle entry)
@@ -301,6 +705,174 @@ export const getGetGuestTransactionByAccessCodeQueryKey = (
 ) => {
 	return [`/transactions/${accessCode}`] as const;
 };
+
+export const getGetGuestTransactionByAccessCodeInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ??
+		getGetGuestTransactionByAccessCodeQueryKey(accessCode);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	> = ({ signal }) =>
+		getGuestTransactionByAccessCode(accessCode, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		enabled: !!accessCode,
+		...queryOptions,
+	} as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetGuestTransactionByAccessCodeInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+>;
+export type GetGuestTransactionByAccessCodeInfiniteQueryError =
+	ErrorType<ApiErrorResponse>;
+
+export function useGetGuestTransactionByAccessCodeInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+					TError,
+					Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGuestTransactionByAccessCodeInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+					TError,
+					Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGuestTransactionByAccessCodeInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Transaction Status (Guest)
+ */
+
+export function useGetGuestTransactionByAccessCodeInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetGuestTransactionByAccessCodeInfiniteQueryOptions(
+		accessCode,
+		options,
+	);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetGuestTransactionByAccessCodeQueryOptions = <
 	TData = Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
@@ -452,6 +1024,294 @@ export function useGetGuestTransactionByAccessCode<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetGuestTransactionByAccessCodeSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ??
+		getGetGuestTransactionByAccessCodeQueryKey(accessCode);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	> = ({ signal }) =>
+		getGuestTransactionByAccessCode(accessCode, requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetGuestTransactionByAccessCodeSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+>;
+export type GetGuestTransactionByAccessCodeSuspenseQueryError =
+	ErrorType<ApiErrorResponse>;
+
+export function useGetGuestTransactionByAccessCodeSuspense<
+	TData = Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGuestTransactionByAccessCodeSuspense<
+	TData = Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGuestTransactionByAccessCodeSuspense<
+	TData = Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Transaction Status (Guest)
+ */
+
+export function useGetGuestTransactionByAccessCodeSuspense<
+	TData = Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetGuestTransactionByAccessCodeSuspenseQueryOptions(
+		accessCode,
+		options,
+	);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetGuestTransactionByAccessCodeSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ??
+		getGetGuestTransactionByAccessCodeQueryKey(accessCode);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	> = ({ signal }) =>
+		getGuestTransactionByAccessCode(accessCode, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetGuestTransactionByAccessCodeSuspenseInfiniteQueryResult =
+	NonNullable<Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>>;
+export type GetGuestTransactionByAccessCodeSuspenseInfiniteQueryError =
+	ErrorType<ApiErrorResponse>;
+
+export function useGetGuestTransactionByAccessCodeSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGuestTransactionByAccessCodeSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetGuestTransactionByAccessCodeSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get Transaction Status (Guest)
+ */
+
+export function useGetGuestTransactionByAccessCodeSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>
+	>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	accessCode: string,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getGuestTransactionByAccessCode>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions =
+		getGetGuestTransactionByAccessCodeSuspenseInfiniteQueryOptions(
+			accessCode,
+			options,
+		);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

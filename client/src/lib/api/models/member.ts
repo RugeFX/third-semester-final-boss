@@ -10,7 +10,7 @@ This documentation provides a base for all the resources defined in the database
 
 export interface Member {
 	id: number;
-	userId: number;
-	joinedAt: string;
-	endedAt: string;
+	user_id: number;
+	joined_at: string;
+	ended_at: string;
 }

@@ -11,18 +11,32 @@ This documentation provides a base for all the resources defined in the database
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
+	UseSuspenseQueryOptions,
+	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
@@ -56,6 +70,145 @@ export const listMembers = (
 export const getListMembersQueryKey = () => {
 	return [`/members`] as const;
 };
+
+export const getListMembersInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(options?: {
+	query?: Partial<
+		UseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof listMembers>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListMembersQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof listMembers>>> = ({
+		signal,
+	}) => listMembers(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof listMembers>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListMembersInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembers>>
+>;
+export type ListMembersInfiniteQueryError = ErrorType<ApiErrorResponse>;
+
+export function useListMembersInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof listMembers>>,
+					TError,
+					Awaited<ReturnType<typeof listMembers>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListMembersInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof listMembers>>,
+					TError,
+					Awaited<ReturnType<typeof listMembers>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListMembersInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all members (Admin only)
+ */
+
+export function useListMembersInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListMembersInfiniteQueryOptions(options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getListMembersQueryOptions = <
 	TData = Awaited<ReturnType<typeof listMembers>>,
@@ -174,6 +327,256 @@ export function useListMembers<
 	return query;
 }
 
+export const getListMembersSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof listMembers>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseQueryOptions<
+			Awaited<ReturnType<typeof listMembers>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListMembersQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof listMembers>>> = ({
+		signal,
+	}) => listMembers(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof listMembers>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListMembersSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembers>>
+>;
+export type ListMembersSuspenseQueryError = ErrorType<ApiErrorResponse>;
+
+export function useListMembersSuspense<
+	TData = Awaited<ReturnType<typeof listMembers>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListMembersSuspense<
+	TData = Awaited<ReturnType<typeof listMembers>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListMembersSuspense<
+	TData = Awaited<ReturnType<typeof listMembers>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all members (Admin only)
+ */
+
+export function useListMembersSuspense<
+	TData = Awaited<ReturnType<typeof listMembers>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListMembersSuspenseQueryOptions(options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getListMembersSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof listMembers>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListMembersQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof listMembers>>> = ({
+		signal,
+	}) => listMembers(requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof listMembers>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListMembersSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembers>>
+>;
+export type ListMembersSuspenseInfiniteQueryError = ErrorType<ApiErrorResponse>;
+
+export function useListMembersSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListMembersSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListMembersSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all members (Admin only)
+ */
+
+export function useListMembersSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembers>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listMembers>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListMembersSuspenseInfiniteQueryOptions(options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
 /**
  * Creates a new member record for an existing user. Restricted to admins.
  * @summary Create a member record (Admin only)
@@ -286,6 +689,159 @@ export const getMemberById = (
 export const getGetMemberByIdQueryKey = (id?: number) => {
 	return [`/members/${id}`] as const;
 };
+
+export const getGetMemberByIdInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetMemberByIdQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getMemberById>>> = ({
+		signal,
+	}) => getMemberById(id, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		enabled: !!id,
+		...queryOptions,
+	} as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getMemberById>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMemberByIdInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMemberById>>
+>;
+export type GetMemberByIdInfiniteQueryError = ErrorType<
+	ApiErrorResponse | ApiErrorResponse
+>;
+
+export function useGetMemberByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getMemberById>>,
+					TError,
+					Awaited<ReturnType<typeof getMemberById>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMemberByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getMemberById>>,
+					TError,
+					Awaited<ReturnType<typeof getMemberById>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMemberByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get member by ID (Admin only)
+ */
+
+export function useGetMemberByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetMemberByIdInfiniteQueryOptions(id, options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetMemberByIdQueryOptions = <
 	TData = Awaited<ReturnType<typeof getMemberById>>,
@@ -412,6 +968,277 @@ export function useGetMemberById<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetMemberByIdSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getMemberById>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetMemberByIdQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getMemberById>>> = ({
+		signal,
+	}) => getMemberById(id, requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getMemberById>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMemberByIdSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMemberById>>
+>;
+export type GetMemberByIdSuspenseQueryError = ErrorType<
+	ApiErrorResponse | ApiErrorResponse
+>;
+
+export function useGetMemberByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMemberById>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMemberByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMemberById>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMemberByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMemberById>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get member by ID (Admin only)
+ */
+
+export function useGetMemberByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMemberById>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetMemberByIdSuspenseQueryOptions(id, options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetMemberByIdSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetMemberByIdQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getMemberById>>> = ({
+		signal,
+	}) => getMemberById(id, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getMemberById>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetMemberByIdSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMemberById>>
+>;
+export type GetMemberByIdSuspenseInfiniteQueryError = ErrorType<
+	ApiErrorResponse | ApiErrorResponse
+>;
+
+export function useGetMemberByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMemberByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetMemberByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get member by ID (Admin only)
+ */
+
+export function useGetMemberByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMemberById>>>,
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getMemberById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetMemberByIdSuspenseInfiniteQueryOptions(
+		id,
+		options,
+	);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 
@@ -708,6 +1535,157 @@ export const getGetCurrentMemberTransactionsQueryKey = () => {
 	return [`/members/me/transactions`] as const;
 };
 
+export const getGetCurrentMemberTransactionsInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getGetCurrentMemberTransactionsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	> = ({ signal }) => getCurrentMemberTransactions(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCurrentMemberTransactionsInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+>;
+export type GetCurrentMemberTransactionsInfiniteQueryError = ErrorType<unknown>;
+
+export function useGetCurrentMemberTransactionsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+					TError,
+					Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCurrentMemberTransactionsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+					TError,
+					Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCurrentMemberTransactionsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get member's transaction history
+ */
+
+export function useGetCurrentMemberTransactionsInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions =
+		getGetCurrentMemberTransactionsInfiniteQueryOptions(options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
 export const getGetCurrentMemberTransactionsQueryOptions = <
 	TData = Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
 	TError = ErrorType<unknown>,
@@ -840,6 +1818,270 @@ export function useGetCurrentMemberTransactions<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetCurrentMemberTransactionsSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseQueryOptions<
+			Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getGetCurrentMemberTransactionsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	> = ({ signal }) => getCurrentMemberTransactions(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCurrentMemberTransactionsSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+>;
+export type GetCurrentMemberTransactionsSuspenseQueryError = ErrorType<unknown>;
+
+export function useGetCurrentMemberTransactionsSuspense<
+	TData = Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCurrentMemberTransactionsSuspense<
+	TData = Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCurrentMemberTransactionsSuspense<
+	TData = Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get member's transaction history
+ */
+
+export function useGetCurrentMemberTransactionsSuspense<
+	TData = Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions =
+		getGetCurrentMemberTransactionsSuspenseQueryOptions(options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetCurrentMemberTransactionsSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getGetCurrentMemberTransactionsQueryKey();
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	> = ({ signal }) => getCurrentMemberTransactions(requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCurrentMemberTransactionsSuspenseInfiniteQueryResult =
+	NonNullable<Awaited<ReturnType<typeof getCurrentMemberTransactions>>>;
+export type GetCurrentMemberTransactionsSuspenseInfiniteQueryError =
+	ErrorType<unknown>;
+
+export function useGetCurrentMemberTransactionsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCurrentMemberTransactionsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCurrentMemberTransactionsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get member's transaction history
+ */
+
+export function useGetCurrentMemberTransactionsSuspenseInfinite<
+	TData = InfiniteData<
+		Awaited<ReturnType<typeof getCurrentMemberTransactions>>
+	>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCurrentMemberTransactions>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions =
+		getGetCurrentMemberTransactionsSuspenseInfiniteQueryOptions(options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

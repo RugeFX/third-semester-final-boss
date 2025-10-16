@@ -17,8 +17,8 @@ const RootLayout = () => {
 			<HeadContent />
 			<div className="min-h-screen antialiased dark-mode text-primary bg-primary">
 				<Outlet />
-				<Toaster />
 			</div>
+			<Toaster />
 			<ReactQueryDevtools position="right" />
 			<TanStackRouterDevtools />
 		</>
