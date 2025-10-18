@@ -2,6 +2,7 @@ import HttpError from "../common/exceptions/http.error";
 import userRepository from "./user.repository";
 import { createUserSchema, updateUserSchema } from "./user.schema";
 import { z } from "zod";
+import bcrypt from 'bcrypt';
 
 type createUserInput = z.infer<typeof createUserSchema>;
 type updateUserInput = z.infer<typeof updateUserSchema>;
@@ -22,7 +23,9 @@ export const findUserById = async (userId: number) => {
 
 // Create a new user
 export const createUser = async (userData: createUserInput) => {
-    return await userRepository.create(userData);
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+    return await userRepository.create({ ...userData, password: hashedPassword });
 };
 
 // Update a user
