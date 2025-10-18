@@ -1,5 +1,5 @@
 import { db } from '../../db';
-import { eq } from 'drizzle-orm';
+import { eq, and, isNull } from 'drizzle-orm';
 import { transactionsTable } from '../../db/schema';
 import { createTransactionSchema, processPaymentSchema, updateTransactionSchema } from './transaction.schema';
 import { z } from 'zod';
@@ -100,7 +100,13 @@ export const update = async (accessCode: string, transactionData: updatedTransac
 export const updatePaidAmount = async (accessCode: string, paidAmount: number) => {
     const [ updatedTransactionPaidAmount ] = await db.update(transactionsTable).set({
         paid_amount: paidAmount.toString(),
-    }).where(eq(transactionsTable.access_code, accessCode)).returning();
+    }).where(
+        and(
+            eq(transactionsTable.access_code, accessCode),
+            eq(transactionsTable.status, "ENTRY"),
+            isNull(transactionsTable.paid_amount)
+        )
+    ).returning();
 
     return updatedTransactionPaidAmount;
 }
@@ -109,7 +115,12 @@ export const updatePaidAmount = async (accessCode: string, paidAmount: number) =
 export const updateToExit = async (accessCode: string) => {
     const [ updatedTransactionExit ] = await db.update(transactionsTable).set({
         status: "EXIT",
-    }).where(eq(transactionsTable.access_code, accessCode)).returning();
+    }).where(
+        and(
+            eq(transactionsTable.access_code, accessCode),
+            eq(transactionsTable.status, "ENTRY")
+        )
+    ).returning();
 
     return updatedTransactionExit;
 }

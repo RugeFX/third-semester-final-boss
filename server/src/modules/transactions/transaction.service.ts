@@ -184,16 +184,6 @@ export const calculateParkingFee = async (transaction: TransactionWithDetails) =
 export const processTransactionPayment = async (accessCode: string, paymentData: processPaymentInput) => {
     const transaction = await getTransactionByAccessCode(accessCode);
 
-    // Validate transaction status
-    if (transaction.status !== "ENTRY") {
-        throw new HttpError(400, "Transaction is not in ENTRY status");
-    }
-
-    // Check if already paid even though status is ENTRY and paid_amount is zero
-    if (transaction.paid_amount !== null) {
-        throw new HttpError(409, "Transaction has already been paid");
-    }
-
     let totalFee = await calculateParkingFee(transaction);
 
     // Validate payment amount
@@ -207,16 +197,6 @@ export const processTransactionPayment = async (accessCode: string, paymentData:
 
 // Update transaction status to EXIT
 export const updateTransactionToExit = async (accessCode: string) => {
-    const transaction = await getTransactionByAccessCode(accessCode);
-
-    if (transaction.status === "EXIT") {
-        throw new HttpError(400, "Transaction has already been completed.");
-    }
-
-    if (transaction.paid_amount === null) {
-        throw new HttpError(400, "Transaction has not been paid yet.");
-    }
-
     return await transactionRepository.updateToExit(accessCode);
 };
 
