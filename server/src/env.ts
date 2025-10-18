@@ -24,6 +24,9 @@ export const env = createEnv({
     TIGRIS_STORAGE_SECRET_ACCESS_KEY: z.string().min(1),
     TIGRIS_STORAGE_ENDPOINT: z.string().min(1),
     TIGRIS_STORAGE_BUCKET: z.string().min(1),
+
+    // JWT Configuration
+    JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters long for security"),
   },
 
   /**
