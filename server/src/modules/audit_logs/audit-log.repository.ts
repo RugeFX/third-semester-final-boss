@@ -1,7 +1,6 @@
 import { db } from '../../db';
 import { eq } from 'drizzle-orm';
 import { auditLogsTable } from '../../db/schema';
-import { z } from 'zod';
 
 // Get all audit logs
 export const findAll = async () => {

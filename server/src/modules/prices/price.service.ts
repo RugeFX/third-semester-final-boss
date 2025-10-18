@@ -1,10 +1,7 @@
-import { db } from "../../db";
 import HttpError from "../common/exceptions/http.error";
-import { eq, and } from "drizzle-orm";
 import categoryService from "../categories/category.service";
 import priceRepository from "./price.repository";
 import { createPriceSchema, updatePriceSchema } from "./price.schema";
-import { pricesTable } from "../../db/schema";
 import { z } from "zod";
 
 type createPriceInput = z.infer<typeof createPriceSchema>;
