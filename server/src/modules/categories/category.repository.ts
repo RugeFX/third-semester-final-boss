@@ -45,7 +45,9 @@ export const update = async (categoryId: number, categoryData: updatedCategory) 
 
 // Delete a category
 export const remove = async (categoryId: number) => {
-    return await db.delete(categoriesTable).where(eq(categoriesTable.id, categoryId));
+    return await db.delete(categoriesTable).where(
+        eq(categoriesTable.id, categoryId)
+    ).returning();
 }
 
 export default { findAll, findById, create, update, remove };

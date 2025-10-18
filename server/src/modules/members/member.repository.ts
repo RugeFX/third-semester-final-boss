@@ -26,6 +26,13 @@ export const findById = async (memberId: number) => {
     });
 }
 
+// Find member by user ID
+export const findByUserId = async (userId: number) => {
+    return await db.query.membersTable.findFirst({
+        where: eq(membersTable.user_id, userId)
+    });
+}
+
 // Create a member
 export const create = async (memberData: newMember) => {
     const [ newMember ] = await db.insert(membersTable).values({
@@ -47,7 +54,9 @@ export const update = async (memberId: number, memberData: updatedMember) => {
 
 // Delete a member
 export const remove = async (memberId: number) => {
-    return await db.delete(membersTable).where(eq(membersTable.id, memberId)).returning();
+    return await db.delete(membersTable).where(
+        eq(membersTable.id, memberId)
+    ).returning();
 }
 
-export default { findAll, findById, create, update, remove };
+export default { findAll, findById, findByUserId, create, update, remove };

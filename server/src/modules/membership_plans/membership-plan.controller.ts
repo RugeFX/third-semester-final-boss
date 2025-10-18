@@ -68,6 +68,7 @@ export const deleteMembershipPlan = async (req: Request, res: Response) => {
 
     return res.status(200).json({ 
         success: true,
-        message: "Membership plan deleted successfully"
+        message: "Membership plan deleted successfully",
+        data: deletedMembershipPlan
     });
 };

@@ -83,6 +83,11 @@ export const getTransactionByAccessCode = async (accessCode: string): Promise<Tr
     return transaction;
 };
 
+// Get transactions by User ID
+export const getTransactionsByUserId = async (userId: number) => {
+    return await transactionRepository.findByUserId(userId);
+};
+
 // Create a new transaction
 export const createTransaction = async (transactionData: createTransactionInput) => {
     return await transactionRepository.create(transactionData);
@@ -224,4 +229,4 @@ export const deleteTransaction = async (accessCode: string) => {
     return deletedTransaction;
 };
 
-export default { getAllTransactions, getTransactionById, getTransactionByAccessCode, createTransaction, createEntryTransaction, processTransactionPayment, updateTransaction, updateTransactionToExit, deleteTransaction };
+export default { getAllTransactions, getTransactionById, getTransactionByAccessCode, getTransactionsByUserId, createTransaction, createEntryTransaction, processTransactionPayment, updateTransaction, updateTransactionToExit, deleteTransaction };

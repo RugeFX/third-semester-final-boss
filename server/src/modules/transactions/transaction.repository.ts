@@ -12,12 +12,16 @@ type updatedTransaction = z.infer<typeof updateTransactionSchema>;
 // Get all transactions
 export const findAll = async () => {
     return await db.query.transactionsTable.findMany({
-            with: {
-                user: true,
-                vehicleDetail: true,
-                parkingLevel: true,
+        with: {
+            user: true,
+            vehicleDetail: {
+                with: {
+                    category: true
+                }
             },
-        });
+            parkingLevel: true,
+        },
+    });
 };
 
 // Find transaction by ID
@@ -48,6 +52,22 @@ export const findByAccessCode = async (accessCode: string, tx: TransactionDB = d
                 }
             },
             parkingLevel: true
+        }
+    });
+}
+
+// Find transaction by user ID
+export const findByUserId = async (userId: number) => {
+    return await db.query.transactionsTable.findMany({
+        where: eq(transactionsTable.user_id, userId),
+        with: {
+            user: true,
+            vehicleDetail: {
+                with: {
+                    category: true
+                }
+            },
+            parkingLevel: true,
         }
     });
 }
@@ -87,7 +107,7 @@ export const updatePaidAmount = async (accessCode: string, paidAmount: number) =
 
 // Update a transaction to EXIT
 export const updateToExit = async (accessCode: string) => {
-    const [updatedTransactionExit] = await db.update(transactionsTable).set({
+    const [ updatedTransactionExit ] = await db.update(transactionsTable).set({
         status: "EXIT",
     }).where(eq(transactionsTable.access_code, accessCode)).returning();
 
@@ -103,4 +123,4 @@ export const remove = async (accessCode: string) => {
     return deletedTransaction;
 }
 
-export default { findAll, findById, findByAccessCode, create, update, updatePaidAmount, updateToExit, remove };
+export default { findAll, findById, findByAccessCode, findByUserId, create, update, updatePaidAmount, updateToExit, remove };

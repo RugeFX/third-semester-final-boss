@@ -68,6 +68,7 @@ export const deleteVehicleDetail = async (req: Request, res: Response) => {
 
     res.status(200).json({
         success: true,
-        message: "Vehicle detail deleted successfully"
+        message: "Vehicle detail deleted successfully",
+        data: deletedVehicleDetail
     });
 };

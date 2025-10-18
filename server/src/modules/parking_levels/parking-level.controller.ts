@@ -68,6 +68,7 @@ export const deleteParkingLevel = async (req: Request, res: Response) => {
 
     res.status(200).json({
         success: true,
-        message: "Parking level deleted successfully"
+        message: "Parking level deleted successfully",
+        data: deletedParkingLevel
     });
 };

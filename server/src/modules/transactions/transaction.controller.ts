@@ -13,6 +13,7 @@ export const getAllTransactions = async (_req: Request, res: Response) => {
     });
 };
 
+// Get transaction by access code
 export const getTransactionByAccessCode = async (req: Request, res: Response) => {
     const { accessCode } = paramsSchema.parse(req.params);
 
@@ -25,6 +26,7 @@ export const getTransactionByAccessCode = async (req: Request, res: Response) =>
     });
 }
 
+// Create an entry transaction
 export const createTransactionEntry = async (req: Request, res: Response) => {
     const entryData = entryTransactionSchema.parse(req.body);
 
@@ -37,6 +39,7 @@ export const createTransactionEntry = async (req: Request, res: Response) => {
     });
 };
 
+// Manually update a transaction
 export const manuallyUpdateTransaction = async (req: Request, res: Response) => {
     const { accessCode } = paramsSchema.parse(req.params);
     const transactionData = updateTransactionSchema.parse(req.body);
@@ -50,6 +53,7 @@ export const manuallyUpdateTransaction = async (req: Request, res: Response) => 
     });
 }
 
+// Process transaction payment
 export const processTransactionPayment = async (req: Request, res: Response) => {
     const { accessCode } = paramsSchema.parse(req.params);
     const { paidAmount } = processPaymentSchema.parse(req.body);
@@ -63,6 +67,7 @@ export const processTransactionPayment = async (req: Request, res: Response) => 
     });
 }
 
+// Update transaction to exit
 export const updateTransactionExit = async (req: Request, res: Response) => {
     const { accessCode } = paramsSchema.parse(req.params);
 
@@ -75,6 +80,7 @@ export const updateTransactionExit = async (req: Request, res: Response) => {
     });
 }
 
+// Delete a transaction
 export const deleteTransaction = async (req: Request, res: Response) => {
     const { accessCode } = paramsSchema.parse(req.params);
 

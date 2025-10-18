@@ -1,10 +1,13 @@
 import HttpError from "../common/exceptions/http.error";
-import { createMemberSchema, updateMemberSchema } from "./member.schema";
+import { createMemberSchema, updateMemberSchema, renewMembershipSchema } from "./member.schema";
 import memberRepository from "./member.repository";
+import transactionService from "../transactions/transaction.service";   
+import userService from "../users/user.service";
 import { z } from "zod";
 
 type createMemberInput = z.infer<typeof createMemberSchema>;
 type updateMemberInput = z.infer<typeof updateMemberSchema>;
+type renewMembershipInput = z.infer<typeof renewMembershipSchema>;
 
 // Get all members
 export const getAllMembers = async () => {
@@ -22,22 +25,21 @@ export const findMemberById = async (id: number) => {
     return member;
 };
 
-// Get member by user ID
-// export const findMemberByUserId = async (userId: number) => {
-//     const member = await db.query.membersTable.findFirst({
-//         where: eq(membersTable.user_id, userId),
-//         with: {
-//             user: true
-//         }
-//     });
+// Get member transactions
+export const getTransactionForMember = async (userId: number) => {
+    const user = await userService.findUserById(userId);
 
-//     if (!member) throw new HttpError(400, "Member not found");
+    const transactions = await transactionService.getTransactionsByUserId(user.id);
 
-//     return member;
-// };
+    return transactions;
+}
 
 // Create a new member
 export const createMember = async (memberData: createMemberInput) => {
+    const member = await memberRepository.findByUserId(memberData.userId);
+
+    if (member) throw new HttpError(400, "Member already exists");
+
     return await memberRepository.create(memberData);
 };
 
@@ -48,6 +50,22 @@ export const updateMember = async (memberId: number, memberData: updateMemberInp
     return await memberRepository.update(memberId, memberData);
 };
 
+// Renew membership subscription
+export const renewMembership = async (memberId: number, renewalData: renewMembershipInput) => {
+    const member = await findMemberById(memberId);
+
+    const newEndDate = new Date(member.ended_at);
+
+    // Add renewal period
+    newEndDate.setMonth(newEndDate.getMonth() + renewalData.renewalPeriodMonths);
+
+    const updatedMember = await memberRepository.update(memberId, {
+        endedAt: newEndDate
+    });
+
+    return updatedMember;
+};
+
 // Delete a member
 export const deleteMember = async (memberId: number) => {
     await findMemberById(memberId);
@@ -55,4 +73,4 @@ export const deleteMember = async (memberId: number) => {
     return await memberRepository.remove(memberId);
 };
 
-export default { getAllMembers, findMemberById, createMember, updateMember, deleteMember };
+export default { getAllMembers, findMemberById, getTransactionForMember, createMember, updateMember, renewMembership, deleteMember };

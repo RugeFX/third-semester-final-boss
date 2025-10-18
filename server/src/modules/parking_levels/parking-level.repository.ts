@@ -41,7 +41,9 @@ export const update = async (parkingLevelId: number, parkingLevelData: updatedPa
 
 // Delete a parking level
 export const remove = async (parkingLevelId: number) => {
-    return await db.delete(parkingLevelsTable).where(eq(parkingLevelsTable.id, parkingLevelId));
+    return await db.delete(parkingLevelsTable).where(
+        eq(parkingLevelsTable.id, parkingLevelId)
+    ).returning();
 }
 
 export default { findAll, findById, create, update, remove };
