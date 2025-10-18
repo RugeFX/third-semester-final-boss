@@ -8,13 +8,13 @@
 
 ## Overview
 
-Belum ada bang
+**Pola**: Aplikasi Manajemen Parkir
 
 ## Tech Stack
 
 - **Language**: Typescript
-- **Frontend**: React, Tailwind
-- **Backend**: NodeJS, Express
+- **Frontend**: React, Tailwind, Tanstack Router & Query
+- **Backend**: NodeJS, Express, Drizzle
 
 ## Team Members
 

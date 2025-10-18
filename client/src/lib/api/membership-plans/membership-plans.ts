@@ -41,10 +41,9 @@ import {
 import type {
 	ApiErrorResponse,
 	BaseResponse,
-	UserArrayResponse,
-	UserCreate,
-	UserResponse,
-	UserUpdate,
+	MembershipPlanArrayResponse,
+	MembershipPlanCreate,
+	MembershipPlanResponse,
 } from ".././models";
 import type { BodyType, ErrorType } from ".././mutator/custom-instance";
 import { customInstance } from ".././mutator/custom-instance";
@@ -52,30 +51,30 @@ import { customInstance } from ".././mutator/custom-instance";
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Retrieves a list of all user accounts. This operation is restricted to admin users.
- * @summary List all users (Admin only)
+ * Returns a list of all available membership plans.
+ * @summary List all membership plans
  */
-export const listUsers = (
+export const listMembershipPlans = (
 	options?: SecondParameter<typeof customInstance>,
 	signal?: AbortSignal,
 ) => {
-	return customInstance<UserArrayResponse>(
-		{ url: `/users`, method: "GET", signal },
+	return customInstance<MembershipPlanArrayResponse>(
+		{ url: `/membership-plans`, method: "GET", signal },
 		options,
 	);
 };
 
-export const getListUsersQueryKey = () => {
-	return [`/users`] as const;
+export const getListMembershipPlansQueryKey = () => {
+	return [`/membership-plans`] as const;
 };
 
-export const getListUsersInfiniteQueryOptions = <
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export const getListMembershipPlansInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(options?: {
 	query?: Partial<
 		UseInfiniteQueryOptions<
-			Awaited<ReturnType<typeof listUsers>>,
+			Awaited<ReturnType<typeof listMembershipPlans>>,
 			TError,
 			TData
 		>
@@ -84,41 +83,41 @@ export const getListUsersInfiniteQueryOptions = <
 }) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getListUsersQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getListMembershipPlansQueryKey();
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof listUsers>>> = ({
-		signal,
-	}) => listUsers(requestOptions, signal);
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof listMembershipPlans>>
+	> = ({ signal }) => listMembershipPlans(requestOptions, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
-		Awaited<ReturnType<typeof listUsers>>,
+		Awaited<ReturnType<typeof listMembershipPlans>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type ListUsersInfiniteQueryResult = NonNullable<
-	Awaited<ReturnType<typeof listUsers>>
+export type ListMembershipPlansInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembershipPlans>>
 >;
-export type ListUsersInfiniteQueryError = ErrorType<ApiErrorResponse>;
+export type ListMembershipPlansInfiniteQueryError = ErrorType<unknown>;
 
-export function useListUsersInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(
 	options: {
 		query: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof listUsers>>,
+					Awaited<ReturnType<typeof listMembershipPlans>>,
 					TError,
-					Awaited<ReturnType<typeof listUsers>>
+					Awaited<ReturnType<typeof listMembershipPlans>>
 				>,
 				"initialData"
 			>;
@@ -128,23 +127,23 @@ export function useListUsersInfinite<
 ): DefinedUseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useListUsersInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof listUsers>>,
+					Awaited<ReturnType<typeof listMembershipPlans>>,
 					TError,
-					Awaited<ReturnType<typeof listUsers>>
+					Awaited<ReturnType<typeof listMembershipPlans>>
 				>,
 				"initialData"
 			>;
@@ -154,14 +153,14 @@ export function useListUsersInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useListUsersInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -173,17 +172,17 @@ export function useListUsersInfinite<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary List all users (Admin only)
+ * @summary List all membership plans
  */
 
-export function useListUsersInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -194,7 +193,7 @@ export function useListUsersInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getListUsersInfiniteQueryOptions(options);
+	const queryOptions = getListMembershipPlansInfiniteQueryOptions(options);
 
 	const query = useInfiniteQuery(
 		queryOptions,
@@ -208,48 +207,56 @@ export function useListUsersInfinite<
 	return query;
 }
 
-export const getListUsersQueryOptions = <
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export const getListMembershipPlansQueryOptions = <
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(options?: {
 	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
+		UseQueryOptions<
+			Awaited<ReturnType<typeof listMembershipPlans>>,
+			TError,
+			TData
+		>
 	>;
 	request?: SecondParameter<typeof customInstance>;
 }) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getListUsersQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getListMembershipPlansQueryKey();
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof listUsers>>> = ({
-		signal,
-	}) => listUsers(requestOptions, signal);
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof listMembershipPlans>>
+	> = ({ signal }) => listMembershipPlans(requestOptions, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof listUsers>>,
+		Awaited<ReturnType<typeof listMembershipPlans>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type ListUsersQueryResult = NonNullable<
-	Awaited<ReturnType<typeof listUsers>>
+export type ListMembershipPlansQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembershipPlans>>
 >;
-export type ListUsersQueryError = ErrorType<ApiErrorResponse>;
+export type ListMembershipPlansQueryError = ErrorType<unknown>;
 
-export function useListUsers<
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlans<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(
 	options: {
 		query: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof listMembershipPlans>>,
+				TError,
+				TData
+			>
 		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof listUsers>>,
+					Awaited<ReturnType<typeof listMembershipPlans>>,
 					TError,
-					Awaited<ReturnType<typeof listUsers>>
+					Awaited<ReturnType<typeof listMembershipPlans>>
 				>,
 				"initialData"
 			>;
@@ -259,19 +266,23 @@ export function useListUsers<
 ): DefinedUseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useListUsers<
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlans<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof listMembershipPlans>>,
+				TError,
+				TData
+			>
 		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof listUsers>>,
+					Awaited<ReturnType<typeof listMembershipPlans>>,
 					TError,
-					Awaited<ReturnType<typeof listUsers>>
+					Awaited<ReturnType<typeof listMembershipPlans>>
 				>,
 				"initialData"
 			>;
@@ -281,13 +292,17 @@ export function useListUsers<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useListUsers<
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlans<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof listMembershipPlans>>,
+				TError,
+				TData
+			>
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
@@ -296,16 +311,20 @@ export function useListUsers<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary List all users (Admin only)
+ * @summary List all membership plans
  */
 
-export function useListUsers<
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlans<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof listUsers>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof listMembershipPlans>>,
+				TError,
+				TData
+			>
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
@@ -313,7 +332,7 @@ export function useListUsers<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getListUsersQueryOptions(options);
+	const queryOptions = getListMembershipPlansQueryOptions(options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
 		TData,
@@ -325,13 +344,13 @@ export function useListUsers<
 	return query;
 }
 
-export const getListUsersSuspenseQueryOptions = <
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export const getListMembershipPlansSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(options?: {
 	query?: Partial<
 		UseSuspenseQueryOptions<
-			Awaited<ReturnType<typeof listUsers>>,
+			Awaited<ReturnType<typeof listMembershipPlans>>,
 			TError,
 			TData
 		>
@@ -340,32 +359,32 @@ export const getListUsersSuspenseQueryOptions = <
 }) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getListUsersQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getListMembershipPlansQueryKey();
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof listUsers>>> = ({
-		signal,
-	}) => listUsers(requestOptions, signal);
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof listMembershipPlans>>
+	> = ({ signal }) => listMembershipPlans(requestOptions, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-		Awaited<ReturnType<typeof listUsers>>,
+		Awaited<ReturnType<typeof listMembershipPlans>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type ListUsersSuspenseQueryResult = NonNullable<
-	Awaited<ReturnType<typeof listUsers>>
+export type ListMembershipPlansSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembershipPlans>>
 >;
-export type ListUsersSuspenseQueryError = ErrorType<ApiErrorResponse>;
+export type ListMembershipPlansSuspenseQueryError = ErrorType<unknown>;
 
-export function useListUsersSuspense<
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansSuspense<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(
 	options: {
 		query: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -376,14 +395,14 @@ export function useListUsersSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useListUsersSuspense<
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansSuspense<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -394,14 +413,14 @@ export function useListUsersSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useListUsersSuspense<
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansSuspense<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -413,17 +432,17 @@ export function useListUsersSuspense<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary List all users (Admin only)
+ * @summary List all membership plans
  */
 
-export function useListUsersSuspense<
-	TData = Awaited<ReturnType<typeof listUsers>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansSuspense<
+	TData = Awaited<ReturnType<typeof listMembershipPlans>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -434,7 +453,7 @@ export function useListUsersSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getListUsersSuspenseQueryOptions(options);
+	const queryOptions = getListMembershipPlansSuspenseQueryOptions(options);
 
 	const query = useSuspenseQuery(
 		queryOptions,
@@ -448,13 +467,13 @@ export function useListUsersSuspense<
 	return query;
 }
 
-export const getListUsersSuspenseInfiniteQueryOptions = <
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export const getListMembershipPlansSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(options?: {
 	query?: Partial<
 		UseSuspenseInfiniteQueryOptions<
-			Awaited<ReturnType<typeof listUsers>>,
+			Awaited<ReturnType<typeof listMembershipPlans>>,
 			TError,
 			TData
 		>
@@ -463,36 +482,36 @@ export const getListUsersSuspenseInfiniteQueryOptions = <
 }) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getListUsersQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getListMembershipPlansQueryKey();
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof listUsers>>> = ({
-		signal,
-	}) => listUsers(requestOptions, signal);
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof listMembershipPlans>>
+	> = ({ signal }) => listMembershipPlans(requestOptions, signal);
 
 	return {
 		queryKey,
 		queryFn,
 		...queryOptions,
 	} as UseSuspenseInfiniteQueryOptions<
-		Awaited<ReturnType<typeof listUsers>>,
+		Awaited<ReturnType<typeof listMembershipPlans>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type ListUsersSuspenseInfiniteQueryResult = NonNullable<
-	Awaited<ReturnType<typeof listUsers>>
+export type ListMembershipPlansSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listMembershipPlans>>
 >;
-export type ListUsersSuspenseInfiniteQueryError = ErrorType<ApiErrorResponse>;
+export type ListMembershipPlansSuspenseInfiniteQueryError = ErrorType<unknown>;
 
-export function useListUsersSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(
 	options: {
 		query: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -503,14 +522,14 @@ export function useListUsersSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useListUsersSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -521,14 +540,14 @@ export function useListUsersSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useListUsersSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -540,17 +559,17 @@ export function useListUsersSuspenseInfinite<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary List all users (Admin only)
+ * @summary List all membership plans
  */
 
-export function useListUsersSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof listUsers>>>,
-	TError = ErrorType<ApiErrorResponse>,
+export function useListMembershipPlansSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listMembershipPlans>>>,
+	TError = ErrorType<unknown>,
 >(
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof listUsers>>,
+				Awaited<ReturnType<typeof listMembershipPlans>>,
 				TError,
 				TData
 			>
@@ -561,7 +580,8 @@ export function useListUsersSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getListUsersSuspenseInfiniteQueryOptions(options);
+	const queryOptions =
+		getListMembershipPlansSuspenseInfiniteQueryOptions(options);
 
 	const query = useSuspenseInfiniteQuery(
 		queryOptions,
@@ -576,44 +596,44 @@ export function useListUsersSuspenseInfinite<
 }
 
 /**
- * Creates a new user account in the system. This operation is restricted to admin users.
- * @summary Create a new user (Admin only)
+ * Creates a new membership plan. Restricted to admins.
+ * @summary Create a membership plan (Admin only)
  */
-export const createUser = (
-	userCreate: BodyType<UserCreate>,
+export const createMembershipPlan = (
+	membershipPlanCreate: BodyType<MembershipPlanCreate>,
 	options?: SecondParameter<typeof customInstance>,
 	signal?: AbortSignal,
 ) => {
-	return customInstance<UserResponse>(
+	return customInstance<MembershipPlanResponse>(
 		{
-			url: `/users`,
+			url: `/membership-plans`,
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			data: userCreate,
+			data: membershipPlanCreate,
 			signal,
 		},
 		options,
 	);
 };
 
-export const getCreateUserMutationOptions = <
+export const getCreateMembershipPlanMutationOptions = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof createUser>>,
+		Awaited<ReturnType<typeof createMembershipPlan>>,
 		TError,
-		{ data: BodyType<UserCreate> },
+		{ data: BodyType<MembershipPlanCreate> },
 		TContext
 	>;
 	request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-	Awaited<ReturnType<typeof createUser>>,
+	Awaited<ReturnType<typeof createMembershipPlan>>,
 	TError,
-	{ data: BodyType<UserCreate> },
+	{ data: BodyType<MembershipPlanCreate> },
 	TContext
 > => {
-	const mutationKey = ["createUser"];
+	const mutationKey = ["createMembershipPlan"];
 	const { mutation: mutationOptions, request: requestOptions } = options
 		? options.mutation &&
 			"mutationKey" in options.mutation &&
@@ -623,80 +643,80 @@ export const getCreateUserMutationOptions = <
 		: { mutation: { mutationKey }, request: undefined };
 
 	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof createUser>>,
-		{ data: BodyType<UserCreate> }
+		Awaited<ReturnType<typeof createMembershipPlan>>,
+		{ data: BodyType<MembershipPlanCreate> }
 	> = (props) => {
 		const { data } = props ?? {};
 
-		return createUser(data, requestOptions);
+		return createMembershipPlan(data, requestOptions);
 	};
 
 	return { mutationFn, ...mutationOptions };
 };
 
-export type CreateUserMutationResult = NonNullable<
-	Awaited<ReturnType<typeof createUser>>
+export type CreateMembershipPlanMutationResult = NonNullable<
+	Awaited<ReturnType<typeof createMembershipPlan>>
 >;
-export type CreateUserMutationBody = BodyType<UserCreate>;
-export type CreateUserMutationError = ErrorType<
+export type CreateMembershipPlanMutationBody = BodyType<MembershipPlanCreate>;
+export type CreateMembershipPlanMutationError = ErrorType<
 	ApiErrorResponse | ApiErrorResponse
 >;
 
 /**
- * @summary Create a new user (Admin only)
+ * @summary Create a membership plan (Admin only)
  */
-export const useCreateUser = <
+export const useCreateMembershipPlan = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(
 	options?: {
 		mutation?: UseMutationOptions<
-			Awaited<ReturnType<typeof createUser>>,
+			Awaited<ReturnType<typeof createMembershipPlan>>,
 			TError,
-			{ data: BodyType<UserCreate> },
+			{ data: BodyType<MembershipPlanCreate> },
 			TContext
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
 	queryClient?: QueryClient,
 ): UseMutationResult<
-	Awaited<ReturnType<typeof createUser>>,
+	Awaited<ReturnType<typeof createMembershipPlan>>,
 	TError,
-	{ data: BodyType<UserCreate> },
+	{ data: BodyType<MembershipPlanCreate> },
 	TContext
 > => {
-	const mutationOptions = getCreateUserMutationOptions(options);
+	const mutationOptions = getCreateMembershipPlanMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };
 /**
- * Retrieves the details of a specific user by their unique ID. This operation is restricted to admin users.
- * @summary Get user by ID (Admin only)
+ * Retrieves details for a specific membership plan.
+ * @summary Get membership plan by ID
  */
-export const getUserById = (
+export const getMembershipPlanById = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 	signal?: AbortSignal,
 ) => {
-	return customInstance<UserResponse>(
-		{ url: `/users/${id}`, method: "GET", signal },
+	return customInstance<MembershipPlanResponse>(
+		{ url: `/membership-plans/${id}`, method: "GET", signal },
 		options,
 	);
 };
 
-export const getGetUserByIdQueryKey = (id?: number) => {
-	return [`/users/${id}`] as const;
+export const getGetMembershipPlanByIdQueryKey = (id?: number) => {
+	return [`/membership-plans/${id}`] as const;
 };
 
-export const getGetUserByIdInfiniteQueryOptions = <
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export const getGetMembershipPlanByIdInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -706,11 +726,12 @@ export const getGetUserByIdInfiniteQueryOptions = <
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetUserByIdQueryKey(id);
+	const queryKey =
+		queryOptions?.queryKey ?? getGetMembershipPlanByIdQueryKey(id);
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserById>>> = ({
-		signal,
-	}) => getUserById(id, requestOptions, signal);
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getMembershipPlanById>>
+	> = ({ signal }) => getMembershipPlanById(id, requestOptions, signal);
 
 	return {
 		queryKey,
@@ -718,37 +739,36 @@ export const getGetUserByIdInfiniteQueryOptions = <
 		enabled: !!id,
 		...queryOptions,
 	} as UseInfiniteQueryOptions<
-		Awaited<ReturnType<typeof getUserById>>,
+		Awaited<ReturnType<typeof getMembershipPlanById>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetUserByIdInfiniteQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getUserById>>
+export type GetMembershipPlanByIdInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMembershipPlanById>>
 >;
-export type GetUserByIdInfiniteQueryError = ErrorType<
-	ApiErrorResponse | ApiErrorResponse
->;
+export type GetMembershipPlanByIdInfiniteQueryError =
+	ErrorType<ApiErrorResponse>;
 
-export function useGetUserByIdInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options: {
 		query: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getUserById>>,
+					Awaited<ReturnType<typeof getMembershipPlanById>>,
 					TError,
-					Awaited<ReturnType<typeof getUserById>>
+					Awaited<ReturnType<typeof getMembershipPlanById>>
 				>,
 				"initialData"
 			>;
@@ -758,24 +778,24 @@ export function useGetUserByIdInfinite<
 ): DefinedUseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetUserByIdInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
 		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getUserById>>,
+					Awaited<ReturnType<typeof getMembershipPlanById>>,
 					TError,
-					Awaited<ReturnType<typeof getUserById>>
+					Awaited<ReturnType<typeof getMembershipPlanById>>
 				>,
 				"initialData"
 			>;
@@ -785,15 +805,15 @@ export function useGetUserByIdInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetUserByIdInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -805,18 +825,18 @@ export function useGetUserByIdInfinite<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get user by ID (Admin only)
+ * @summary Get membership plan by ID
  */
 
-export function useGetUserByIdInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -827,7 +847,10 @@ export function useGetUserByIdInfinite<
 ): UseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetUserByIdInfiniteQueryOptions(id, options);
+	const queryOptions = getGetMembershipPlanByIdInfiniteQueryOptions(
+		id,
+		options,
+	);
 
 	const query = useInfiniteQuery(
 		queryOptions,
@@ -841,25 +864,30 @@ export function useGetUserByIdInfinite<
 	return query;
 }
 
-export const getGetUserByIdQueryOptions = <
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export const getGetMembershipPlanByIdQueryOptions = <
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
+				TError,
+				TData
+			>
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetUserByIdQueryKey(id);
+	const queryKey =
+		queryOptions?.queryKey ?? getGetMembershipPlanByIdQueryKey(id);
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserById>>> = ({
-		signal,
-	}) => getUserById(id, requestOptions, signal);
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getMembershipPlanById>>
+	> = ({ signal }) => getMembershipPlanById(id, requestOptions, signal);
 
 	return {
 		queryKey,
@@ -867,33 +895,35 @@ export const getGetUserByIdQueryOptions = <
 		enabled: !!id,
 		...queryOptions,
 	} as UseQueryOptions<
-		Awaited<ReturnType<typeof getUserById>>,
+		Awaited<ReturnType<typeof getMembershipPlanById>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetUserByIdQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getUserById>>
+export type GetMembershipPlanByIdQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMembershipPlanById>>
 >;
-export type GetUserByIdQueryError = ErrorType<
-	ApiErrorResponse | ApiErrorResponse
->;
+export type GetMembershipPlanByIdQueryError = ErrorType<ApiErrorResponse>;
 
-export function useGetUserById<
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanById<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options: {
 		query: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
+				TError,
+				TData
+			>
 		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getUserById>>,
+					Awaited<ReturnType<typeof getMembershipPlanById>>,
 					TError,
-					Awaited<ReturnType<typeof getUserById>>
+					Awaited<ReturnType<typeof getMembershipPlanById>>
 				>,
 				"initialData"
 			>;
@@ -903,20 +933,24 @@ export function useGetUserById<
 ): DefinedUseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetUserById<
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanById<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
+				TError,
+				TData
+			>
 		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof getUserById>>,
+					Awaited<ReturnType<typeof getMembershipPlanById>>,
 					TError,
-					Awaited<ReturnType<typeof getUserById>>
+					Awaited<ReturnType<typeof getMembershipPlanById>>
 				>,
 				"initialData"
 			>;
@@ -926,14 +960,18 @@ export function useGetUserById<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetUserById<
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanById<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
+				TError,
+				TData
+			>
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
@@ -942,17 +980,21 @@ export function useGetUserById<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get user by ID (Admin only)
+ * @summary Get membership plan by ID
  */
 
-export function useGetUserById<
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanById<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
+				TError,
+				TData
+			>
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
@@ -960,7 +1002,7 @@ export function useGetUserById<
 ): UseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetUserByIdQueryOptions(id, options);
+	const queryOptions = getGetMembershipPlanByIdQueryOptions(id, options);
 
 	const query = useQuery(queryOptions, queryClient) as UseQueryResult<
 		TData,
@@ -972,15 +1014,15 @@ export function useGetUserById<
 	return query;
 }
 
-export const getGetUserByIdSuspenseQueryOptions = <
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export const getGetMembershipPlanByIdSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -990,35 +1032,35 @@ export const getGetUserByIdSuspenseQueryOptions = <
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetUserByIdQueryKey(id);
+	const queryKey =
+		queryOptions?.queryKey ?? getGetMembershipPlanByIdQueryKey(id);
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserById>>> = ({
-		signal,
-	}) => getUserById(id, requestOptions, signal);
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getMembershipPlanById>>
+	> = ({ signal }) => getMembershipPlanById(id, requestOptions, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
-		Awaited<ReturnType<typeof getUserById>>,
+		Awaited<ReturnType<typeof getMembershipPlanById>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetUserByIdSuspenseQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getUserById>>
+export type GetMembershipPlanByIdSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMembershipPlanById>>
 >;
-export type GetUserByIdSuspenseQueryError = ErrorType<
-	ApiErrorResponse | ApiErrorResponse
->;
+export type GetMembershipPlanByIdSuspenseQueryError =
+	ErrorType<ApiErrorResponse>;
 
-export function useGetUserByIdSuspense<
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options: {
 		query: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1029,15 +1071,15 @@ export function useGetUserByIdSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetUserByIdSuspense<
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1048,15 +1090,15 @@ export function useGetUserByIdSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetUserByIdSuspense<
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1068,18 +1110,18 @@ export function useGetUserByIdSuspense<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get user by ID (Admin only)
+ * @summary Get membership plan by ID
  */
 
-export function useGetUserByIdSuspense<
-	TData = Awaited<ReturnType<typeof getUserById>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdSuspense<
+	TData = Awaited<ReturnType<typeof getMembershipPlanById>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1090,7 +1132,10 @@ export function useGetUserByIdSuspense<
 ): UseSuspenseQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetUserByIdSuspenseQueryOptions(id, options);
+	const queryOptions = getGetMembershipPlanByIdSuspenseQueryOptions(
+		id,
+		options,
+	);
 
 	const query = useSuspenseQuery(
 		queryOptions,
@@ -1104,15 +1149,15 @@ export function useGetUserByIdSuspense<
 	return query;
 }
 
-export const getGetUserByIdSuspenseInfiniteQueryOptions = <
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export const getGetMembershipPlanByIdSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1122,39 +1167,39 @@ export const getGetUserByIdSuspenseInfiniteQueryOptions = <
 ) => {
 	const { query: queryOptions, request: requestOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getGetUserByIdQueryKey(id);
+	const queryKey =
+		queryOptions?.queryKey ?? getGetMembershipPlanByIdQueryKey(id);
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserById>>> = ({
-		signal,
-	}) => getUserById(id, requestOptions, signal);
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof getMembershipPlanById>>
+	> = ({ signal }) => getMembershipPlanById(id, requestOptions, signal);
 
 	return {
 		queryKey,
 		queryFn,
 		...queryOptions,
 	} as UseSuspenseInfiniteQueryOptions<
-		Awaited<ReturnType<typeof getUserById>>,
+		Awaited<ReturnType<typeof getMembershipPlanById>>,
 		TError,
 		TData
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
 };
 
-export type GetUserByIdSuspenseInfiniteQueryResult = NonNullable<
-	Awaited<ReturnType<typeof getUserById>>
+export type GetMembershipPlanByIdSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getMembershipPlanById>>
 >;
-export type GetUserByIdSuspenseInfiniteQueryError = ErrorType<
-	ApiErrorResponse | ApiErrorResponse
->;
+export type GetMembershipPlanByIdSuspenseInfiniteQueryError =
+	ErrorType<ApiErrorResponse>;
 
-export function useGetUserByIdSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options: {
 		query: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1165,15 +1210,15 @@ export function useGetUserByIdSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetUserByIdSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1184,15 +1229,15 @@ export function useGetUserByIdSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
-export function useGetUserByIdSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1204,18 +1249,18 @@ export function useGetUserByIdSuspenseInfinite<
 	queryKey: DataTag<QueryKey, TData, TError>;
 };
 /**
- * @summary Get user by ID (Admin only)
+ * @summary Get membership plan by ID
  */
 
-export function useGetUserByIdSuspenseInfinite<
-	TData = InfiniteData<Awaited<ReturnType<typeof getUserById>>>,
-	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+export function useGetMembershipPlanByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getMembershipPlanById>>>,
+	TError = ErrorType<ApiErrorResponse>,
 >(
 	id: number,
 	options?: {
 		query?: Partial<
 			UseSuspenseInfiniteQueryOptions<
-				Awaited<ReturnType<typeof getUserById>>,
+				Awaited<ReturnType<typeof getMembershipPlanById>>,
 				TError,
 				TData
 			>
@@ -1226,7 +1271,10 @@ export function useGetUserByIdSuspenseInfinite<
 ): UseSuspenseInfiniteQueryResult<TData, TError> & {
 	queryKey: DataTag<QueryKey, TData, TError>;
 } {
-	const queryOptions = getGetUserByIdSuspenseInfiniteQueryOptions(id, options);
+	const queryOptions = getGetMembershipPlanByIdSuspenseInfiniteQueryOptions(
+		id,
+		options,
+	);
 
 	const query = useSuspenseInfiniteQuery(
 		queryOptions,
@@ -1241,43 +1289,43 @@ export function useGetUserByIdSuspenseInfinite<
 }
 
 /**
- * Updates a user's details. This operation is restricted to admin users.
- * @summary Update a user (Admin only)
+ * Updates a membership plan. Restricted to admins.
+ * @summary Update a membership plan (Admin only)
  */
-export const updateUser = (
+export const updateMembershipPlan = (
 	id: number,
-	userUpdate: BodyType<UserUpdate>,
+	membershipPlanCreate: BodyType<MembershipPlanCreate>,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<UserResponse>(
+	return customInstance<MembershipPlanResponse>(
 		{
-			url: `/users/${id}`,
+			url: `/membership-plans/${id}`,
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
-			data: userUpdate,
+			data: membershipPlanCreate,
 		},
 		options,
 	);
 };
 
-export const getUpdateUserMutationOptions = <
+export const getUpdateMembershipPlanMutationOptions = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof updateUser>>,
+		Awaited<ReturnType<typeof updateMembershipPlan>>,
 		TError,
-		{ id: number; data: BodyType<UserUpdate> },
+		{ id: number; data: BodyType<MembershipPlanCreate> },
 		TContext
 	>;
 	request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-	Awaited<ReturnType<typeof updateUser>>,
+	Awaited<ReturnType<typeof updateMembershipPlan>>,
 	TError,
-	{ id: number; data: BodyType<UserUpdate> },
+	{ id: number; data: BodyType<MembershipPlanCreate> },
 	TContext
 > => {
-	const mutationKey = ["updateUser"];
+	const mutationKey = ["updateMembershipPlan"];
 	const { mutation: mutationOptions, request: requestOptions } = options
 		? options.mutation &&
 			"mutationKey" in options.mutation &&
@@ -1287,84 +1335,84 @@ export const getUpdateUserMutationOptions = <
 		: { mutation: { mutationKey }, request: undefined };
 
 	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof updateUser>>,
-		{ id: number; data: BodyType<UserUpdate> }
+		Awaited<ReturnType<typeof updateMembershipPlan>>,
+		{ id: number; data: BodyType<MembershipPlanCreate> }
 	> = (props) => {
 		const { id, data } = props ?? {};
 
-		return updateUser(id, data, requestOptions);
+		return updateMembershipPlan(id, data, requestOptions);
 	};
 
 	return { mutationFn, ...mutationOptions };
 };
 
-export type UpdateUserMutationResult = NonNullable<
-	Awaited<ReturnType<typeof updateUser>>
+export type UpdateMembershipPlanMutationResult = NonNullable<
+	Awaited<ReturnType<typeof updateMembershipPlan>>
 >;
-export type UpdateUserMutationBody = BodyType<UserUpdate>;
-export type UpdateUserMutationError = ErrorType<
+export type UpdateMembershipPlanMutationBody = BodyType<MembershipPlanCreate>;
+export type UpdateMembershipPlanMutationError = ErrorType<
 	ApiErrorResponse | ApiErrorResponse | ApiErrorResponse
 >;
 
 /**
- * @summary Update a user (Admin only)
+ * @summary Update a membership plan (Admin only)
  */
-export const useUpdateUser = <
+export const useUpdateMembershipPlan = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(
 	options?: {
 		mutation?: UseMutationOptions<
-			Awaited<ReturnType<typeof updateUser>>,
+			Awaited<ReturnType<typeof updateMembershipPlan>>,
 			TError,
-			{ id: number; data: BodyType<UserUpdate> },
+			{ id: number; data: BodyType<MembershipPlanCreate> },
 			TContext
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
 	queryClient?: QueryClient,
 ): UseMutationResult<
-	Awaited<ReturnType<typeof updateUser>>,
+	Awaited<ReturnType<typeof updateMembershipPlan>>,
 	TError,
-	{ id: number; data: BodyType<UserUpdate> },
+	{ id: number; data: BodyType<MembershipPlanCreate> },
 	TContext
 > => {
-	const mutationOptions = getUpdateUserMutationOptions(options);
+	const mutationOptions = getUpdateMembershipPlanMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };
 /**
- * Deletes a user from the system. This operation is restricted to admin users.
- * @summary Delete a user (Admin only)
+ * Deletes a membership plan. Restricted to admins.
+ * @summary Delete a membership plan (Admin only)
  */
-export const deleteUser = (
+export const deleteMembershipPlan = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
 	return customInstance<BaseResponse>(
-		{ url: `/users/${id}`, method: "DELETE" },
+		{ url: `/membership-plans/${id}`, method: "DELETE" },
 		options,
 	);
 };
 
-export const getDeleteUserMutationOptions = <
+export const getDeleteMembershipPlanMutationOptions = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof deleteUser>>,
+		Awaited<ReturnType<typeof deleteMembershipPlan>>,
 		TError,
 		{ id: number },
 		TContext
 	>;
 	request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-	Awaited<ReturnType<typeof deleteUser>>,
+	Awaited<ReturnType<typeof deleteMembershipPlan>>,
 	TError,
 	{ id: number },
 	TContext
 > => {
-	const mutationKey = ["deleteUser"];
+	const mutationKey = ["deleteMembershipPlan"];
 	const { mutation: mutationOptions, request: requestOptions } = options
 		? options.mutation &&
 			"mutationKey" in options.mutation &&
@@ -1374,35 +1422,35 @@ export const getDeleteUserMutationOptions = <
 		: { mutation: { mutationKey }, request: undefined };
 
 	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof deleteUser>>,
+		Awaited<ReturnType<typeof deleteMembershipPlan>>,
 		{ id: number }
 	> = (props) => {
 		const { id } = props ?? {};
 
-		return deleteUser(id, requestOptions);
+		return deleteMembershipPlan(id, requestOptions);
 	};
 
 	return { mutationFn, ...mutationOptions };
 };
 
-export type DeleteUserMutationResult = NonNullable<
-	Awaited<ReturnType<typeof deleteUser>>
+export type DeleteMembershipPlanMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteMembershipPlan>>
 >;
 
-export type DeleteUserMutationError = ErrorType<
+export type DeleteMembershipPlanMutationError = ErrorType<
 	ApiErrorResponse | ApiErrorResponse
 >;
 
 /**
- * @summary Delete a user (Admin only)
+ * @summary Delete a membership plan (Admin only)
  */
-export const useDeleteUser = <
+export const useDeleteMembershipPlan = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(
 	options?: {
 		mutation?: UseMutationOptions<
-			Awaited<ReturnType<typeof deleteUser>>,
+			Awaited<ReturnType<typeof deleteMembershipPlan>>,
 			TError,
 			{ id: number },
 			TContext
@@ -1411,12 +1459,12 @@ export const useDeleteUser = <
 	},
 	queryClient?: QueryClient,
 ): UseMutationResult<
-	Awaited<ReturnType<typeof deleteUser>>,
+	Awaited<ReturnType<typeof deleteMembershipPlan>>,
 	TError,
 	{ id: number },
 	TContext
 > => {
-	const mutationOptions = getDeleteUserMutationOptions(options);
+	const mutationOptions = getDeleteMembershipPlanMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };

@@ -113,8 +113,9 @@ const Slot = ({
 			{...props}
 			role="presentation"
 			aria-label={`Enter digit ${index + 1} of ${slots.length}`}
+			data-focused={isFocused && slot?.isActive ? true : undefined}
 			className={cx(
-				"relative flex items-center justify-center rounded-xl bg-primary text-center text-placeholder_subtle shadow-xs ring-1 ring-primary transition-[box-shadow,background-color] duration-100 ease-linear ring-inset",
+				"relative flex items-center justify-center rounded-xl bg-gray-500 text-center text-placeholder shadow-xs ring-1 ring-primary transition-[box-shadow,background-color] duration-100 ease-linear ring-inset",
 				sizes[size],
 				isFocused &&
 					slot?.isActive &&
@@ -208,4 +209,9 @@ PinInput.Group = Group;
 PinInput.Separator = Separator;
 PinInput.Description = Description;
 
-export { PinInput };
+export {
+	PinInput,
+	type PinInputContextType,
+	type RootProps as PinInputProps,
+	type GroupProps as PinInputGroupProps,
+};

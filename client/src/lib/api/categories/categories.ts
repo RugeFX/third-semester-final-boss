@@ -11,18 +11,32 @@ This documentation provides a base for all the resources defined in the database
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
+	UseSuspenseQueryOptions,
+	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
@@ -53,6 +67,145 @@ export const listCategories = (
 export const getListCategoriesQueryKey = () => {
 	return [`/categories`] as const;
 };
+
+export const getListCategoriesInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof listCategories>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListCategoriesQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof listCategories>>> = ({
+		signal,
+	}) => listCategories(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof listCategories>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListCategoriesInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listCategories>>
+>;
+export type ListCategoriesInfiniteQueryError = ErrorType<unknown>;
+
+export function useListCategoriesInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof listCategories>>,
+					TError,
+					Awaited<ReturnType<typeof listCategories>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListCategoriesInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof listCategories>>,
+					TError,
+					Awaited<ReturnType<typeof listCategories>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListCategoriesInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all vehicle categories
+ */
+
+export function useListCategoriesInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListCategoriesInfiniteQueryOptions(options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getListCategoriesQueryOptions = <
 	TData = Awaited<ReturnType<typeof listCategories>>,
@@ -171,6 +324,256 @@ export function useListCategories<
 	return query;
 }
 
+export const getListCategoriesSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof listCategories>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseQueryOptions<
+			Awaited<ReturnType<typeof listCategories>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListCategoriesQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof listCategories>>> = ({
+		signal,
+	}) => listCategories(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof listCategories>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListCategoriesSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listCategories>>
+>;
+export type ListCategoriesSuspenseQueryError = ErrorType<unknown>;
+
+export function useListCategoriesSuspense<
+	TData = Awaited<ReturnType<typeof listCategories>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListCategoriesSuspense<
+	TData = Awaited<ReturnType<typeof listCategories>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListCategoriesSuspense<
+	TData = Awaited<ReturnType<typeof listCategories>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all vehicle categories
+ */
+
+export function useListCategoriesSuspense<
+	TData = Awaited<ReturnType<typeof listCategories>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListCategoriesSuspenseQueryOptions(options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getListCategoriesSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof listCategories>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListCategoriesQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof listCategories>>> = ({
+		signal,
+	}) => listCategories(requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof listCategories>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListCategoriesSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listCategories>>
+>;
+export type ListCategoriesSuspenseInfiniteQueryError = ErrorType<unknown>;
+
+export function useListCategoriesSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListCategoriesSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListCategoriesSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all vehicle categories
+ */
+
+export function useListCategoriesSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listCategories>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listCategories>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListCategoriesSuspenseInfiniteQueryOptions(options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
 /**
  * Creates a new vehicle category. Restricted to admins.
  * @summary Create a vehicle category (Admin only)
@@ -283,6 +686,157 @@ export const getCategoryById = (
 export const getGetCategoryByIdQueryKey = (id?: number) => {
 	return [`/categories/${id}`] as const;
 };
+
+export const getGetCategoryByIdInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetCategoryByIdQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getCategoryById>>> = ({
+		signal,
+	}) => getCategoryById(id, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		enabled: !!id,
+		...queryOptions,
+	} as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getCategoryById>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCategoryByIdInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getCategoryById>>
+>;
+export type GetCategoryByIdInfiniteQueryError = ErrorType<ApiErrorResponse>;
+
+export function useGetCategoryByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getCategoryById>>,
+					TError,
+					Awaited<ReturnType<typeof getCategoryById>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getCategoryById>>,
+					TError,
+					Awaited<ReturnType<typeof getCategoryById>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get category by ID
+ */
+
+export function useGetCategoryByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetCategoryByIdInfiniteQueryOptions(id, options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetCategoryByIdQueryOptions = <
 	TData = Awaited<ReturnType<typeof getCategoryById>>,
@@ -427,6 +981,274 @@ export function useGetCategoryById<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetCategoryByIdSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getCategoryById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetCategoryByIdQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getCategoryById>>> = ({
+		signal,
+	}) => getCategoryById(id, requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getCategoryById>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCategoryByIdSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getCategoryById>>
+>;
+export type GetCategoryByIdSuspenseQueryError = ErrorType<ApiErrorResponse>;
+
+export function useGetCategoryByIdSuspense<
+	TData = Awaited<ReturnType<typeof getCategoryById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryByIdSuspense<
+	TData = Awaited<ReturnType<typeof getCategoryById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryByIdSuspense<
+	TData = Awaited<ReturnType<typeof getCategoryById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get category by ID
+ */
+
+export function useGetCategoryByIdSuspense<
+	TData = Awaited<ReturnType<typeof getCategoryById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetCategoryByIdSuspenseQueryOptions(id, options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetCategoryByIdSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetCategoryByIdQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getCategoryById>>> = ({
+		signal,
+	}) => getCategoryById(id, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getCategoryById>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetCategoryByIdSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getCategoryById>>
+>;
+export type GetCategoryByIdSuspenseInfiniteQueryError =
+	ErrorType<ApiErrorResponse>;
+
+export function useGetCategoryByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetCategoryByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get category by ID
+ */
+
+export function useGetCategoryByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getCategoryById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getCategoryById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetCategoryByIdSuspenseInfiniteQueryOptions(
+		id,
+		options,
+	);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 

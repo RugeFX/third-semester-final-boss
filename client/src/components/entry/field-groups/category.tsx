@@ -1,16 +1,28 @@
 import { useStore } from "@tanstack/react-form";
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 
 import { Button } from "@/components/base/buttons/button";
+import { RemoteSVG } from "@/components/svg/remote-svg";
+import type { Category } from "@/lib/api/models";
 import { withFieldGroup } from "@/lib/form";
 import { cx } from "@/lib/utils/cx";
-import { categories } from "../data";
+
+type CategoryFieldGroupProps = {
+	categories: Category[];
+	variants: Variants;
+	direction: 1 | -1;
+};
 
 const CategoryFieldGroup = withFieldGroup({
+	props: {
+		categories: [],
+		variants: {},
+		direction: 1,
+	} as CategoryFieldGroupProps,
 	defaultValues: {
 		categoryId: null as number | null,
 	},
-	render: function Render({ group }) {
+	render: function Render({ group, categories, variants, direction }) {
 		const categoryId = useStore(
 			group.store,
 			(state) => state.values.categoryId,
@@ -18,26 +30,11 @@ const CategoryFieldGroup = withFieldGroup({
 
 		return (
 			<motion.div
-				initial={{
-					x: "-20%",
-					opacity: 0,
-				}}
-				animate={{
-					x: 0,
-					opacity: 1,
-					transition: {
-						duration: 0.3,
-						ease: "easeOut",
-					},
-				}}
-				exit={{
-					x: "-20%",
-					opacity: 0,
-					transition: {
-						duration: 0.3,
-						ease: "easeIn",
-					},
-				}}
+				custom={direction}
+				variants={variants}
+				initial="enter"
+				animate="animate"
+				exit="exit"
 				className="flex flex-col gap-8 justify-center ml-auto max-w-lg"
 			>
 				<div className="space-y-4">
@@ -51,7 +48,7 @@ const CategoryFieldGroup = withFieldGroup({
 						<>
 							<div className="flex gap-4">
 								{categories.map((category) => {
-									const { id, name, icon: Icon } = category;
+									const { id, name, icon } = category;
 									const isSelected = categoryId === id;
 
 									return (
@@ -65,14 +62,16 @@ const CategoryFieldGroup = withFieldGroup({
 											)}
 											onClick={() => field.handleChange(id)}
 										>
-											<Icon
+											<div
 												className={cx(
-													"transition-inherit-all size-14 fill-gray-400 group-hover:fill-bg-brand-solid",
+													"grid place-items-center **:transition-colors **:fill-gray-400 group-hover:**:fill-bg-brand-solid",
 													isSelected &&
-														"fill-gray-500 group-hover:fill-gray-600",
+														"**:fill-gray-500 group-hover:**:fill-gray-600",
 												)}
-											/>
-											<span className="sr-only">{name}</span>
+											>
+												{icon && <RemoteSVG url={icon} className="*:size-14" />}
+											</div>
+											<span className={cx(icon && "sr-only")}>{name}</span>
 										</Button>
 									);
 								})}

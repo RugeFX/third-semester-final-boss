@@ -11,4 +11,6 @@ This documentation provides a base for all the resources defined in the database
 export interface CategoryCreate {
 	name: string;
 	weight: number;
+	icon: string;
+	thumbnail: string;
 }

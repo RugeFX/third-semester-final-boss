@@ -1,11 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { motion } from "motion/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { useStore } from "zustand";
 
 import { routeTree } from "./routeTree.gen";
 import "./styles/globals.css";
+import LoadingIndicator from "./components/base/loading-indicator";
 import authStore from "./lib/store/auth";
 
 const rootElement = document.getElementById("root");
@@ -14,8 +16,22 @@ if (!rootElement) throw new Error("Failed to find the root element");
 
 const queryClient = new QueryClient();
 
+function DefaultPendingComponent() {
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			className="flex items-center justify-center flex-col gap-4 h-full"
+		>
+			<LoadingIndicator />
+			<h2 className="font-bold text-2xl">Mohon Tunggu...</h2>
+		</motion.div>
+	);
+}
+
 const router = createRouter({
 	routeTree,
+	defaultPendingComponent: DefaultPendingComponent,
 	// biome-ignore lint/style/noNonNullAssertion: it will be set from the provider
 	context: { auth: undefined!, queryClient },
 });

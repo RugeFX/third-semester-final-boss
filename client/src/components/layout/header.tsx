@@ -15,7 +15,7 @@ export default function Header() {
 				<Button size="xl" to="/sign-in">
 					Join Membership
 				</Button>
-				<Button color="secondary" size="xl" to="/sign-in">
+				<Button color="secondary" size="xl" to="/check">
 					Periksa Kendaraan
 				</Button>
 			</div>

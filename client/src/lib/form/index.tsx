@@ -1,6 +1,7 @@
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { Eye, EyeOff } from "@untitledui/icons";
-import { useState } from "react";
+import { type ComponentProps, Fragment, useState } from "react";
+
 import { Button, type ButtonProps } from "@/components/base/buttons/button";
 import {
 	Input,
@@ -12,6 +13,17 @@ import {
 	InputGroup as InputGroupBase,
 	type InputGroupProps,
 } from "@/components/base/input/input-group";
+import {
+	PinInput as BasePinInput,
+	type PinInputProps as BasePinInputProps,
+	type PinInputGroupProps,
+} from "@/components/base/pin-input/pin-input";
+import {
+	RadioGroup as BaseRadioGroup,
+	RadioButton,
+	type RadioButtonProps,
+	type RadioGroupProps,
+} from "@/components/base/radio-buttons/radio-buttons";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
 	createFormHookContexts();
@@ -93,6 +105,79 @@ function PasswordInput({ groupProps, inputProps }: FormInputGroupProps) {
 	);
 }
 
+interface FormRadioGroupProps extends Omit<RadioGroupProps, "children"> {
+	items: {
+		label: string;
+		value: string | number;
+		hint?: string;
+	}[];
+	buttonProps?: Omit<RadioButtonProps, "label" | "value" | "hint">;
+}
+
+function RadioGroup({ items, buttonProps, ...props }: FormRadioGroupProps) {
+	const field = useFieldContext<string | number>();
+
+	return (
+		<BaseRadioGroup
+			name={field.name}
+			value={String(field.state.value)}
+			onChange={field.handleChange}
+			onBlur={field.handleBlur}
+			isInvalid={field.state.meta.errors.length > 0}
+			{...props}
+		>
+			{items.map((item) => (
+				<RadioButton
+					key={item.value}
+					label={item.label}
+					hint={item.hint}
+					value={String(item.value)}
+					{...buttonProps}
+				/>
+			))}
+		</BaseRadioGroup>
+	);
+}
+
+interface PinInputProps {
+	length: number;
+	pinInputProps?: Omit<BasePinInputProps, "children">;
+	groupProps?: Omit<PinInputGroupProps, "children" | "render" | "maxLength">;
+	slotProps?: ComponentProps<"div">;
+}
+
+function PinInput({
+	length,
+	pinInputProps,
+	groupProps,
+	slotProps,
+}: PinInputProps) {
+	const field = useFieldContext<string>();
+
+	return (
+		<BasePinInput size="lg" {...pinInputProps}>
+			<BasePinInput.Group
+				maxLength={length}
+				value={field.state.value}
+				onChange={field.handleChange}
+				onBlur={field.handleBlur}
+				{...groupProps}
+			>
+				{Array(length)
+					.fill(0)
+					.map((_, i) => (
+						<Fragment key={`slot-${i + 1}`}>
+							{i === Math.floor(length / 2) && (
+								<BasePinInput.Separator className="text-gray-400" />
+							)}
+							<BasePinInput.Slot index={i} {...slotProps} />
+						</Fragment>
+					))}
+			</BasePinInput.Group>
+		</BasePinInput>
+	);
+}
+
 function SubmitButton(props: ButtonProps) {
 	const form = useFormContext();
 
@@ -165,6 +250,8 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
 		InputGroup,
 		TextInput,
 		PasswordInput,
+		RadioGroup,
+		PinInput,
 		Errors: FieldErrors,
 	},
 	formComponents: {

@@ -1,14 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import CheckForm from "@/components/check/form";
+import { routeTitle } from "@/lib/utils/title";
+
 export const Route = createFileRoute("/check/")({
 	component: RouteComponent,
+	head: () => ({
+		meta: [routeTitle("Periksa Kendaraan")],
+	}),
 });
 
 function RouteComponent() {
-	// TODO: Kodingkan le
-	return (
-		<div>
-			<h1 className="text-2xl font-bold">Kodingkan disini le</h1>
-		</div>
-	);
+	return <CheckForm />;
 }

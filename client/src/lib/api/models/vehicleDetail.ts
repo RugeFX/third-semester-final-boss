@@ -10,6 +10,6 @@ This documentation provides a base for all the resources defined in the database
 
 export interface VehicleDetail {
 	id: number;
-	plateNumber: string;
-	categoryId: number;
+	plate_number: string;
+	category_id: number;
 }

@@ -11,18 +11,32 @@ This documentation provides a base for all the resources defined in the database
 import type {
 	DataTag,
 	DefinedInitialDataOptions,
+	DefinedUseInfiniteQueryResult,
 	DefinedUseQueryResult,
+	InfiniteData,
 	MutationFunction,
 	QueryClient,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseInfiniteQueryOptions,
+	UseInfiniteQueryResult,
 	UseMutationOptions,
 	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
+	UseSuspenseInfiniteQueryOptions,
+	UseSuspenseInfiniteQueryResult,
+	UseSuspenseQueryOptions,
+	UseSuspenseQueryResult,
 } from "@tanstack/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 
 import type {
 	ApiErrorResponse,
@@ -53,6 +67,145 @@ export const listPrices = (
 export const getListPricesQueryKey = () => {
 	return [`/prices`] as const;
 };
+
+export const getListPricesInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof listPrices>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListPricesQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof listPrices>>> = ({
+		signal,
+	}) => listPrices(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof listPrices>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListPricesInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listPrices>>
+>;
+export type ListPricesInfiniteQueryError = ErrorType<unknown>;
+
+export function useListPricesInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof listPrices>>,
+					TError,
+					Awaited<ReturnType<typeof listPrices>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListPricesInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof listPrices>>,
+					TError,
+					Awaited<ReturnType<typeof listPrices>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListPricesInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all prices
+ */
+
+export function useListPricesInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListPricesInfiniteQueryOptions(options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getListPricesQueryOptions = <
 	TData = Awaited<ReturnType<typeof listPrices>>,
@@ -171,6 +324,256 @@ export function useListPrices<
 	return query;
 }
 
+export const getListPricesSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof listPrices>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseQueryOptions<
+			Awaited<ReturnType<typeof listPrices>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListPricesQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof listPrices>>> = ({
+		signal,
+	}) => listPrices(requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof listPrices>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListPricesSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listPrices>>
+>;
+export type ListPricesSuspenseQueryError = ErrorType<unknown>;
+
+export function useListPricesSuspense<
+	TData = Awaited<ReturnType<typeof listPrices>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListPricesSuspense<
+	TData = Awaited<ReturnType<typeof listPrices>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListPricesSuspense<
+	TData = Awaited<ReturnType<typeof listPrices>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all prices
+ */
+
+export function useListPricesSuspense<
+	TData = Awaited<ReturnType<typeof listPrices>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListPricesSuspenseQueryOptions(options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getListPricesSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseSuspenseInfiniteQueryOptions<
+			Awaited<ReturnType<typeof listPrices>>,
+			TError,
+			TData
+		>
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getListPricesQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof listPrices>>> = ({
+		signal,
+	}) => listPrices(requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof listPrices>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type ListPricesSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof listPrices>>
+>;
+export type ListPricesSuspenseInfiniteQueryError = ErrorType<unknown>;
+
+export function useListPricesSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListPricesSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useListPricesSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary List all prices
+ */
+
+export function useListPricesSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof listPrices>>>,
+	TError = ErrorType<unknown>,
+>(
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof listPrices>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getListPricesSuspenseInfiniteQueryOptions(options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
 /**
  * Creates a new price configuration. Restricted to admins.
  * @summary Create a price (Admin only)
@@ -283,6 +686,157 @@ export const getPriceById = (
 export const getGetPriceByIdQueryKey = (id?: number) => {
 	return [`/prices/${id}`] as const;
 };
+
+export const getGetPriceByIdInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetPriceByIdQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getPriceById>>> = ({
+		signal,
+	}) => getPriceById(id, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		enabled: !!id,
+		...queryOptions,
+	} as UseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getPriceById>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPriceByIdInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getPriceById>>
+>;
+export type GetPriceByIdInfiniteQueryError = ErrorType<ApiErrorResponse>;
+
+export function useGetPriceByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getPriceById>>,
+					TError,
+					Awaited<ReturnType<typeof getPriceById>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): DefinedUseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPriceByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof getPriceById>>,
+					TError,
+					Awaited<ReturnType<typeof getPriceById>>
+				>,
+				"initialData"
+			>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPriceByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get price by ID
+ */
+
+export function useGetPriceByIdInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetPriceByIdInfiniteQueryOptions(id, options);
+
+	const query = useInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
 
 export const getGetPriceByIdQueryOptions = <
 	TData = Awaited<ReturnType<typeof getPriceById>>,
@@ -407,6 +961,271 @@ export function useGetPriceById<
 		TData,
 		TError
 	> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetPriceByIdSuspenseQueryOptions = <
+	TData = Awaited<ReturnType<typeof getPriceById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetPriceByIdQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getPriceById>>> = ({
+		signal,
+	}) => getPriceById(id, requestOptions, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+		Awaited<ReturnType<typeof getPriceById>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPriceByIdSuspenseQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getPriceById>>
+>;
+export type GetPriceByIdSuspenseQueryError = ErrorType<ApiErrorResponse>;
+
+export function useGetPriceByIdSuspense<
+	TData = Awaited<ReturnType<typeof getPriceById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPriceByIdSuspense<
+	TData = Awaited<ReturnType<typeof getPriceById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPriceByIdSuspense<
+	TData = Awaited<ReturnType<typeof getPriceById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get price by ID
+ */
+
+export function useGetPriceByIdSuspense<
+	TData = Awaited<ReturnType<typeof getPriceById>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetPriceByIdSuspenseQueryOptions(id, options);
+
+	const query = useSuspenseQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const getGetPriceByIdSuspenseInfiniteQueryOptions = <
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+) => {
+	const { query: queryOptions, request: requestOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getGetPriceByIdQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof getPriceById>>> = ({
+		signal,
+	}) => getPriceById(id, requestOptions, signal);
+
+	return {
+		queryKey,
+		queryFn,
+		...queryOptions,
+	} as UseSuspenseInfiniteQueryOptions<
+		Awaited<ReturnType<typeof getPriceById>>,
+		TError,
+		TData
+	> & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type GetPriceByIdSuspenseInfiniteQueryResult = NonNullable<
+	Awaited<ReturnType<typeof getPriceById>>
+>;
+export type GetPriceByIdSuspenseInfiniteQueryError =
+	ErrorType<ApiErrorResponse>;
+
+export function useGetPriceByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options: {
+		query: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPriceByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+export function useGetPriceByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+};
+/**
+ * @summary Get price by ID
+ */
+
+export function useGetPriceByIdSuspenseInfinite<
+	TData = InfiniteData<Awaited<ReturnType<typeof getPriceById>>>,
+	TError = ErrorType<ApiErrorResponse>,
+>(
+	id: number,
+	options?: {
+		query?: Partial<
+			UseSuspenseInfiniteQueryOptions<
+				Awaited<ReturnType<typeof getPriceById>>,
+				TError,
+				TData
+			>
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseSuspenseInfiniteQueryResult<TData, TError> & {
+	queryKey: DataTag<QueryKey, TData, TError>;
+} {
+	const queryOptions = getGetPriceByIdSuspenseInfiniteQueryOptions(id, options);
+
+	const query = useSuspenseInfiniteQuery(
+		queryOptions,
+		queryClient,
+	) as UseSuspenseInfiniteQueryResult<TData, TError> & {
+		queryKey: DataTag<QueryKey, TData, TError>;
+	};
 
 	query.queryKey = queryOptions.queryKey;
 
