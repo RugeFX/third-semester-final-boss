@@ -5,7 +5,8 @@ import {
   pgTable,
   varchar,
   timestamp,
-  boolean
+  boolean,
+  uniqueIndex
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
@@ -35,6 +36,7 @@ export const membersTable = pgTable("members", {
   joined_at: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow(),
   ended_at: timestamp("ended_at", { withTimezone: true }).notNull(),
   user_id: integer("user_id")
+    .unique()
     .notNull()
     .references(() => usersTable.id),
 });
@@ -94,7 +96,11 @@ export const pricesTable = pgTable("prices", {
   is_active: boolean("is_active").notNull().default(true),
   valid_from: timestamp("valid_from", { withTimezone: true }),
   valid_until: timestamp("valid_until", { withTimezone: true }),
-});
+}, (table) => [
+  uniqueIndex("unique_active_price_per_category_type")
+    .on(table.category_id, table.type)
+    .where(sql`${table.is_active} = true`)
+]);
 
 export const pricesRelations = relations(pricesTable, ({ one }) => ({
   category: one(categoriesTable, {
