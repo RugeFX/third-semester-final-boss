@@ -50,9 +50,11 @@ export const update = async (vehicleDetailId: number, vehicleDetailData: updated
 
 // Delete a vehicle detail
 export const remove = async (vehicleDetailId: number) => {
-    return await db.delete(vehicleDetailsTable).where(
+    const [ deletedVehicleDetail ] = await db.delete(vehicleDetailsTable).where(
         eq(vehicleDetailsTable.id, vehicleDetailId)
     ).returning();
+
+    return deletedVehicleDetail;
 }
 
 export default { findAll, findById, create, update, remove };

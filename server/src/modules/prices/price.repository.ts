@@ -69,9 +69,11 @@ export const update = async (priceId: number, priceData: updatedPrice) => {
 
 // Delete a price
 export const remove = async (priceId: number) => {
-    return await db.delete(pricesTable).where(
+    const [ deletedPrice ] = await db.delete(pricesTable).where(
         eq(pricesTable.id, priceId)
     ).returning();
+
+    return deletedPrice;
 }
 
 export default { findAll, findById, findActivePriceByCategoryAndType, create, update, remove };
