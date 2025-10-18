@@ -54,9 +54,11 @@ export const update = async (memberId: number, memberData: updatedMember) => {
 
 // Delete a member
 export const remove = async (memberId: number) => {
-    return await db.delete(membersTable).where(
+    const [ deletedMember ] = await db.delete(membersTable).where(
         eq(membersTable.id, memberId)
     ).returning();
+
+    return deletedMember;
 }
 
 export default { findAll, findById, findByUserId, create, update, remove };

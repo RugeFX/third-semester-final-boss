@@ -36,10 +36,6 @@ export const getTransactionForMember = async (userId: number) => {
 
 // Create a new member
 export const createMember = async (memberData: createMemberInput) => {
-    const member = await memberRepository.findByUserId(memberData.userId);
-
-    if (member) throw new HttpError(400, "Member already exists");
-
     return await memberRepository.create(memberData);
 };
 
