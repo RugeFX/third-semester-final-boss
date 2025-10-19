@@ -30,6 +30,10 @@
       "description": "Endpoints for member-specific actions and admin CRUD for memberships."
     },
     {
+      "name": "Membership Plans",
+      "description": "Admin CRUD operations for managing membership plans."
+    },
+    {
       "name": "Transactions",
       "description": "Endpoints for the parking lifecycle and admin management of transactions."
     },
@@ -186,6 +190,23 @@
           }
         }
       },
+      "MembershipPlan": {
+        "type": "object",
+        "required": ["id", "cost", "period"],
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "cost": { "type": "number", "format": "double", "example": 50 },
+          "period": { "type": "integer", "description": "Duration of the plan in months.", "example": 1 }
+        }
+      },
+      "MembershipPlanCreate": {
+        "type": "object",
+        "required": ["cost", "period"],
+        "properties": {
+          "cost": { "type": "number", "format": "double", "example": 100 },
+          "period": { "type": "integer", "description": "Duration of the plan in months.", "example": 6 }
+        }
+      },
       "DashboardSummary": {
         "type": "object",
         "description": "Summary data for the admin or member dashboard.",
@@ -282,7 +303,7 @@
       },
       "PriceCreate": {
         "type": "object",
-        "required": ["categoryId", "amount"],
+        "required": ["categoryId", "amount", "type"],
         "properties": {
           "categoryId": {
             "type": "integer",
@@ -292,6 +313,31 @@
             "type": "number",
             "format": "double",
             "example": 7.5
+          },
+          "type": {
+            "type": "string",
+            "description": "Business rule type for the price.",
+            "example": "PER_HOUR"
+          },
+          "block_hours": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Duration in hours for INITIAL_BLOCK type. Required if type is 'INITIAL_BLOCK'.",
+            "example": 1
+          },
+          "is_active": {
+            "type": "boolean",
+            "default": true
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "valid_until": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         }
       },
@@ -556,6 +602,41 @@
           }
         ]
       },
+      "MembershipPlanResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
+          },
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/MembershipPlan"
+              }
+            }
+          }
+        ]
+      },
+      "MembershipPlanArrayResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseResponse"
+          },
+          {
+            "type": "object",
+            "required": ["data"],
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MembershipPlan"
+                }
+              }
+            }
+          }
+        ]
+      },
       "TransactionResponse": {
         "allOf": [
           {
@@ -812,46 +893,10 @@
               }
             }
           },
-          "400": {
-            "description": "Bad Request. The request body is missing required fields or contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized. The provided credentials (name or password) are incorrect.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. The user account is locked or inactive.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error. An unexpected error occurred on the server.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "500": { "description": "Internal Server Error", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -862,26 +907,8 @@
         "description": "Retrieves a list of all user accounts. This operation is restricted to admin users.",
         "operationId": "listUsers",
         "responses": {
-          "200": {
-            "description": "A list of users.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserArrayResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. User does not have the necessary permissions.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "A list of users.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserArrayResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "post": {
@@ -900,36 +927,9 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "User created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. User does not have the necessary permissions.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "201": { "description": "User created successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -939,47 +939,11 @@
         "summary": "Get user by ID (Admin only)",
         "description": "Retrieves the details of a specific user by their unique ID. This operation is restricted to admin users.",
         "operationId": "getUserById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. User does not have the necessary permissions.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "put": {
@@ -987,16 +951,7 @@
         "summary": "Update a user (Admin only)",
         "description": "Updates a user's details. This operation is restricted to admin users.",
         "operationId": "updateUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "requestBody": {
           "required": true,
           "content": {
@@ -1008,46 +963,10 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "User updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "User updated successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "delete": {
@@ -1055,47 +974,11 @@
         "summary": "Delete a user (Admin only)",
         "description": "Deletes a user from the system. This operation is restricted to admin users.",
         "operationId": "deleteUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "User deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "User deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1106,26 +989,8 @@
         "description": "Retrieves a list of all member records. Restricted to admins.",
         "operationId": "listMembers",
         "responses": {
-          "200": {
-            "description": "A list of members.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemberArrayResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "A list of members.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MemberArrayResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "post": {
@@ -1144,36 +1009,9 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Member record created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemberResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "201": { "description": "Member record created successfully.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MemberResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1183,47 +1021,11 @@
         "summary": "Get member by ID (Admin only)",
         "description": "Retrieves a specific member record by ID. Restricted to admins.",
         "operationId": "getMemberById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemberResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Member not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MemberResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Member not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "put": {
@@ -1231,72 +1033,16 @@
         "summary": "Update a member (Admin only)",
         "description": "Updates a member record. Restricted to admins.",
         "operationId": "updateMember",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "endedAt": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                }
-              }
-            }
-          }
+          "content": { "application/json": { "schema": { "properties": { "endedAt": { "type": "string", "format": "date-time" } } } } }
         },
         "responses": {
-          "200": {
-            "description": "Member updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemberResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Member not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Member updated successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MemberResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Member not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "delete": {
@@ -1304,47 +1050,11 @@
         "summary": "Delete a member record (Admin only)",
         "description": "Deletes a member record. Restricted to admins.",
         "operationId": "deleteMember",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "Member deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Member not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Member deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MemberResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Member not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1354,37 +1064,10 @@
         "summary": "Renew a membership",
         "description": "Allows the currently authenticated member to extend their membership subscription.",
         "operationId": "renewCurrentMember",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MembershipRenewal"
-              }
-            }
-          }
-        },
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipRenewal" } } } },
         "responses": {
-          "200": {
-            "description": "Membership renewed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemberResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request or payment failed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Membership renewed successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MemberResponse" } } } },
+          "400": { "description": "Bad request or payment failed", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1395,16 +1078,71 @@
         "description": "Fetches a list of all parking transactions for the authenticated member.",
         "operationId": "getCurrentMemberTransactions",
         "responses": {
-          "200": {
-            "description": "A list of transactions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionArrayResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "A list of transactions", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionArrayResponse" } } } }
+        }
+      }
+    },
+    "/membership-plans": {
+      "get": {
+        "tags": ["Membership Plans"],
+        "summary": "List all membership plans (Admin only)",
+        "description": "Retrieves a list of all membership plans. Restricted to admins.",
+        "operationId": "listMembershipPlans",
+        "responses": {
+          "200": { "description": "A list of membership plans.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanArrayResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
+        }
+      },
+      "post": {
+        "tags": ["Membership Plans"],
+        "summary": "Create a membership plan (Admin only)",
+        "description": "Creates a new membership plan. Restricted to admins.",
+        "operationId": "createMembershipPlan",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanCreate" } } } },
+        "responses": {
+          "201": { "description": "Membership plan created successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
+        }
+      }
+    },
+    "/membership-plans/{id}": {
+      "get": {
+        "tags": ["Membership Plans"],
+        "summary": "Get membership plan by ID (Admin only)",
+        "description": "Retrieves details for a specific membership plan. Restricted to admins.",
+        "operationId": "getMembershipPlanById",
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Membership plan not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
+        }
+      },
+      "put": {
+        "tags": ["Membership Plans"],
+        "summary": "Update a membership plan (Admin only)",
+        "description": "Updates a membership plan. Restricted to admins.",
+        "operationId": "updateMembershipPlan",
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanCreate" } } } },
+        "responses": {
+          "200": { "description": "Membership plan updated successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Membership plan not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
+        }
+      },
+      "delete": {
+        "tags": ["Membership Plans"],
+        "summary": "Delete a membership plan (Admin only)",
+        "description": "Deletes a membership plan. Restricted to admins.",
+        "operationId": "deleteMembershipPlan",
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "responses": {
+          "200": { "description": "Membership plan deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Membership plan not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1415,26 +1153,8 @@
         "description": "Retrieves a list of all transactions. Restricted to admins.",
         "operationId": "listTransactions",
         "responses": {
-          "200": {
-            "description": "A list of transactions.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionArrayResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "A list of transactions.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionArrayResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1444,37 +1164,10 @@
         "summary": "Create a new transaction (vehicle entry)",
         "description": "This endpoint is called when a vehicle enters the parking facility. It creates a vehicle detail and a new transaction record.",
         "operationId": "createEntryTransaction",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TransactionCreate"
-              }
-            }
-          }
-        },
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionCreate" } } } },
         "responses": {
-          "201": {
-            "description": "Transaction created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "201": { "description": "Transaction created successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1485,37 +1178,10 @@
         "description": "Allows a guest to retrieve the status of their active parking transaction using the access code from their ticket. This endpoint is public and does not require authentication.",
         "operationId": "getGuestTransactionByAccessCode",
         "security": [],
-        "parameters": [
-          {
-            "name": "accessCode",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [ { "name": "accessCode", "in": "path", "required": true, "schema": { "type": "string" } } ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Transaction not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
+          "404": { "description": "Transaction not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1525,53 +1191,11 @@
         "summary": "Process payment for a transaction",
         "description": "Processes a payment for an active transaction and updates its status.",
         "operationId": "processTransactionPayment",
-        "parameters": [
-          {
-            "name": "accessCode",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "paidAmount": {
-                    "type": "number",
-                    "example": 15.75
-                  }
-                }
-              }
-            }
-          }
-        },
+        "parameters": [ { "name": "accessCode", "in": "path", "required": true, "schema": { "type": "string" } } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "paidAmount": { "type": "number", "example": 15.75 } } } } } },
         "responses": {
-          "200": {
-            "description": "Payment successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Payment successful", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1581,37 +1205,10 @@
         "summary": "Complete a transaction (vehicle exit)",
         "description": "Marks a transaction as completed when a vehicle exits the parking facility. The final fee is calculated and status updated.",
         "operationId": "completeTransaction",
-        "parameters": [
-          {
-            "name": "accessCode",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [ { "name": "accessCode", "in": "path", "required": true, "schema": { "type": "string" } } ],
         "responses": {
-          "200": {
-            "description": "Vehicle exit processed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Vehicle exit processed successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1621,67 +1218,13 @@
         "summary": "Manually update a transaction (Admin only)",
         "description": "Allows an admin to manually update transaction details by its access code. Restricted to admins.",
         "operationId": "updateTransactionByAccessCode",
-        "parameters": [
-          {
-            "name": "accessCode",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TransactionUpdate"
-              }
-            }
-          }
-        },
+        "parameters": [ { "name": "accessCode", "in": "path", "required": true, "schema": { "type": "string" } } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionUpdate" } } } },
         "responses": {
-          "200": {
-            "description": "Transaction updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Transaction not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Transaction updated successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Transaction not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "delete": {
@@ -1689,47 +1232,11 @@
         "summary": "Delete a transaction (Admin only)",
         "description": "Allows an admin to delete/void a transaction by its access code. Restricted to admins.",
         "operationId": "deleteTransactionByAccessCode",
-        "parameters": [
-          {
-            "name": "accessCode",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [ { "name": "accessCode", "in": "path", "required": true, "schema": { "type": "string" } } ],
         "responses": {
-          "200": {
-            "description": "Transaction deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Transaction not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Transaction deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Transaction not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1740,16 +1247,7 @@
         "description": "Retrieves summary data for the dashboard. The response varies based on the user's role (Admin or Member).",
         "operationId": "getDashboardSummary",
         "responses": {
-          "200": {
-            "description": "Dashboard summary data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DashboardSummaryResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Dashboard summary data", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DashboardSummaryResponse" } } } }
         }
       }
     },
@@ -1761,16 +1259,7 @@
         "operationId": "listParkingLevels",
         "security": [],
         "responses": {
-          "200": {
-            "description": "A list of parking levels",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParkingLevelArrayResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "A list of parking levels", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ParkingLevelArrayResponse" } } } }
         }
       },
       "post": {
@@ -1778,47 +1267,11 @@
         "summary": "Create a parking level (Admin only)",
         "description": "Creates a new parking level. Restricted to admins.",
         "operationId": "createParkingLevel",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParkingLevelCreate"
-              }
-            }
-          }
-        },
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ParkingLevelCreate" } } } },
         "responses": {
-          "201": {
-            "description": "Parking level created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParkingLevelResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "201": { "description": "Parking level created successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ParkingLevelResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1829,37 +1282,10 @@
         "description": "Retrieves details for a specific parking level.",
         "operationId": "getParkingLevelById",
         "security": [],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParkingLevelResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Parking level not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ParkingLevelResponse" } } } },
+          "404": { "description": "Parking level not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "put": {
@@ -1867,67 +1293,13 @@
         "summary": "Update a parking level (Admin only)",
         "description": "Updates a parking level. Restricted to admins.",
         "operationId": "updateParkingLevel",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParkingLevelCreate"
-              }
-            }
-          }
-        },
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ParkingLevelCreate" } } } },
         "responses": {
-          "200": {
-            "description": "Parking level updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParkingLevelResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Parking level not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Parking level updated successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ParkingLevelResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Parking level not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "delete": {
@@ -1935,47 +1307,11 @@
         "summary": "Delete a parking level (Admin only)",
         "description": "Deletes a parking level. Restricted to admins.",
         "operationId": "deleteParkingLevel",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "Parking level deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Parking level not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Parking level deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ParkingLevelResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Parking level not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1987,16 +1323,7 @@
         "operationId": "listCategories",
         "security": [],
         "responses": {
-          "200": {
-            "description": "A list of categories.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CategoryArrayResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "A list of categories.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CategoryArrayResponse" } } } }
         }
       },
       "post": {
@@ -2004,47 +1331,11 @@
         "summary": "Create a vehicle category (Admin only)",
         "description": "Creates a new vehicle category. Restricted to admins.",
         "operationId": "createCategory",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CategoryCreate"
-              }
-            }
-          }
-        },
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CategoryCreate" } } } },
         "responses": {
-          "201": {
-            "description": "Category created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CategoryResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "201": { "description": "Category created successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CategoryResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -2055,37 +1346,10 @@
         "description": "Retrieves details for a specific vehicle category.",
         "operationId": "getCategoryById",
         "security": [],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CategoryResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Category not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CategoryResponse" } } } },
+          "404": { "description": "Category not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "put": {
@@ -2093,67 +1357,13 @@
         "summary": "Update a category (Admin only)",
         "description": "Updates a vehicle category. Restricted to admins.",
         "operationId": "updateCategory",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CategoryCreate"
-              }
-            }
-          }
-        },
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CategoryCreate" } } } },
         "responses": {
-          "200": {
-            "description": "Category updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CategoryResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Category not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Category updated successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CategoryResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Category not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "delete": {
@@ -2161,47 +1371,11 @@
         "summary": "Delete a category (Admin only)",
         "description": "Deletes a vehicle category. Restricted to admins.",
         "operationId": "deleteCategory",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "Category deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Category not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Category deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CategoryResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Category not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -2213,16 +1387,7 @@
         "operationId": "listPrices",
         "security": [],
         "responses": {
-          "200": {
-            "description": "A list of prices.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PriceArrayResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "A list of prices.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PriceArrayResponse" } } } }
         }
       },
       "post": {
@@ -2230,47 +1395,11 @@
         "summary": "Create a price (Admin only)",
         "description": "Creates a new price configuration. Restricted to admins.",
         "operationId": "createPrice",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PriceCreate"
-              }
-            }
-          }
-        },
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PriceCreate" } } } },
         "responses": {
-          "201": {
-            "description": "Price created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PriceResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "201": { "description": "Price created successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PriceResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -2281,37 +1410,10 @@
         "description": "Retrieves details for a specific price configuration.",
         "operationId": "getPriceById",
         "security": [],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PriceResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Price not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PriceResponse" } } } },
+          "404": { "description": "Price not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "put": {
@@ -2319,67 +1421,13 @@
         "summary": "Update a price (Admin only)",
         "description": "Updates a price configuration. Restricted to admins.",
         "operationId": "updatePrice",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PriceCreate"
-              }
-            }
-          }
-        },
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PriceCreate" } } } },
         "responses": {
-          "200": {
-            "description": "Price updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PriceResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request. The request body contains invalid data.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Price not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Price updated successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PriceResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Price not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "delete": {
@@ -2387,47 +1435,11 @@
         "summary": "Delete a price (Admin only)",
         "description": "Deletes a price configuration. Restricted to admins.",
         "operationId": "deletePrice",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "Price deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Price not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Price deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PriceResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Price not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -2435,53 +1447,18 @@
       "get": {
         "tags": ["Vehicle Details"],
         "summary": "List all vehicle details",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
+        "security": [ { "BearerAuth": [] } ],
         "responses": {
-          "200": {
-            "description": "A list of vehicle details.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VehicleDetailArrayResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "A list of vehicle details.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailArrayResponse" } } } }
         }
       },
       "post": {
         "tags": ["Vehicle Details"],
         "summary": "Create a new vehicle detail",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VehicleDetailCreate"
-              }
-            }
-          }
-        },
+        "security": [ { "BearerAuth": [] } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailCreate" } } } },
         "responses": {
-          "201": {
-            "description": "Vehicle detail created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VehicleDetailResponse"
-                }
-              }
-            }
-          }
+          "201": { "description": "Vehicle detail created successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailResponse" } } } }
         }
       }
     },
@@ -2489,124 +1466,31 @@
       "get": {
         "tags": ["Vehicle Details"],
         "summary": "Get vehicle detail by ID",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "security": [ { "BearerAuth": [] } ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VehicleDetailResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Vehicle detail not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailResponse" } } } },
+          "404": { "description": "Vehicle detail not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
       "put": {
         "tags": ["Vehicle Details"],
         "summary": "Update a vehicle detail",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VehicleDetailUpdate"
-              }
-            }
-          }
-        },
+        "security": [ { "BearerAuth": [] } ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailUpdate" } } } },
         "responses": {
-          "200": {
-            "description": "Vehicle detail updated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VehicleDetailResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Vehicle detail updated successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailResponse" } } } }
         }
       },
       "delete": {
         "tags": ["Vehicle Details"],
         "summary": "Delete a vehicle detail",
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "security": [ { "BearerAuth": [] } ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "Vehicle detail deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Vehicle detail not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "Vehicle detail deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailResponse" } } } },
+          "404": { "description": "Vehicle detail not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -2617,26 +1501,8 @@
         "description": "Retrieves a list of all audit log records. Restricted to admins.",
         "operationId": "listAuditLogs",
         "responses": {
-          "200": {
-            "description": "A list of audit logs.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuditLogArrayResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden. User does not have the necessary permissions.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "A list of audit logs.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuditLogArrayResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -2646,47 +1512,11 @@
         "summary": "Get audit log by ID (Admin only)",
         "description": "Retrieves a specific audit log by ID. Restricted to admins.",
         "operationId": "getAuditLogById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuditLogResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Audit log not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          }
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuditLogResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "Audit log not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     }
