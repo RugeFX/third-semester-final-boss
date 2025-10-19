@@ -50,10 +50,11 @@ export const updateMember = async (memberId: number, memberData: updateMemberInp
 export const renewMembership = async (memberId: number, renewalData: renewMembershipInput) => {
     const member = await findMemberById(memberId);
 
-    const newEndDate = new Date(member.ended_at);
-
-    // Add renewal period
-    newEndDate.setMonth(newEndDate.getMonth() + renewalData.renewalPeriodMonths);
+    const now = new Date();
+    // Determine the new end date based on current end date or now
+    const base = new Date(member.ended_at) > now ? new Date(member.ended_at) : now;
+    // Calculate new end date
+    const newEndDate = new Date(base.setMonth(base.getMonth() + renewalData.renewalPeriodMonths));
 
     const updatedMember = await memberRepository.update(memberId, {
         endedAt: newEndDate
