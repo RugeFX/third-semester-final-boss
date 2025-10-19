@@ -1,4 +1,4 @@
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import membershipPlanRepository from "./membership-plan.repository";
 import { createMembershipPlanSchema, updateMembershipPlanSchema } from "./membership-plan.schema";
 import { z } from "zod";

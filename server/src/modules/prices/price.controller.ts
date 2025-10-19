@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import priceService from "./price.service";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import { paramsSchema, createPriceSchema, updatePriceSchema } from "./price.schema";
 
 // Get all prices

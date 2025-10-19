@@ -1,7 +1,7 @@
 import { db } from "../../db";
 import { InferSelectModel } from "drizzle-orm";
-import { generateShortCode } from "../common/utils/generate-short-code";
-import HttpError from "../common/exceptions/http.error";
+import { generateShortCode } from "../../common/utils/generate-short-code";
+import HttpError from "../../common/exceptions/http.error";
 import { z } from "zod";
 
 import categoryService from "../categories/category.service";

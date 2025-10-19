@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import categoryService from "./category.service";
 import { paramsSchema, createCategorySchema, updateCategorySchema } from "./category.schema";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 
 // Get all categories
 export const getAllCategories = async (_req: Request, res: Response) => {

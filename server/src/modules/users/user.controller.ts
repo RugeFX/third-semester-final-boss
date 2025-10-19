@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import userService from "./user.service";
 import { paramsSchema, createUserSchema, updateUserSchema } from "./user.schema";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 
 // Get all users
 export const getAllUsers = async (req: Request, res: Response) => {

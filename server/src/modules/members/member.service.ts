@@ -1,4 +1,4 @@
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import { createMemberSchema, updateMemberSchema, renewMembershipSchema } from "./member.schema";
 import memberRepository from "./member.repository";
 import transactionService from "../transactions/transaction.service";   

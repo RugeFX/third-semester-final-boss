@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { env } from '../../env';
 import authRepository from "./auth.repository";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 

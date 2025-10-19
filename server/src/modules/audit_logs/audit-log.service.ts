@@ -1,4 +1,4 @@
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import auditLogRepository from "./audit-log.repository";
 
 // Get all audit logs

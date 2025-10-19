@@ -2,11 +2,11 @@
 
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
-import HttpError from "../modules/common/exceptions/http.error";
-import BadRequestError from "../modules/common/exceptions/bad-request.error";
+import HttpError from "../common/exceptions/http.error";
+import BadRequestError from "../common/exceptions/bad-request.error";
 import { DrizzleQueryError } from "drizzle-orm";
 import { DatabaseError } from "pg";
-import { extranctDbError } from "../modules/common/exceptions/utils/handler";
+import { extranctDbError } from "../common/exceptions/sql.error";
 
 export const errorHandler = (error: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (error instanceof ZodError) {

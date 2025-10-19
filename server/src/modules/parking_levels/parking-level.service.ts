@@ -1,5 +1,5 @@
 import parkingLevelRepository from "./parking-level.repository";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import { z } from "zod";
 import { createParkingLevelSchema, updateParkingLevelSchema } from "./parking-level.schema";
 

@@ -1,4 +1,4 @@
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import categoryService from "../categories/category.service";
 import priceRepository from "./price.repository";
 import { createPriceSchema, updatePriceSchema } from "./price.schema";

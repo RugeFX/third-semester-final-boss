@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import parkingLevelService from "./parking-level.service";
 import { paramsSchema, createParkingLevelSchema, updateParkingLevelSchema } from "./parking-level.schema";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 
 // Get all parking levels
 export const getAllParkingLevels = async (_req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createCategorySchema, updateCategorySchema } from "./category.schema";
 import categoryRepository from "./category.repository";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 
 type createCategoryInput = z.infer<typeof createCategorySchema>;
 type updateCategoryInput = z.infer<typeof updateCategorySchema>;
