@@ -1,63 +1,65 @@
-import { db } from "../../db";
-import { eq } from "drizzle-orm";
-import { membersTable } from "../../db/schema";
 import HttpError from "../common/exceptions/http.error";
+import { createMemberSchema, updateMemberSchema, renewMembershipSchema } from "./member.schema";
+import memberRepository from "./member.repository";
+import transactionService from "../transactions/transaction.service";   
+import userService from "../users/user.service";
+import { z } from "zod";
+
+type createMemberInput = z.infer<typeof createMemberSchema>;
+type updateMemberInput = z.infer<typeof updateMemberSchema>;
+type renewMembershipInput = z.infer<typeof renewMembershipSchema>;
 
 // Get all members
 export const getAllMembers = async () => {
-    const members = await db.query.membersTable.findMany({
-        with: {
-            user: true
-        }
-    });
+    const members = await memberRepository.findAll();
 
     return members;
 };
 
 // Get member by ID
 export const findMemberById = async (id: number) => {
-    const member = await db.query.membersTable.findFirst({
-        where: eq(membersTable.id, id),
-        with: {
-            user: true
-        }
-    });
+    const member = await memberRepository.findById(id);
 
     if (!member) throw new HttpError(404, "Member not found");
 
     return member;
 };
 
-// Get member by user ID
-// export const findMemberByUserId = async (userId: number) => {
-//     const member = await db.query.membersTable.findFirst({
-//         where: eq(membersTable.user_id, userId),
-//         with: {
-//             user: true
-//         }
-//     });
+// Get member transactions
+export const getTransactionForMember = async (userId: number) => {
+    const user = await userService.findUserById(userId);
 
-//     if (!member) throw new HttpError(400, "Member not found");
+    const transactions = await transactionService.getTransactionsByUserId(user.id);
 
-//     return member;
-// };
+    return transactions;
+}
 
 // Create a new member
-export const createMember = async (joinedAt: Date, endedAt: Date, userId: number) => {
-    const [ newMember ] = await db.insert(membersTable).values({ 
-        joined_at: joinedAt, ended_at: endedAt, user_id: userId 
-    }).returning();
-
-    return newMember;
+export const createMember = async (memberData: createMemberInput) => {
+    return await memberRepository.create(memberData);
 };
 
 // Update a member
-export const updateMember = async (memberId: number, endedAt: Date) => {
+export const updateMember = async (memberId: number, memberData: updateMemberInput) => {
     await findMemberById(memberId);
 
-    const [ updatedMember ] = await db.update(membersTable).set({ 
-        ended_at: endedAt 
-    }).where(eq(membersTable.id, memberId)).returning();
+    return await memberRepository.update(memberId, memberData);
+};
+
+// Renew membership subscription
+export const renewMembership = async (memberId: number, renewalData: renewMembershipInput) => {
+    const member = await findMemberById(memberId);
+
+    const now = new Date();
+    // Determine the new end date based on current end date or now
+    const base = new Date(member.ended_at) > now ? new Date(member.ended_at) : now;
+    // Calculate new end date
+    const newEndDate = new Date(base);
+    newEndDate.setMonth(newEndDate.getMonth() + renewalData.renewalPeriodMonths);
+
+    const updatedMember = await memberRepository.update(memberId, {
+        endedAt: newEndDate
+    });
 
     return updatedMember;
 };
@@ -66,9 +68,7 @@ export const updateMember = async (memberId: number, endedAt: Date) => {
 export const deleteMember = async (memberId: number) => {
     await findMemberById(memberId);
 
-    const deletedMember = await db.delete(membersTable).where(eq(membersTable.id, memberId));
-
-    return deletedMember;
+    return await memberRepository.remove(memberId);
 };
 
-export default { getAllMembers, findMemberById, createMember, updateMember, deleteMember };
+export default { getAllMembers, findMemberById, getTransactionForMember, createMember, updateMember, renewMembership, deleteMember };

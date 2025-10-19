@@ -29,9 +29,9 @@ export const getMembershipPlanById = async (req: Request, res: Response) => {
 
 // Create a new membership plan (Admin only)
 export const createMembershipPlan = async (req: Request, res: Response) => {
-    const { cost, period } = createMembershipPlanSchema.parse(req.body);
+    const membershipPlanData= createMembershipPlanSchema.parse(req.body);
 
-    const newMembershipPlan = await membershipPlanService.createMembershipPlan(cost, period);
+    const newMembershipPlan = await membershipPlanService.createMembershipPlan(membershipPlanData);
 
     if (!newMembershipPlan) throw new HttpError(500, "Failed to create membership plan");
 
@@ -45,9 +45,9 @@ export const createMembershipPlan = async (req: Request, res: Response) => {
 // Update a membership plan (Admin only)
 export const updateMembershipPlan = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
-    const { cost, period } = updateMembershipPlanSchema.parse(req.body);
+    const membershipPlanData = updateMembershipPlanSchema.parse(req.body);
 
-    const updatedMembershipPlan = await membershipPlanService.updateMembershipPlan(id, cost, period);
+    const updatedMembershipPlan = await membershipPlanService.updateMembershipPlan(id, membershipPlanData);
 
     if (!updatedMembershipPlan) throw new HttpError(500, "Failed to update membership plan");
 
@@ -68,6 +68,7 @@ export const deleteMembershipPlan = async (req: Request, res: Response) => {
 
     return res.status(200).json({ 
         success: true,
-        message: "Membership plan deleted successfully"
+        message: "Membership plan deleted successfully",
+        data: deletedMembershipPlan
     });
 };

@@ -1,27 +1,13 @@
 import { Request, Response } from "express";
+import auditLogService from "./audit-log.service";
+import { paramsSchema } from "./audit-log.schema";
 
 // Get all audit logs
-export const getAllAuditLogs = async (req: Request, res: Response) => {
-    const auditLogs = [
-        {
-            id: 1,
-            context: "User created",
-            type: "CREATE",
-            created_at: new Date(),
-            created_by: 1
-        },
-        {
-            id: 2,
-            context: "User deleted",
-            type: "DELETE",
-            created_at: new Date(),
-            created_by: 1
-        }
-    ];
+export const getAllAuditLogs = async (_req: Request, res: Response) => {
+    const auditLogs = await auditLogService.getAllAuditLogs();
 
-    res.json({
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Audit logs fetched successfully",
         data: auditLogs
     });
@@ -29,37 +15,13 @@ export const getAllAuditLogs = async (req: Request, res: Response) => {
 
 // Get audit log by ID
 export const getAuditLogById = async (req: Request, res: Response) => {
-    const auditLog = {
-        id: 1,
-        context: "User created",
-        type: "CREATE",
-        created_at: new Date(),
-        created_by: 1
-    };
+    const { id } = paramsSchema.parse(req.params);
 
-    res.json({
+    const auditLog = await auditLogService.findAuditLogById(Number(id));
+
+    res.status(200).json({
         success: true,
-        code: 200,
         message: "Audit log fetched successfully",
         data: auditLog
     });
 };
-
-// Create a new audit log
-export const createAuditLog = async (req: Request, res: Response) => {
-    const { context, type, created_at, created_by } = req.body;
-
-    res.json({
-        success: true,
-        code: 200,
-        message: "Audit log created successfully",
-        data: {
-            context,
-            type,
-            created_at,
-            created_by
-        }
-    });
-};
-
-// Dont update and delete audit logs

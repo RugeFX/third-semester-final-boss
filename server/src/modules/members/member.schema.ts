@@ -10,3 +10,8 @@ export const createMemberSchema = z.object({
 });
 
 export const updateMemberSchema = createMemberSchema.pick({ endedAt: true });
+
+export const renewMembershipSchema = z.object({
+    renewalPeriodMonths: z.coerce.number().int().positive("Renewal period must be a positive number"),
+    amountPaid: z.coerce.number().positive("Amount paid must be a positive number"),
+});

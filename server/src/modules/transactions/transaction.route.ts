@@ -5,9 +5,8 @@ import {
     processTransactionPayment,
     updateTransactionExit,
     getTransactionByAccessCode,
-    // createTransaction,
-    // updateTransaction,
-    // deleteTransaction
+    manuallyUpdateTransaction,
+    deleteTransaction
 } from "./transaction.controller";
 
 const router = Router();
@@ -17,7 +16,7 @@ router.get("/:accessCode", getTransactionByAccessCode);
 router.post("/entry", createTransactionEntry);
 router.post("/:accessCode/payment", processTransactionPayment);
 router.post("/:accessCode/exit", updateTransactionExit);
-// router.put("/:id", updateTransaction);
-// router.delete("/:id", deleteTransaction);
+router.put("/manage/:accessCode", manuallyUpdateTransaction);
+router.delete("/manage/:accessCode", deleteTransaction);
 
 export default router;
