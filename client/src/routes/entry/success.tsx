@@ -56,7 +56,7 @@ export const Route = createFileRoute("/entry/success")({
 			toast.error("Akses ditolak", {
 				description: "Anda belum melakukan proses registrasi.",
 			});
-			throw redirect({ to: "/entry" });
+			throw redirect({ to: "/entry", replace: true });
 		}
 
 		return { token };
@@ -140,6 +140,7 @@ function RouteComponent() {
 						key={category.id}
 						className="object-contain object-right-bottom absolute top-20 left-0 size-full scale-120 z-1"
 						src={category.thumbnail}
+						role="presentation"
 						variants={bannerItemVariants}
 					/>
 				</AnimatePresence>

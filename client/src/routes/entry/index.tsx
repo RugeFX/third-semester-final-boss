@@ -20,6 +20,7 @@ export const Route = createFileRoute("/entry/")({
 		if (context.auth.token)
 			throw redirect({
 				to: "/",
+				replace: true,
 			});
 	},
 	loader: ({ context }) => {

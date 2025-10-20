@@ -20,9 +20,6 @@ const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
 
 const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: { meta: { throwNotFound: true } },
-	},
 	queryCache: new QueryCache({
 		onError: (error, { meta }) => {
 			if (

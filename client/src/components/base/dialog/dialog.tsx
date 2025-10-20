@@ -146,7 +146,11 @@ const DialogDescription = ({
 	className,
 	...props
 }: React.HTMLAttributes<HTMLParagraphElement>) => (
-	<p className={cx(styles.description, className)} {...props} />
+	<p
+		slot="description"
+		className={cx(styles.description, className)}
+		{...props}
+	/>
 );
 
 export {

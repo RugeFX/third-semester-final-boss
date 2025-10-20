@@ -6,7 +6,9 @@ import { routeTitle } from "@/lib/utils/title";
 export const Route = createFileRoute("/check/")({
 	component: RouteComponent,
 	beforeLoad: ({ context }) => {
-		if (context.auth.token) throw redirect({ to: "/check/details" });
+		const { token, user } = context.auth;
+		if (token && user?.type === "guest")
+			throw redirect({ to: "/check/details", replace: true });
 	},
 	head: () => ({
 		meta: [routeTitle("Periksa Kendaraan")],

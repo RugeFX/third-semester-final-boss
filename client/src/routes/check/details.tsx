@@ -38,14 +38,17 @@ export const Route = createFileRoute("/check/details")({
 	notFoundComponent: NotFoundComponent,
 	component: RouteComponent,
 	beforeLoad: ({ context }) => {
-		if (!context.auth.token || context.auth.user?.type !== "guest")
-			throw redirect({ to: "/check" });
+		const { token, user } = context.auth;
+		if (!token || user?.type !== "guest")
+			throw redirect({ to: "/check", replace: true });
 
-		return { accessCode: context.auth.token };
+		return { accessCode: token };
 	},
 	loader: async ({ context }) => {
 		const { data } = await context.queryClient.ensureQueryData(
-			getGetGuestTransactionByAccessCodeQueryOptions(context.accessCode),
+			getGetGuestTransactionByAccessCodeQueryOptions(context.accessCode, {
+				query: { meta: { throwNotFound: true } },
+			}),
 		);
 
 		await context.queryClient.ensureQueryData(
@@ -188,7 +191,7 @@ function RouteComponent() {
 	const onEndSession = () => {};
 
 	const formattedEnteredDate = format(enteredDate, "hh.mm a - dd MMMM yyyy");
-	const paddedHours = String(hours).padStart(2, "0");
+	const paddedHours = String(hours % 100).padStart(2, "0");
 	const paddedMinutes = String(minutes).padStart(2, "0");
 	const paddedSeconds = String(seconds).padStart(2, "0");
 
@@ -218,6 +221,7 @@ function RouteComponent() {
 							key={category.id}
 							className="object-contain object-right-bottom absolute top-20 left-0 size-full scale-120 z-1"
 							src={category.thumbnail}
+							role="presentation"
 							variants={bannerItemVariants}
 						/>
 					</AnimatePresence>

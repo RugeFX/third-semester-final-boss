@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_auth")({
 	component: RouteComponent,
 	beforeLoad: ({ context }) => {
 		if (context.auth.token && context.auth.user?.type === "user")
-			throw redirect({ to: "/" });
+			throw redirect({ to: "/", replace: true });
 	},
 });
 
