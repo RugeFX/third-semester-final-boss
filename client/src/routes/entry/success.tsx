@@ -84,7 +84,7 @@ function RouteComponent() {
 	const { accessCode } = Route.useLoaderData();
 
 	const {
-		data: { vehicleDetail, parkingLevel },
+		data: { vehicleDetail },
 	} = useGetGuestTransactionByAccessCodeSuspense(accessCode, {
 		query: { select: ({ data }) => data },
 	});

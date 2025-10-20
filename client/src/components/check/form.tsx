@@ -1,10 +1,9 @@
 import { useRouter } from "@tanstack/react-router";
 import { AnimatePresence, motion, type Variants } from "motion/react";
-import { toast } from "sonner";
 import { z } from "zod";
+
 import checkStaff from "@/assets/check-staff.png";
 import background from "@/assets/entry-banner-bg.png";
-import { getGuestTransactionByAccessCode } from "@/lib/api/transactions/transactions";
 import { useAppForm } from "@/lib/form";
 import { useAuthActions } from "@/lib/store/auth";
 import { wait } from "@/lib/utils";
@@ -60,7 +59,7 @@ export default function CheckForm() {
 
 			await router.invalidate();
 
-			router.navigate("/check/details");
+			router.navigate({ to: "/check/details" });
 		},
 	});
 
