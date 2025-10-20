@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React from "react";
+import DOMPurify from "dompurify";
+import React, { useMemo } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { cx } from "@/lib/utils/cx";
@@ -17,11 +18,19 @@ function InnerRemoteSVG({ url, className }: RemoteSVGProps) {
 		staleTime: Infinity,
 	});
 
+	const sanitizedSvg = useMemo(
+		() =>
+			DOMPurify.sanitize(data, {
+				USE_PROFILES: { svg: true, svgFilters: true },
+			}),
+		[data],
+	);
+
 	return (
 		<span
 			className={className}
-			// biome-ignore lint/security/noDangerouslySetInnerHtml: the backend SHOULD have already sanitized this
-			dangerouslySetInnerHTML={{ __html: data }}
+			// biome-ignore lint/security/noDangerouslySetInnerHtml: already sanitized
+			dangerouslySetInnerHTML={{ __html: sanitizedSvg }}
 		/>
 	);
 }

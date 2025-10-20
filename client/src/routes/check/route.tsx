@@ -7,11 +7,9 @@ export const Route = createFileRoute("/check")({
 
 function RouteComponent() {
 	return (
-		<div className="flex flex-col min-h-screen size-full">
+		<div className="min-h-screen flex flex-col size-full">
 			<Header />
-			<div className="container grid flex-1 px-6 py-7 mx-auto size-full sm:px-8 md:px-12 lg:px-16">
-				<Outlet />
-			</div>
+			<Outlet />
 		</div>
 	);
 }

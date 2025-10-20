@@ -54,6 +54,7 @@ Root.displayName = "Root";
 type GroupProps = ComponentPropsWithRef<typeof OTPInput> & {
 	width?: number;
 	inputClassName?: string;
+	isInvalid?: boolean;
 };
 
 const Group = ({
@@ -61,6 +62,7 @@ const Group = ({
 	containerClassName,
 	width,
 	maxLength = 4,
+	isInvalid = false,
 	...props
 }: GroupProps) => {
 	const { id, size, disabled } = usePinInputContext();
@@ -74,6 +76,8 @@ const Group = ({
 	return (
 		<OTPInput
 			{...props}
+			aria-invalid={isInvalid ? true : undefined}
+			data-invalid={isInvalid ? true : undefined}
 			size={width}
 			maxLength={maxLength}
 			disabled={disabled}
@@ -121,6 +125,8 @@ const Slot = ({
 					slot?.isActive &&
 					"ring-2 ring-brand outline-2 outline-offset-2 outline-brand",
 				slot?.char && "text-brand-tertiary_alt ring-2 ring-brand",
+				"group-has-data-invalid:outline-error_subtle",
+				"group-has-data-invalid:ring-error_subtle",
 				disabled && "bg-disabled_subtle text-fg-disabled_subtle ring-disabled",
 				className,
 			)}
@@ -161,7 +167,7 @@ const Separator = (props: ComponentPropsWithRef<"p">) => {
 				props.className,
 			)}
 		>
-			-
+			{props.children ?? "-"}
 		</div>
 	);
 };

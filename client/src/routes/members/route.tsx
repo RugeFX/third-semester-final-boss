@@ -8,6 +8,13 @@ export const Route = createFileRoute("/members")({
 			toast.error("Silahkan masuk terlebih dahulu!");
 			throw redirect({ to: "/sign-in" });
 		}
+
+		if (context.auth.user?.type !== "user") {
+			toast.error("Akses ditolak", {
+				description: "Anda tidak memiliki izin untuk mengakses halaman ini.",
+			});
+			throw redirect({ to: "/" });
+		}
 	},
 });
 

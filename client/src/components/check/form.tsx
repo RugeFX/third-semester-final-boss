@@ -1,11 +1,12 @@
+import { useRouter } from "@tanstack/react-router";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { toast } from "sonner";
 import { z } from "zod";
-
 import checkStaff from "@/assets/check-staff.png";
 import background from "@/assets/entry-banner-bg.png";
 import { getGuestTransactionByAccessCode } from "@/lib/api/transactions/transactions";
 import { useAppForm } from "@/lib/form";
+import { useAuthActions } from "@/lib/store/auth";
 import { wait } from "@/lib/utils";
 import LoadingIndicator from "../base/loading-indicator";
 
@@ -40,29 +41,26 @@ const checkFormSchema = z.object({
 type CheckForm = z.infer<typeof checkFormSchema>;
 
 export default function CheckForm() {
+	const router = useRouter();
+	const { signInAsGuest } = useAuthActions();
+
 	const form = useAppForm({
 		defaultValues: {
 			accessCode: "",
 		} as CheckForm,
 		validators: {
-			onChange: checkFormSchema,
+			onBlur: checkFormSchema,
 		},
 		onSubmit: async ({ value }) => {
-			// TODO: should remove this at some point
+			// TODO: only for emulating loadiing state, should remove this at some point
 			await wait(3000);
 
-			// TODO: change to main logic
-			try {
-				const { data } = await getGuestTransactionByAccessCode(
-					value.accessCode,
-				);
-				toast.success("Kode akses ditemukan!", {
-					description: `Status kendaraan anda: ${data.status}`,
-				});
-			} catch (error) {
-				console.error(error);
-				toast.error("Kode akses tidak ditemukan");
-			}
+			// TODO: is this the correct approach?
+			signInAsGuest(value.accessCode);
+
+			await router.invalidate();
+
+			router.navigate("/check/details");
 		},
 	});
 
@@ -126,13 +124,14 @@ export default function CheckForm() {
 											<div className="mt-4">
 												<field.PinInput
 													length={6}
-													pinInputProps={{
-														size: "sm",
-													}}
+													size="sm"
 													groupProps={{
 														containerClassName: "h-20",
 														onChange: (value) =>
 															field.setValue(value.toUpperCase()),
+														onKeyUp: (e) => {
+															if (e.key === "Enter") form.handleSubmit();
+														},
 													}}
 													slotProps={{ className: "size-full" }}
 												/>

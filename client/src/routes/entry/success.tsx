@@ -149,7 +149,7 @@ function RouteComponent() {
 				<div className="space-y-4">
 					<h1 className="text-5xl font-bold text-bg-brand-solid">Selamat!</h1>
 					<h2 className="text-2xl font-semibold">
-						Sekarang, motor anda sudah terdaftar!
+						Sekarang, {category.name.toLowerCase()} anda sudah terdaftar!
 					</h2>
 				</div>
 
@@ -159,7 +159,9 @@ function RouteComponent() {
 						size="xl"
 						className="flex-1 w-full h-26 max-w-24 group disabled:cursor-default disabled:opacity-100"
 					>
-						{!!category.icon && <RemoteSVG url={category.icon} />}
+						{!!category.icon && (
+							<RemoteSVG url={category.icon} className="**:fill-gray-500" />
+						)}
 						<span className="sr-only">{category.name}</span>
 					</Button>
 
