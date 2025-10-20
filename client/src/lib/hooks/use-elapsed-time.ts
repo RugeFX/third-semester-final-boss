@@ -9,8 +9,6 @@ export function useElapsedTime(startDate: Date) {
 	});
 
 	useEffect(() => {
-		console.log("startDate", startDate);
-
 		const tick = () => {
 			const now = new Date();
 			const totalSeconds = differenceInSeconds(now, startDate);
