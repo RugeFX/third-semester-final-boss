@@ -27,10 +27,10 @@ export const authenticateJWT = (req: Request, _res: Response, next: NextFunction
         const token = authHeader.split(' ')[1];
         
         // Verify token
-        jwt.verify(token, env.JWT_SECRET, (error, userPayload) => {
+        jwt.verify(token, env.JWT_SECRET, { algorithms: ['HS256'] }, (error, userPayload) => {
             // If token is invalid or expired
             if (error) {
-                return next(new HttpError(403, 'Forbidden: Invalid token'));
+                return next(new HttpError(401, 'Unauthorized: Invalid or expired token'));
             }
 
             // Attach user payload to the request object
