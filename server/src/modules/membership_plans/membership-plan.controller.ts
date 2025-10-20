@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import membershipPlanService from "./membership-plan.service";
 import { paramsSchema, createMembershipPlanSchema, updateMembershipPlanSchema } from "./membership-plan.schema";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 
 // Get all membership plans
 export const getAllMembershipPlans = async (_req: Request, res: Response) => {

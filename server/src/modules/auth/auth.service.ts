@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { env } from '../../env';
 import authRepository from "./auth.repository";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -16,12 +16,13 @@ export const authenticateUser = async (username: string, password: string) => {
 
   const payload = {
     id: user.id,
+    fullname: user.fullname,
     username: user.username,
     role: user.role,
   };
 
   const secret = env.JWT_SECRET;
-  
+
   if (!secret) {
     throw new Error("JWT_SECRET is not defined in environment variables. Application cannot start.");
   }

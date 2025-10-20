@@ -31,7 +31,7 @@
     },
     {
       "name": "Membership Plans",
-      "description": "Admin CRUD operations for managing membership plans."
+      "description": "Public and admin endpoints for managing membership plans."
     },
     {
       "name": "Transactions",
@@ -883,16 +883,7 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Successful authentication",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenResponse"
-                }
-              }
-            }
-          },
+          "200": { "description": "Successful authentication", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TokenResponse" } } } },
           "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
           "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
           "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
@@ -1085,12 +1076,12 @@
     "/membership-plans": {
       "get": {
         "tags": ["Membership Plans"],
-        "summary": "List all membership plans (Admin only)",
-        "description": "Retrieves a list of all membership plans. Restricted to admins.",
+        "summary": "List all membership plans",
+        "description": "Retrieves a list of all available membership plans.",
         "operationId": "listMembershipPlans",
+        "security": [],
         "responses": {
-          "200": { "description": "A list of membership plans.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanArrayResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
+          "200": { "description": "A list of membership plans.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanArrayResponse" } } } }
         }
       },
       "post": {
@@ -1109,13 +1100,13 @@
     "/membership-plans/{id}": {
       "get": {
         "tags": ["Membership Plans"],
-        "summary": "Get membership plan by ID (Admin only)",
-        "description": "Retrieves details for a specific membership plan. Restricted to admins.",
+        "summary": "Get membership plan by ID",
+        "description": "Retrieves details for a specific membership plan.",
         "operationId": "getMembershipPlanById",
+        "security": [],
         "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
           "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanResponse" } } } },
-          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
           "404": { "description": "Membership plan not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       },
@@ -1164,6 +1155,7 @@
         "summary": "Create a new transaction (vehicle entry)",
         "description": "This endpoint is called when a vehicle enters the parking facility. It creates a vehicle detail and a new transaction record.",
         "operationId": "createEntryTransaction",
+        "security": [],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionCreate" } } } },
         "responses": {
           "201": { "description": "Transaction created successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
@@ -1191,6 +1183,7 @@
         "summary": "Process payment for a transaction",
         "description": "Processes a payment for an active transaction and updates its status.",
         "operationId": "processTransactionPayment",
+        "security": [],
         "parameters": [ { "name": "accessCode", "in": "path", "required": true, "schema": { "type": "string" } } ],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "paidAmount": { "type": "number", "example": 15.75 } } } } } },
         "responses": {
@@ -1205,6 +1198,7 @@
         "summary": "Complete a transaction (vehicle exit)",
         "description": "Marks a transaction as completed when a vehicle exits the parking facility. The final fee is calculated and status updated.",
         "operationId": "completeTransaction",
+        "security": [],
         "parameters": [ { "name": "accessCode", "in": "path", "required": true, "schema": { "type": "string" } } ],
         "responses": {
           "200": { "description": "Vehicle exit processed successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TransactionResponse" } } } },
@@ -1446,7 +1440,7 @@
     "/vehicle-details": {
       "get": {
         "tags": ["Vehicle Details"],
-        "summary": "List all vehicle details",
+        "summary": "List all vehicle details (Admin only)",
         "security": [ { "BearerAuth": [] } ],
         "responses": {
           "200": { "description": "A list of vehicle details.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailArrayResponse" } } } }
@@ -1454,7 +1448,7 @@
       },
       "post": {
         "tags": ["Vehicle Details"],
-        "summary": "Create a new vehicle detail",
+        "summary": "Create a new vehicle detail (Admin only)",
         "security": [ { "BearerAuth": [] } ],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailCreate" } } } },
         "responses": {
@@ -1465,7 +1459,7 @@
     "/vehicle-details/{id}": {
       "get": {
         "tags": ["Vehicle Details"],
-        "summary": "Get vehicle detail by ID",
+        "summary": "Get vehicle detail by ID (Admin only)",
         "security": [ { "BearerAuth": [] } ],
         "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {
@@ -1475,7 +1469,7 @@
       },
       "put": {
         "tags": ["Vehicle Details"],
-        "summary": "Update a vehicle detail",
+        "summary": "Update a vehicle detail (Admin only)",
         "security": [ { "BearerAuth": [] } ],
         "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VehicleDetailUpdate" } } } },
@@ -1485,7 +1479,7 @@
       },
       "delete": {
         "tags": ["Vehicle Details"],
-        "summary": "Delete a vehicle detail",
+        "summary": "Delete a vehicle detail (Admin only)",
         "security": [ { "BearerAuth": [] } ],
         "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
         "responses": {

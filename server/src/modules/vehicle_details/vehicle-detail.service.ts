@@ -1,5 +1,5 @@
 import { db } from "../../db";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import vehicleDetailRepository from "./vehicle-detail.repository";
 import { createVehicleDetailSchema, updateVehicleDetailSchema } from "./vehicle-detail.schema";
 import categoryService from "../categories/category.service";

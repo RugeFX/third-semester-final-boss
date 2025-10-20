@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import vehicleDetailService from "./vehicle-detail.service";
 import { paramsSchema, createVehicleDetailSchema, updateVehicleDetailSchema } from "./vehicle-detail.schema";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 
 // Get all vehicle details
 export const getAllVehicleDetails = async (_req: Request, res: Response) => {

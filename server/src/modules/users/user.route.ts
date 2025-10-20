@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticateJWT, authorizeAdmin } from "../../middleware/auth";
 import {
     getAllUsers,
     getUserById,
@@ -8,6 +9,8 @@ import {
 } from "./user.controller";
 
 const router = Router();
+
+router.use(authenticateJWT, authorizeAdmin);
 
 router.get("/", getAllUsers);
 router.get("/:id", getUserById);

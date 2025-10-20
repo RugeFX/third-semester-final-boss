@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticateJWT, authorizeAdmin } from "../../middleware/auth";
 import {
     getAllVehicleDetails,
     getVehicleDetailById,
@@ -9,7 +10,9 @@ import {
 
 const router = Router();
 
-router.get("/", getAllVehicleDetails);
+router.use(authenticateJWT, authorizeAdmin);
+
+router.get("/",  getAllVehicleDetails);
 router.get("/:id", getVehicleDetailById);
 router.post("/", createVehicleDetail);
 router.put("/:id", updateVehicleDetail);

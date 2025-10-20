@@ -1,4 +1,4 @@
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 import userRepository from "./user.repository";
 import { createUserSchema, updateUserSchema } from "./user.schema";
 import { z } from "zod";

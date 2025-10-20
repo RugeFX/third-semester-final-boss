@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import memberService from "./member.service";
 import { paramsSchema, createMemberSchema, updateMemberSchema, renewMembershipSchema } from "./member.schema";
-import HttpError from "../common/exceptions/http.error";
+import HttpError from "../../common/exceptions/http.error";
 
 // Get all members
 export const getAllMembers = async (_req: Request, res: Response) => {

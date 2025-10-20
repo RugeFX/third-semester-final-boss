@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticateJWT, authorizeAdmin } from "../../middleware/auth";
 import { 
     getAllCategories, 
     getCategoryById, 
@@ -9,10 +10,13 @@ import {
 
 const router = Router();
 
+// Public routes
 router.get("/", getAllCategories);
 router.get("/:id", getCategoryById);
-router.post("/", createCategory);
-router.put("/:id", updateCategory);
-router.delete("/:id", deleteCategory);
+
+// Admin routes
+router.post("/", authenticateJWT, authorizeAdmin, createCategory);
+router.put("/:id", authenticateJWT, authorizeAdmin, updateCategory);
+router.delete("/:id", authenticateJWT, authorizeAdmin, deleteCategory);
 
 export default router;
