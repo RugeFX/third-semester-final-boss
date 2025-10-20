@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticateJWT, authorizeAdmin } from "../../middleware/auth";
 import {
     getAllMembershipPlans,
     getMembershipPlanById,
@@ -9,10 +10,13 @@ import {
 
 const router = Router();
 
+// Public routes
 router.get("/", getAllMembershipPlans);
 router.get("/:id", getMembershipPlanById);
-router.post("/", createMembershipPlan);
-router.put("/:id", updateMembershipPlan);
-router.delete("/:id", deleteMembershipPlan);
+
+// Admin routes
+router.post("/", authenticateJWT, authorizeAdmin, createMembershipPlan);
+router.put("/:id", authenticateJWT, authorizeAdmin, updateMembershipPlan);
+router.delete("/:id", authenticateJWT, authorizeAdmin, deleteMembershipPlan);
 
 export default router;

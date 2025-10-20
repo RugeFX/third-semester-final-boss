@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticateJWT, authorizeAdmin } from "../../middleware/auth";
 import {
     getAllTransactions,
     createTransactionEntry,
@@ -11,12 +12,15 @@ import {
 
 const router = Router();
 
-router.get("/", getAllTransactions);
+// Public routes
 router.get("/:accessCode", getTransactionByAccessCode);
 router.post("/entry", createTransactionEntry);
 router.post("/:accessCode/payment", processTransactionPayment);
 router.post("/:accessCode/exit", updateTransactionExit);
-router.put("/manage/:accessCode", manuallyUpdateTransaction);
-router.delete("/manage/:accessCode", deleteTransaction);
+
+// Admin routes
+router.get("/", authenticateJWT, authorizeAdmin, getAllTransactions);
+router.put("/manage/:accessCode", authenticateJWT, authorizeAdmin, manuallyUpdateTransaction);
+router.delete("/manage/:accessCode", authenticateJWT, authorizeAdmin, deleteTransaction);
 
 export default router;

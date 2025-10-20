@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticateJWT, authorizeAdmin } from "../../middleware/auth";
 import {
     getAllParkingLevels,
     getParkingLevelById,
@@ -9,10 +10,13 @@ import {
 
 const router = Router();
 
+// Public routes
 router.get("/", getAllParkingLevels);
 router.get("/:id", getParkingLevelById);
-router.post("/", createParkingLevel);
-router.put("/:id", updateParkingLevel);
-router.delete("/:id", deleteParkingLevel);
+
+// Admin routes
+router.post("/", authenticateJWT, authorizeAdmin, createParkingLevel);
+router.put("/:id", authenticateJWT, authorizeAdmin, updateParkingLevel);
+router.delete("/:id", authenticateJWT, authorizeAdmin, deleteParkingLevel);
 
 export default router;

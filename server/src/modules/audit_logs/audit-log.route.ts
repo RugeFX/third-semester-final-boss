@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { authenticateJWT, authorizeAdmin } from "../../middleware/auth";
 import {
     getAllAuditLogs,
     getAuditLogById,
@@ -6,7 +7,8 @@ import {
 
 const router = Router();
 
-router.get("/", getAllAuditLogs);
-router.get("/:id", getAuditLogById);
+// Admin routes
+router.get("/", authenticateJWT, authorizeAdmin, getAllAuditLogs);
+router.get("/:id", authenticateJWT, authorizeAdmin, getAuditLogById);
 
 export default router;
