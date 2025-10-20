@@ -107,7 +107,7 @@ export const styles = sortCx({
 		},
 		"primary-destructive": {
 			root: [
-				"bg-error-solid text-white shadow-xs-skeumorphic ring-1 ring-transparent outline-error ring-inset",
+				"bg-error-solid text-white shadow-xs-skeumorphic hover:bg-error-solid_hover ring-1 ring-transparent outline-error ring-inset",
 				// Inner border gradient
 				"before:absolute before:inset-px before:border before:border-white/12 before:mask-b-from-0%",
 				// Disabled styles

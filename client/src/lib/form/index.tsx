@@ -24,6 +24,7 @@ import {
 	type RadioButtonProps,
 	type RadioGroupProps,
 } from "@/components/base/radio-buttons/radio-buttons";
+import { cx } from "../utils/cx";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
 	createFormHookContexts();
@@ -139,29 +140,26 @@ function RadioGroup({ items, buttonProps, ...props }: FormRadioGroupProps) {
 	);
 }
 
-interface PinInputProps {
+interface PinInputProps extends Omit<BasePinInputProps, "children"> {
 	length: number;
-	pinInputProps?: Omit<BasePinInputProps, "children">;
 	groupProps?: Omit<PinInputGroupProps, "children" | "render" | "maxLength">;
 	slotProps?: ComponentProps<"div">;
 }
 
-function PinInput({
-	length,
-	pinInputProps,
-	groupProps,
-	slotProps,
-}: PinInputProps) {
+function PinInput({ length, groupProps, slotProps, ...props }: PinInputProps) {
 	const field = useFieldContext<string>();
 
 	return (
-		<BasePinInput size="lg" {...pinInputProps}>
+		<BasePinInput size="lg" {...props}>
 			<BasePinInput.Group
+				inputMode="text"
 				maxLength={length}
 				value={field.state.value}
 				onChange={field.handleChange}
 				onBlur={field.handleBlur}
+				isInvalid={field.state.meta.errors.length > 0}
 				{...groupProps}
+				containerClassName={cx("group", groupProps?.containerClassName)}
 			>
 				{Array(length)
 					.fill(0)

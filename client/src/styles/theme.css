@@ -790,6 +790,7 @@
 	--color-bg-brand-solid: var(--color-brand-500);
 	--color-bg-secondary-solid: var(--color-gray-600);
 	--color-bg-error-solid: var(--color-error-600);
+	--color-bg-error-solid_hover: var(--color-error-700);
 	--color-bg-warning-solid: var(--color-warning-600);
 	--color-bg-success-solid: var(--color-success-600);
 	--color-bg-secondary_hover: var(--color-gray-100);
@@ -870,6 +871,7 @@
 	--background-color-error-primary: var(--color-bg-error-primary);
 	--background-color-error-secondary: var(--color-bg-error-secondary);
 	--background-color-error-solid: var(--color-bg-error-solid);
+	--background-color-error-solid_hover: var(--color-bg-error-solid_hover);
 	--background-color-warning-primary: var(--color-bg-warning-primary);
 	--background-color-warning-secondary: var(--color-bg-warning-secondary);
 	--background-color-warning-solid: var(--color-bg-warning-solid);
@@ -1214,6 +1216,7 @@
 		--color-bg-brand-solid: var(--color-brand-500);
 		--color-bg-secondary-solid: var(--color-gray-600);
 		--color-bg-error-solid: var(--color-error-600);
+		--color-bg-error-solid_hover: var(--color-error-700);
 		--color-bg-warning-solid: var(--color-warning-600);
 		--color-bg-success-solid: var(--color-success-600);
 		--color-bg-secondary_hover: var(--color-gray-600);
@@ -1300,6 +1303,7 @@
 		--background-color-error-primary: var(--color-bg-error-primary);
 		--background-color-error-secondary: var(--color-bg-error-secondary);
 		--background-color-error-solid: var(--color-bg-error-solid);
+		--background-color-error-solid_hover: var(--color-error-700);
 		--background-color-warning-primary: var(--color-bg-warning-primary);
 		--background-color-warning-secondary: var(--color-bg-warning-secondary);
 		--background-color-warning-solid: var(--color-bg-warning-solid);

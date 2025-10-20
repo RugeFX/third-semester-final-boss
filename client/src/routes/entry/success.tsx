@@ -56,7 +56,7 @@ export const Route = createFileRoute("/entry/success")({
 			toast.error("Akses ditolak", {
 				description: "Anda belum melakukan proses registrasi.",
 			});
-			throw redirect({ to: "/entry" });
+			throw redirect({ to: "/entry", replace: true });
 		}
 
 		return { token };
@@ -84,7 +84,7 @@ function RouteComponent() {
 	const { accessCode } = Route.useLoaderData();
 
 	const {
-		data: { vehicleDetail, parkingLevel },
+		data: { vehicleDetail },
 	} = useGetGuestTransactionByAccessCodeSuspense(accessCode, {
 		query: { select: ({ data }) => data },
 	});
@@ -140,6 +140,7 @@ function RouteComponent() {
 						key={category.id}
 						className="object-contain object-right-bottom absolute top-20 left-0 size-full scale-120 z-1"
 						src={category.thumbnail}
+						role="presentation"
 						variants={bannerItemVariants}
 					/>
 				</AnimatePresence>
@@ -149,7 +150,7 @@ function RouteComponent() {
 				<div className="space-y-4">
 					<h1 className="text-5xl font-bold text-bg-brand-solid">Selamat!</h1>
 					<h2 className="text-2xl font-semibold">
-						Sekarang, motor anda sudah terdaftar!
+						Sekarang, {category.name.toLowerCase()} anda sudah terdaftar!
 					</h2>
 				</div>
 
@@ -159,7 +160,9 @@ function RouteComponent() {
 						size="xl"
 						className="flex-1 w-full h-26 max-w-24 group disabled:cursor-default disabled:opacity-100"
 					>
-						{!!category.icon && <RemoteSVG url={category.icon} />}
+						{!!category.icon && (
+							<RemoteSVG url={category.icon} className="**:fill-gray-500" />
+						)}
 						<span className="sr-only">{category.name}</span>
 					</Button>
 

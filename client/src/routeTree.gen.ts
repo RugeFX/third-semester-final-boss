@@ -18,6 +18,7 @@ import { Route as MembersIndexRouteImport } from './routes/members/index'
 import { Route as EntryIndexRouteImport } from './routes/entry/index'
 import { Route as CheckIndexRouteImport } from './routes/check/index'
 import { Route as EntrySuccessRouteImport } from './routes/entry/success'
+import { Route as CheckDetailsRouteImport } from './routes/check/details'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthSignUpIndexRouteImport } from './routes/_auth/sign-up/index'
 import { Route as AuthSignUpUpgradeRouteImport } from './routes/_auth/sign-up/upgrade'
@@ -67,6 +68,11 @@ const EntrySuccessRoute = EntrySuccessRouteImport.update({
   path: '/success',
   getParentRoute: () => EntryRouteRoute,
 } as any)
+const CheckDetailsRoute = CheckDetailsRouteImport.update({
+  id: '/details',
+  path: '/details',
+  getParentRoute: () => CheckRouteRoute,
+} as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/entry': typeof EntryRouteRouteWithChildren
   '/members': typeof MembersRouteRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
+  '/check/details': typeof CheckDetailsRoute
   '/entry/success': typeof EntrySuccessRoute
   '/check/': typeof CheckIndexRoute
   '/entry/': typeof EntryIndexRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof RouteRoute
   '/sign-in': typeof AuthSignInRoute
+  '/check/details': typeof CheckDetailsRoute
   '/entry/success': typeof EntrySuccessRoute
   '/check': typeof CheckIndexRoute
   '/entry': typeof EntryIndexRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/entry': typeof EntryRouteRouteWithChildren
   '/members': typeof MembersRouteRouteWithChildren
   '/_auth/sign-in': typeof AuthSignInRoute
+  '/check/details': typeof CheckDetailsRoute
   '/entry/success': typeof EntrySuccessRoute
   '/check/': typeof CheckIndexRoute
   '/entry/': typeof EntryIndexRoute
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/entry'
     | '/members'
     | '/sign-in'
+    | '/check/details'
     | '/entry/success'
     | '/check/'
     | '/entry/'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/sign-in'
+    | '/check/details'
     | '/entry/success'
     | '/check'
     | '/entry'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/entry'
     | '/members'
     | '/_auth/sign-in'
+    | '/check/details'
     | '/entry/success'
     | '/check/'
     | '/entry/'
@@ -245,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrySuccessRouteImport
       parentRoute: typeof EntryRouteRoute
     }
+    '/check/details': {
+      id: '/check/details'
+      path: '/details'
+      fullPath: '/check/details'
+      preLoaderRoute: typeof CheckDetailsRouteImport
+      parentRoute: typeof CheckRouteRoute
+    }
     '/_auth/sign-in': {
       id: '/_auth/sign-in'
       path: '/sign-in'
@@ -295,10 +314,12 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface CheckRouteRouteChildren {
+  CheckDetailsRoute: typeof CheckDetailsRoute
   CheckIndexRoute: typeof CheckIndexRoute
 }
 
 const CheckRouteRouteChildren: CheckRouteRouteChildren = {
+  CheckDetailsRoute: CheckDetailsRoute,
   CheckIndexRoute: CheckIndexRoute,
 }
 
