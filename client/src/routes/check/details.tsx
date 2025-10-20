@@ -104,8 +104,8 @@ function NotFoundComponent() {
 		>
 			<img
 				src={bikeAccent}
-				alt="Bike Accent"
 				className="h-64"
+				aria-label="Bike Icon"
 				role="presentation"
 			/>
 			<h1 className="text-5xl font-bold ">Kendaraan tidak ditemukan</h1>
