@@ -16,6 +16,16 @@ export const findAll = async () => {
     });
 }
 
+// Find prices by category ID
+export const findAllByCategoryId = async (categoryId: number) => {
+    return await db.query.pricesTable.findMany({
+        where: eq(pricesTable.category_id, categoryId),
+        with: {
+            category: true
+        }
+    });
+}
+
 // Find price by ID
 export const findById = async (priceId: number) => {
     return await db.query.pricesTable.findFirst({
@@ -76,4 +86,4 @@ export const remove = async (priceId: number) => {
     return deletedPrice;
 }
 
-export default { findAll, findById, findActivePriceByCategoryAndType, create, update, remove };
+export default { findAll, findAllByCategoryId, findById, findActivePriceByCategoryAndType, create, update, remove };

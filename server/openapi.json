@@ -1431,6 +1431,48 @@
         }
       }
     },
+    "/prices/{categoryId}/fee": {
+      "get": {
+        "tags": ["Prices"],
+        "summary": "Get prices by category ID",
+        "description": "Retrieves all price configurations for a specific vehicle category.",
+        "operationId": "getPricesByCategoryId",
+        "security": [],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the vehicle category.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of prices for the specified category.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceArrayResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found or no prices found for this category.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/vehicle-details": {
       "get": {
         "tags": ["Vehicle Details"],

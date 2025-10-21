@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import priceService from "./price.service";
 import HttpError from "../../common/exceptions/http.error";
-import { paramsSchema, createPriceSchema, updatePriceSchema } from "./price.schema";
+import { paramsSchema, categoryPriceParamsSchema, createPriceSchema, updatePriceSchema } from "./price.schema";
 
 // Get all prices
 export const getAllPrices = async (_req: Request, res: Response) => {
@@ -26,6 +26,20 @@ export const getPriceById = async (req: Request, res: Response) => {
         data: price
     });
 };
+
+// Get prices by category ID
+export const getPricesByCategoryId = async (req: Request, res: Response) => {
+    const { categoryId } = categoryPriceParamsSchema.parse(req.params);
+
+    const prices = await priceService.getPricesByCategoryId(categoryId);
+
+    res.status(200).json({
+        success: true,
+        message: "Prices fetched successfully",
+        data: prices
+    });
+};
+
 
 // Create a new price
 export const createPrice = async (req: Request, res: Response) => {

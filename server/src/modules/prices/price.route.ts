@@ -3,6 +3,7 @@ import { authenticateJWT, authorizeAdmin } from "../../middleware/auth";
 import {
     getAllPrices,
     getPriceById,
+    getPricesByCategoryId,
     createPrice,
     updatePrice,
     deletePrice
@@ -13,6 +14,7 @@ const router = Router();
 // Public routes
 router.get("/", getAllPrices);
 router.get("/:id", getPriceById);
+router.get("/:categoryId/fee", getPricesByCategoryId);
 
 // Admin routes
 router.post("/", authenticateJWT, authorizeAdmin, createPrice);

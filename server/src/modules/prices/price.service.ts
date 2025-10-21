@@ -23,6 +23,15 @@ export const findPriceById = async (priceId: number) => {
     return price;
 };
 
+// Find prices by category ID
+export const getPricesByCategoryId = async (categoryId: number) => {
+    const prices = await priceRepository.findAllByCategoryId(categoryId);
+
+    if (!prices) throw new HttpError(404, "Prices not found");
+
+    return prices;
+};
+
 // Create a new price
 export const createPrice = async (priceData: createPriceInput) => {
     await categoryService.findCategoryById(priceData.categoryId);
@@ -57,4 +66,4 @@ export const deletePrice = async (priceId: number) => {
     return await priceRepository.remove(priceId);
 };
 
-export default { getAllPrices, findPriceById, createPrice, updatePrice, deletePrice };
+export default { getAllPrices, findPriceById, getPricesByCategoryId, createPrice, updatePrice, deletePrice };
