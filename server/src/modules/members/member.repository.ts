@@ -11,7 +11,14 @@ type updatedMember = z.infer<typeof updateMemberSchema>;
 export const findAll = async () => {
     return await db.query.membersTable.findMany({
         with: {
-            user: true
+            user: {
+                columns: {
+                    id: true,
+                    fullname: true,
+                    username: true,
+                    role: true
+                }
+            }
         }
     });
 }
@@ -21,7 +28,14 @@ export const findById = async (memberId: number) => {
     return await db.query.membersTable.findFirst({
         where: eq(membersTable.id, memberId),
         with: {
-            user: true
+            user: {
+                columns: {
+                    id: true,
+                    fullname: true,
+                    username: true,
+                    role: true
+                }
+            }
         }
     });
 }
@@ -29,7 +43,17 @@ export const findById = async (memberId: number) => {
 // Find member by user ID
 export const findByUserId = async (userId: number) => {
     return await db.query.membersTable.findFirst({
-        where: eq(membersTable.user_id, userId)
+        where: eq(membersTable.user_id, userId),
+        with: {
+            user: {
+                columns: {
+                    id: true,
+                    fullname: true,
+                    username: true,
+                    role: true
+                }
+            }
+        }
     });
 }
 

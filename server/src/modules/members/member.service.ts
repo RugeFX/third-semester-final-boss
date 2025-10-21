@@ -1,6 +1,7 @@
 import HttpError from "../../common/exceptions/http.error";
 import { createMemberSchema, updateMemberSchema, renewMembershipSchema } from "./member.schema";
 import memberRepository from "./member.repository";
+import membershipPlanService from "../membership_plans/membership-plan.service";
 import transactionService from "../transactions/transaction.service";   
 import userService from "../users/user.service";
 import { z } from "zod";
@@ -20,6 +21,15 @@ export const getAllMembers = async () => {
 export const findMemberById = async (id: number) => {
     const member = await memberRepository.findById(id);
 
+    if (!member) throw new HttpError(404, "Member not found");
+
+    return member;
+};
+
+// Get member by user ID
+export const findMemberByUserId = async (userId: number) => {
+    const member = await memberRepository.findByUserId(userId);
+    
     if (!member) throw new HttpError(404, "Member not found");
 
     return member;
@@ -47,17 +57,21 @@ export const updateMember = async (memberId: number, memberData: updateMemberInp
 };
 
 // Renew membership subscription
-export const renewMembership = async (memberId: number, renewalData: renewMembershipInput) => {
-    const member = await findMemberById(memberId);
+export const renewMembership = async (userId: number, renewalData: renewMembershipInput) => {
+    const member = await findMemberByUserId(userId);
+    const { membershipPlanId } = renewalData;
+
+    // Fetch membership plan details
+    const membershipPlan = await membershipPlanService.findMembershipPlanById(membershipPlanId);
 
     const now = new Date();
     // Determine the new end date based on current end date or now
     const base = new Date(member.ended_at) > now ? new Date(member.ended_at) : now;
     // Calculate new end date
     const newEndDate = new Date(base);
-    newEndDate.setMonth(newEndDate.getMonth() + renewalData.renewalPeriodMonths);
+    newEndDate.setMonth(newEndDate.getMonth() + membershipPlan.period);
 
-    const updatedMember = await memberRepository.update(memberId, {
+    const updatedMember = await memberRepository.update(member.id, {
         endedAt: newEndDate
     });
 

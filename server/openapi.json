@@ -174,19 +174,13 @@
       },
       "MembershipRenewal": {
         "type": "object",
-        "description": "Payload for renewing a membership.",
-        "required": ["renewalPeriodMonths", "amountPaid"],
+        "description": "Payload for renewing a membership using a specific plan ID.",
+        "required": ["membershipPlanId"],
         "properties": {
-          "renewalPeriodMonths": {
+          "membershipPlanId": {
             "type": "integer",
-            "description": "Number of months to extend the membership.",
-            "example": 12
-          },
-          "amountPaid": {
-            "type": "number",
-            "format": "double",
-            "description": "The amount paid for the renewal.",
-            "example": 150
+            "description": "The ID of the membership plan being purchased.",
+            "example": 1
           }
         }
       },
