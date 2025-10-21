@@ -58,7 +58,9 @@ export const processTransactionPayment = async (req: Request, res: Response) => 
     const { accessCode } = paramsSchema.parse(req.params);
     const { paidAmount } = processPaymentSchema.parse(req.body);
 
-    const processedTransaction = await transactionService.processTransactionPayment(accessCode, { paidAmount });
+    const processedTransaction = (req.user) ?
+        await transactionService.processTransactionPaymentForMember(accessCode) :
+        await transactionService.processTransactionPaymentForNonMember(accessCode, { paidAmount });
 
     res.status(200).json({
         success: true,

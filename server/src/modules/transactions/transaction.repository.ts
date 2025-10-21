@@ -13,7 +13,14 @@ type updatedTransaction = z.infer<typeof updateTransactionSchema>;
 export const findAll = async () => {
     return await db.query.transactionsTable.findMany({
         with: {
-            user: true,
+            user: {
+                columns: {
+                    id: true,
+                    fullname: true,
+                    username: true,
+                    role: true
+                }
+            },
             vehicleDetail: {
                 with: {
                     category: true
@@ -29,7 +36,14 @@ export const findById = async (transactionId: number) => {
     return await db.query.transactionsTable.findFirst({
         where: eq(transactionsTable.id, transactionId),
         with: {
-            user: true,
+            user: {
+                columns: {
+                    id: true,
+                    fullname: true,
+                    username: true,
+                    role: true
+                }
+            },
             vehicleDetail: {
                 with: {
                     category: true
@@ -45,7 +59,14 @@ export const findByAccessCode = async (accessCode: string, tx: TransactionDB = d
     return await tx.query.transactionsTable.findFirst({
         where: eq(transactionsTable.access_code, accessCode),
         with: {
-            user: true,
+            user: {
+                columns: {
+                    id: true,
+                    fullname: true,
+                    username: true,
+                    role: true
+                }
+            },
             vehicleDetail: {
                 with: {
                     category: true
@@ -61,7 +82,14 @@ export const findByUserId = async (userId: number) => {
     return await db.query.transactionsTable.findMany({
         where: eq(transactionsTable.user_id, userId),
         with: {
-            user: true,
+            user: {
+                columns: {
+                    id: true,
+                    fullname: true,
+                    username: true,
+                    role: true
+                }
+            },
             vehicleDetail: {
                 with: {
                     category: true

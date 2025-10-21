@@ -181,8 +181,18 @@ export const calculateParkingFee = async (transaction: TransactionWithDetails) =
 }
 
 // Process payment for a transaction
-export const processTransactionPayment = async (accessCode: string, paymentData: processPaymentInput) => {
+export const processTransactionPaymentForNonMember = async (accessCode: string, paymentData: processPaymentInput) => {
     const transaction = await getTransactionByAccessCode(accessCode);
+
+    // Validate transaction status
+    if (transaction.status !== "ENTRY") {
+        throw new HttpError(400, "Transaction is not in ENTRY status");
+    }
+
+    // Check if the transaction has already been paid
+    if (transaction.paid_amount !== null) {
+        throw new HttpError(400, "Transaction has already been paid");
+    }
 
     let totalFee = await calculateParkingFee(transaction);
 
@@ -194,9 +204,38 @@ export const processTransactionPayment = async (accessCode: string, paymentData:
     return await transactionRepository.updatePaidAmount(accessCode, paymentData.paidAmount);
 }
 
+// Process payment for a member transaction (sets paid amount to 0)
+export const processTransactionPaymentForMember = async (accessCode: string) => {
+    const transaction = await getTransactionByAccessCode(accessCode);
+
+    // Validate transaction status
+    if (transaction.status !== "ENTRY") {
+        throw new HttpError(400, "Transaction is not in ENTRY status");
+    }
+
+    // Check if the transaction has already been paid
+    if (transaction.paid_amount !== null) {
+        throw new HttpError(400, "Transaction has already been paid");
+    }
+
+    return await transactionRepository.updatePaidAmount(accessCode, 0);
+};
+
 
 // Update transaction status to EXIT
 export const updateTransactionToExit = async (accessCode: string) => {
+    const transaction = await getTransactionByAccessCode(accessCode);
+
+    // Validate transaction status
+    if (transaction.status !== "ENTRY") {
+        throw new HttpError(400, "Transaction is not in ENTRY status");
+    }
+
+    // Ensure the transaction has been paid before exiting
+    if (transaction.paid_amount === null) {
+        throw new HttpError(400, "Transaction has not been paid yet");
+    }
+
     return await transactionRepository.updateToExit(accessCode);
 };
 
@@ -209,4 +248,4 @@ export const deleteTransaction = async (accessCode: string) => {
     return deletedTransaction;
 };
 
-export default { getAllTransactions, getTransactionById, getTransactionByAccessCode, getTransactionsByUserId, createTransaction, createEntryTransaction, processTransactionPayment, updateTransaction, updateTransactionToExit, deleteTransaction };
+export default { getAllTransactions, getTransactionById, getTransactionByAccessCode, getTransactionsByUserId, createTransaction, createEntryTransaction, processTransactionPaymentForNonMember, processTransactionPaymentForMember, updateTransaction, updateTransactionToExit, deleteTransaction };
