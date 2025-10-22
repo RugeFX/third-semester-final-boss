@@ -85,4 +85,4 @@ export const deleteMember = async (memberId: number) => {
     return await memberRepository.remove(memberId);
 };
 
-export default { getAllMembers, findMemberById, getTransactionForMember, createMember, updateMember, renewMembership, deleteMember };
+export default { getAllMembers, findMemberById, findMemberByUserId, getTransactionForMember, createMember, updateMember, renewMembership, deleteMember };

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import transactionService from "./transaction.service";
+import memberService from "../members/member.service";
 import { paramsSchema, entryTransactionSchema, processPaymentSchema, updateTransactionSchema } from "./transaction.schema";
 
 // Get all transactions
@@ -56,11 +57,26 @@ export const manuallyUpdateTransaction = async (req: Request, res: Response) => 
 // Process transaction payment
 export const processTransactionPayment = async (req: Request, res: Response) => {
     const { accessCode } = paramsSchema.parse(req.params);
-    const { paidAmount } = processPaymentSchema.parse(req.body);
 
-    const processedTransaction = (req.user) ?
-        await transactionService.processTransactionPaymentForMember(accessCode) :
-        await transactionService.processTransactionPaymentForNonMember(accessCode, { paidAmount });
+    // Get the transaction
+    const transaction = await transactionService.getTransactionByAccessCode(accessCode);
+    let member = null;
+
+    // Check if the transaction belongs to a member
+    if (transaction.user_id) {
+        member = await memberService.findMemberByUserId(transaction.user_id).catch(() => null);
+    }
+
+    let processedTransaction;
+
+    // Process payment differently for members and non-members
+    if (member) {
+        processedTransaction = await transactionService.processTransactionPaymentForMember(accessCode);
+    } else {
+        const { paidAmount } = processPaymentSchema.parse(req.body);
+
+        processedTransaction = await transactionService.processTransactionPaymentForNonMember(accessCode, { paidAmount });
+    }
 
     res.status(200).json({
         success: true,

@@ -6,7 +6,7 @@ export const paramsSchema = z.object({
 
 export const createTransactionSchema = z.object({
     status: z.enum(["ENTRY", "EXIT"]).default("ENTRY"),
-    paidAmount: z.coerce.number().positive("Paid amount must be a positive number").nullable().optional(),
+    paidAmount: z.coerce.number().nonnegative("Paid amount must be a non-negative number").nullable().optional(),
     accessCode: z.string().min(3, "Access code must be at least 3 characters long"),
     userId: z.coerce.number().int().positive("User ID must be a positive number").nullable().optional(),
     vehicleDetailId: z.coerce.number().int().positive("Vehicle detail ID must be a positive number"),
@@ -19,7 +19,7 @@ export const updateTransactionSchema = createTransactionSchema.pick({
 });
 
 export const processPaymentSchema = z.object({
-    paidAmount: z.coerce.number().positive("Paid amount must be a positive number"),
+    paidAmount: z.coerce.number().nonnegative("Paid amount must be a non-negative number"),
 });
 
 export const entryTransactionSchema = z.object({
