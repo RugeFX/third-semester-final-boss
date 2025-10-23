@@ -45,7 +45,9 @@ export const manuallyUpdateTransaction = async (req: Request, res: Response) => 
     const { accessCode } = paramsSchema.parse(req.params);
     const transactionData = updateTransactionSchema.parse(req.body);
 
-    const updatedTransaction = await transactionService.updateTransaction(accessCode, transactionData);
+    const adminUserId = req.user!.id;
+
+    const updatedTransaction = await transactionService.updateTransaction(accessCode, transactionData, adminUserId);
 
     res.status(200).json({
         success: true,
@@ -102,7 +104,9 @@ export const updateTransactionExit = async (req: Request, res: Response) => {
 export const deleteTransaction = async (req: Request, res: Response) => {
     const { accessCode } = paramsSchema.parse(req.params);
 
-    const deletedTransaction = await transactionService.deleteTransaction(accessCode);
+    const adminUserId = req.user!.id;
+
+    const deletedTransaction = await transactionService.deleteTransaction(accessCode, adminUserId);
 
     res.status(200).json({
         success: true,

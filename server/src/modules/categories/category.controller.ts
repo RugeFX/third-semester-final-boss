@@ -47,7 +47,9 @@ export const updateCategory = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
     const categoryData = updateCategorySchema.parse(req.body);
 
-    const updatedCategory = await categoryService.updateCategory(id, categoryData);
+    const adminUserId = req.user!.id;
+
+    const updatedCategory = await categoryService.updateCategory(id, categoryData, adminUserId);
 
     if (!updatedCategory) throw new HttpError(500, "Failed to update category");
 
@@ -62,7 +64,9 @@ export const updateCategory = async (req: Request, res: Response) => {
 export const deleteCategory = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
 
-    const deletedCategory = await categoryService.deleteCategory(id);
+    const adminUserId = req.user!.id;
+
+    const deletedCategory = await categoryService.deleteCategory(id, adminUserId);
 
     if (!deletedCategory) throw new HttpError(500, "Failed to delete category");
 

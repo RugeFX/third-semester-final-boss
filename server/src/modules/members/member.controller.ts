@@ -60,7 +60,9 @@ export const updateMember = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
     const memberData = updateMemberSchema.parse(req.body);
 
-    const updatedMember = await memberService.updateMember(id, memberData);
+    const adminUserId = req.user!.id;
+
+    const updatedMember = await memberService.updateMember(id, memberData, adminUserId);
 
     if (!updatedMember) throw new HttpError(500, "Failed to update member");
 
@@ -90,7 +92,9 @@ export const renewMembership = async (req: Request, res: Response) => {
 export const deleteMember = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
 
-    const deletedMember = await memberService.deleteMember(id);
+    const adminUserId = req.user!.id;
+
+    const deletedMember = await memberService.deleteMember(id, adminUserId);
 
     if (!deletedMember) throw new HttpError(500, "Failed to delete member");
 

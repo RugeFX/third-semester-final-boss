@@ -47,7 +47,9 @@ export const updateMembershipPlan = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
     const membershipPlanData = updateMembershipPlanSchema.parse(req.body);
 
-    const updatedMembershipPlan = await membershipPlanService.updateMembershipPlan(id, membershipPlanData);
+    const adminUserId = req.user!.id;
+
+    const updatedMembershipPlan = await membershipPlanService.updateMembershipPlan(id, membershipPlanData, adminUserId);
 
     if (!updatedMembershipPlan) throw new HttpError(500, "Failed to update membership plan");
 
@@ -62,7 +64,9 @@ export const updateMembershipPlan = async (req: Request, res: Response) => {
 export const deleteMembershipPlan = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
 
-    const deletedMembershipPlan = await membershipPlanService.deleteMembershipPlan(id);
+    const adminUserId = req.user!.id;
+
+    const deletedMembershipPlan = await membershipPlanService.deleteMembershipPlan(id, adminUserId);
 
     if (!deletedMembershipPlan) throw new HttpError(500, "Failed to delete membership plan");
 

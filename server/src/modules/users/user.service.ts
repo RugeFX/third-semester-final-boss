@@ -1,4 +1,5 @@
 import HttpError from "../../common/exceptions/http.error";
+import auditLogService from "../audit_logs/audit-log.service";
 import userRepository from "./user.repository";
 import { createUserSchema, updateUserSchema } from "./user.schema";
 import { z } from "zod";
@@ -29,17 +30,45 @@ export const createUser = async (userData: createUserInput) => {
 };
 
 // Update a user
-export const updateUser = async (userId: number, userData: updateUserInput) => {
-    await findUserById(userId);
+export const updateUser = async (userId: number, userData: updateUserInput, adminUserId: number) => {
+    const oldUser = await findUserById(userId);
 
-    return await userRepository.update(userId, userData);
+    const updatedUser = await userRepository.update(userId, userData);
+    const sanitizedUpdatedUser = { ...updatedUser, password: undefined };
+
+    // Create audit log for update
+    try {
+        await auditLogService.createAuditLog({
+            context: `Admin (ID: ${adminUserId}) updated user (ID: ${userId}). Old Data: ${JSON.stringify(oldUser)}, New Data: ${JSON.stringify(sanitizedUpdatedUser)}`,
+            type: "USER_UPDATE",
+            createdBy: adminUserId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for user update:", error);
+    }
+
+    return updatedUser;
 };
 
 // Delete a user
-export const deleteUser = async (userId: number) => {
+export const deleteUser = async (userId: number, adminUserId: number) => {
     await findUserById(userId);
 
-    return await userRepository.remove(userId);
+    const deletedUser = await userRepository.remove(userId);
+    const sanitizedDeletedUser = { ...deletedUser, password: undefined };
+
+    // Create audit log for deletion
+    try {
+        await auditLogService.createAuditLog({
+            context: `Admin (ID: ${adminUserId}) deleted user (ID: ${userId}). Data: ${JSON.stringify(sanitizedDeletedUser)}`,
+            type: "USER_DELETE",
+            createdBy: adminUserId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for user deletion:", error);
+    }
+
+    return deletedUser;
 };
 
 export default { getAllUsers, findUserById, createUser, updateUser, deleteUser };

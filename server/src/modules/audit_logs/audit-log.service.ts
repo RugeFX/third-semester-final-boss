@@ -1,5 +1,9 @@
 import HttpError from "../../common/exceptions/http.error";
 import auditLogRepository from "./audit-log.repository";
+import { createAuditLogSchema } from "./audit-log.schema";
+import { z } from "zod";
+
+export type createAuditLogInput = z.infer<typeof createAuditLogSchema>;
 
 // Get all audit logs
 export const getAllAuditLogs = async () => {
@@ -15,4 +19,8 @@ export const findAuditLogById = async (logId: number) => {
     return auditLog;
 };
 
-export default { getAllAuditLogs, findAuditLogById };
+export const createAuditLog = async (logData: createAuditLogInput) => {
+    return await auditLogRepository.create(logData);
+};
+
+export default { getAllAuditLogs, findAuditLogById, createAuditLog };

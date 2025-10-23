@@ -1,6 +1,10 @@
 import { db } from '../../db';
 import { eq } from 'drizzle-orm';
 import { auditLogsTable } from '../../db/schema';
+import { createAuditLogSchema } from './audit-log.schema';
+import { z } from 'zod';
+
+type newAuditLog = z.infer<typeof createAuditLogSchema>;
 
 // Get all audit logs
 export const findAll = async () => {
@@ -14,4 +18,15 @@ export const findById = async (logId: number) => {
     });
 };
 
-export default { findAll, findById };
+// Create new audit log
+export const create = async (logData: newAuditLog) => {
+    const [ newLog ] = await db.insert(auditLogsTable).values({
+        context: logData.context,
+        type: logData.type,        
+        created_by: logData.createdBy
+    }).returning();
+
+    return newLog;
+};
+
+export default { findAll, findById, create };
