@@ -122,6 +122,19 @@
           }
         }
       },
+      "UserRegister": {
+        "type": "object",
+        "required": ["fullname", "username", "password"],
+        "properties": {
+          "fullname": { "type": "string", "example": "New Member" },
+          "username": { "type": "string", "example": "new.member" },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "strongpassword123"
+          }
+        }
+      },
       "ParkingLevel": {
         "type": "object",
         "required": ["id", "name", "max_weight"],
@@ -143,6 +156,33 @@
             "type": "number",
             "format": "double",
             "example": 3000
+          }
+        }
+      },
+      "PasswordChange": {
+        "type": "object",
+        "required": ["currentPassword", "newPassword"],
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "format": "password",
+            "example": "passwordlama123"
+          },
+          "newPassword": {
+            "type": "string",
+            "format": "password",
+            "example": "passwordbaru456"
+          }
+        }
+      },
+      "PasswordReset": {
+        "type": "object",
+        "required": ["newPassword"],
+        "properties": {
+          "newPassword": {
+            "type": "string",
+            "format": "password",
+            "example": "passwordreset789"
           }
         }
       },
@@ -494,7 +534,7 @@
                         },
                         "issue": {
                           "type": "string",
-                          "example": "Password must be at least 8 characters long."
+          "example": "Password must be at least 8 characters long."
                         }
                       }
                     }
@@ -885,6 +925,29 @@
         }
       }
     },
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Member Self-Registration",
+        "description": "Allows a new user to register for an account. This automatically assigns them the 'member' role.",
+        "operationId": "registerUser",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegister"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponse" } } } },
+          "400": { "description": "Bad Request (e.g., username already exists)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
+        }
+      }
+    },
     "/users": {
       "get": {
         "tags": ["Users"],
@@ -964,6 +1027,54 @@
           "200": { "description": "User deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponse" } } } },
           "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
           "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
+        }
+      }
+    },
+    "/users/{id}/password": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Reset a user's password (Admin only)",
+        "description": "Allows an admin to forcibly reset the password for any user.",
+        "operationId": "resetUserPassword",
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordReset"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Password reset successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SuccessResponse" } } } },
+          "400": { "description": "Bad Request", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "404": { "description": "User not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
+        }
+      }
+    },
+    "/users/me/change-password": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Change current user's password",
+        "description": "Allows the currently authenticated user (admin or member) to change their own password.",
+        "operationId": "changeCurrentUserPassword",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordChange"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Password changed successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SuccessResponse" } } } },
+          "400": { "description": "Bad Request (e.g., current password mismatch)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1127,7 +1238,7 @@
         "responses": {
           "200": { "description": "Membership plan deleted successfully", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MembershipPlanResponse" } } } },
           "403": { "description": "Forbidden", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } },
-          "404": { "description": "Membership plan not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
+          "4This": { "description": "Membership plan not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } } } }
         }
       }
     },
@@ -1460,7 +1571,7 @@
               }
             }
           },
-          "404": {
+          "44": {
             "description": "Category not found or no prices found for this category.",
             "content": {
               "application/json": {
