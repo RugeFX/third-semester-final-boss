@@ -103,7 +103,19 @@ export const changeUserPassword = async (userId: number, currentPassword: string
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    return await userRepository.updateUserPassword(userId, hashedPassword);
+    const updatedUser = await userRepository.updateUserPassword(userId, hashedPassword);
+
+    try {
+        await auditLogService.createAuditLog({
+            context: `User (ID: ${userId}) changed their own password.`,
+            type: "USER_PASSWORD_CHANGE",
+            createdBy: userId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for user password change:", error);
+    }
+
+    return updatedUser;
 };
 
 export default { getAllUsers, findUserById, createUser, updateUser, changeUserPassword, deleteUser, resetUserPassword };
