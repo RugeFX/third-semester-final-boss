@@ -1,5 +1,6 @@
 import HttpError from "../../common/exceptions/http.error";
 import auditLogService from "../audit_logs/audit-log.service";
+import authService from "../auth/auth.service";
 import userRepository from "./user.repository";
 import { createUserSchema, updateUserSchema } from "./user.schema";
 import { z } from "zod";
@@ -50,6 +51,27 @@ export const updateUser = async (userId: number, userData: updateUserInput, admi
     return updatedUser;
 };
 
+// Reset user password
+export const resetUserPassword = async (userId: number, newPassword: string, adminUserId: number) => {
+    await findUserById(userId);
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const updatedUser = await userRepository.updateUserPassword(userId, hashedPassword);
+
+    try {
+        await auditLogService.createAuditLog({
+            context: `Admin (ID: ${adminUserId}) changed password for user (ID: ${userId}).`,
+            type: "USER_PASSWORD_CHANGE",
+            createdBy: adminUserId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for user password change:", error);
+    }
+
+    return updatedUser;
+};
+
 // Delete a user
 export const deleteUser = async (userId: number, adminUserId: number) => {
     await findUserById(userId);
@@ -71,4 +93,29 @@ export const deleteUser = async (userId: number, adminUserId: number) => {
     return deletedUser;
 };
 
-export default { getAllUsers, findUserById, createUser, updateUser, deleteUser };
+// Change user password
+export const changeUserPassword = async (userId: number, currentPassword: string, newPassword: string) => {
+    const user = await authService.findUserById(userId);
+
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isPasswordValid) throw new HttpError(401, "Current password is incorrect");
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const updatedUser = await userRepository.updateUserPassword(userId, hashedPassword);
+
+    try {
+        await auditLogService.createAuditLog({
+            context: `User (ID: ${userId}) changed their own password.`,
+            type: "USER_PASSWORD_CHANGE",
+            createdBy: userId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for user password change:", error);
+    }
+
+    return updatedUser;
+};
+
+export default { getAllUsers, findUserById, createUser, updateUser, changeUserPassword, deleteUser, resetUserPassword };

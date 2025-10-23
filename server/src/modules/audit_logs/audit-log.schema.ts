@@ -20,7 +20,8 @@ export const auditLogTypeEnum = z.enum([
     "VEHICLE_DETAIL_UPDATE",
     "VEHICLE_DETAIL_DELETE",
     "TRANSACTION_UPDATE",
-    "TRANSACTION_DELETE"
+    "TRANSACTION_DELETE",
+    "USER_PASSWORD_CHANGE"
 ]);
 
 export const createAuditLogSchema = z.object({

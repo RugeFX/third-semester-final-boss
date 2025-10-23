@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import userService from "./user.service";
-import { paramsSchema, createUserSchema, updateUserSchema } from "./user.schema";
+import { paramsSchema, createUserSchema, updateUserSchema, changeUserPasswordSchema, resetPasswordSchema } from "./user.schema";
 import HttpError from "../../common/exceptions/http.error";
 
 // Get all users
@@ -65,6 +65,24 @@ export const updateUser = async (req: Request, res: Response) => {
     });
 };
 
+// Reset user password
+export const resetUserPassword = async (req: Request, res: Response) => {
+    const { id } = paramsSchema.parse(req.params);
+    const { newPassword } = resetPasswordSchema.parse(req.body);
+
+    const adminUserId = req.user!.id;
+
+    const updatedUser = await userService.resetUserPassword(id, newPassword, adminUserId);
+
+    if (!updatedUser) throw new HttpError(500, "Failed to reset user password");
+
+    res.status(200).json({
+        success: true,
+        message: "User password reset successfully",
+        data: updatedUser
+    });
+};
+
 // Delete a user
 export const deleteUser = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
@@ -79,5 +97,22 @@ export const deleteUser = async (req: Request, res: Response) => {
         success: true,
         message: "User deleted successfully",
         data: deletedUser
+    });
+};
+
+// Change user password
+export const changeUserPassword = async (req: Request, res: Response) => {
+    const { currentPassword, newPassword } = changeUserPasswordSchema.parse(req.body);
+
+    const userId = req.user!.id;
+
+    const updatedUser = await userService.changeUserPassword(userId, currentPassword, newPassword);
+
+    if (!updatedUser) throw new HttpError(500, "Failed to change user password");
+
+    res.status(200).json({
+        success: true,
+        message: "User password changed successfully",
+        data: updatedUser
     });
 };

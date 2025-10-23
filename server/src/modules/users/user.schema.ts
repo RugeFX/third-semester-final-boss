@@ -12,3 +12,12 @@ export const createUserSchema = z.object({
 });
 
 export const updateUserSchema = createUserSchema.pick({ fullname: true, username: true, role: true });
+
+export const resetPasswordSchema = z.object({
+    newPassword: z.string().min(3, "Password must be at least 3 characters long"),
+});
+
+export const changeUserPasswordSchema = z.object({
+    currentPassword: z.string().min(3, "Password must be at least 3 characters long"),
+    newPassword: z.string().min(3, "Password must be at least 3 characters long"),
+});
