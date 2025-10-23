@@ -61,7 +61,9 @@ export const updatePrice = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
     const priceData = updatePriceSchema.parse(req.body);
 
-    const updatedPrice = await priceService.updatePrice(id, priceData);
+    const adminUserId = req.user!.id;
+
+    const updatedPrice = await priceService.updatePrice(id, priceData, adminUserId);
 
     if (!updatedPrice) throw new HttpError(500, "Failed to update price");
 
@@ -76,7 +78,9 @@ export const updatePrice = async (req: Request, res: Response) => {
 export const deletePrice = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
 
-    const deletedPrice = await priceService.deletePrice(id);
+    const adminUserId = req.user!.id;
+
+    const deletedPrice = await priceService.deletePrice(id, adminUserId);
 
     if (!deletedPrice) throw new HttpError(500, "Failed to delete price");
 

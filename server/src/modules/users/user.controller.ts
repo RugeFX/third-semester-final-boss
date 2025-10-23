@@ -52,7 +52,9 @@ export const updateUser = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
     const userData = updateUserSchema.parse(req.body);
 
-    const updatedUser = await userService.updateUser(id, userData);
+    const adminUserId = req.user!.id;
+
+    const updatedUser = await userService.updateUser(id, userData, adminUserId);
 
     if (!updatedUser) throw new HttpError(500, "Failed to update user");
 
@@ -67,7 +69,9 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
 
-    const deletedUser = await userService.deleteUser(id);
+    const adminUserId = req.user!.id;
+
+    const deletedUser = await userService.deleteUser(id, adminUserId);
 
     if (!deletedUser) throw new HttpError(500, "Failed to delete user");
 

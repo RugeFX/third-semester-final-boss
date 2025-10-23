@@ -1,4 +1,5 @@
 import HttpError from "../../common/exceptions/http.error";
+import auditLogService from "../audit_logs/audit-log.service";
 import categoryService from "../categories/category.service";
 import priceRepository from "./price.repository";
 import { createPriceSchema, updatePriceSchema } from "./price.schema";
@@ -45,8 +46,8 @@ export const createPrice = async (priceData: createPriceInput) => {
 };
 
 // Update a price
-export const updatePrice = async (priceId: number, priceData: updatePriceInput) => {
-    await findPriceById(priceId);
+export const updatePrice = async (priceId: number, priceData: updatePriceInput, adminUserId: number) => {
+    const oldPrice = await findPriceById(priceId);
     await categoryService.findCategoryById(priceData.categoryId);
 
     if (priceData.isActive !== false) {
@@ -56,14 +57,41 @@ export const updatePrice = async (priceId: number, priceData: updatePriceInput) 
             throw new HttpError(409, `Price with type '${priceData.type}' for this category already exists and is active`);
     }
 
-    return await priceRepository.update(priceId, priceData);
+    const updatedPrice = await priceRepository.update(priceId, priceData);
+
+    // Create audit log for update
+    try {
+        await auditLogService.createAuditLog({
+            context: `Admin (ID: ${adminUserId}) updated price (ID: ${priceId}). Old Data: ${JSON.stringify(oldPrice)}, New Data: ${JSON.stringify(updatedPrice)}`,
+            type: "PRICE_UPDATE",
+            createdBy: adminUserId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for price update:", error);
+    }
+
+
+    return updatedPrice;
 }
 
 // Delete a price
-export const deletePrice = async (priceId: number) => {
+export const deletePrice = async (priceId: number, adminUserId: number) => {
     await findPriceById(priceId);
 
-    return await priceRepository.remove(priceId);
+    const deletedPrice = await priceRepository.remove(priceId);
+
+    // Create audit log for deletion
+    try {
+        await auditLogService.createAuditLog({
+            context: `Admin (ID: ${adminUserId}) deleted price (ID: ${priceId}). Data: ${JSON.stringify(deletedPrice)}`,
+            type: "PRICE_DELETE",
+            createdBy: adminUserId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for price deletion:", error);
+    }
+
+    return deletedPrice;
 };
 
 export default { getAllPrices, findPriceById, getPricesByCategoryId, createPrice, updatePrice, deletePrice };

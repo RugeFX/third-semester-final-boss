@@ -47,7 +47,9 @@ export const updateParkingLevel = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
     const parkingLevelData = updateParkingLevelSchema.parse(req.body);
 
-    const updatedParkingLevel = await parkingLevelService.updateParkingLevel(id, parkingLevelData);
+    const adminUserId = req.user!.id;
+
+    const updatedParkingLevel = await parkingLevelService.updateParkingLevel(id, parkingLevelData, adminUserId);
 
     if (!updatedParkingLevel) throw new HttpError(500, "Failed to update parking level");
 
@@ -62,7 +64,9 @@ export const updateParkingLevel = async (req: Request, res: Response) => {
 export const deleteParkingLevel = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
 
-    const deletedParkingLevel = await parkingLevelService.deleteParkingLevel(id);
+    const adminUserId = req.user!.id;
+
+    const deletedParkingLevel = await parkingLevelService.deleteParkingLevel(id, adminUserId);
 
     if (!deletedParkingLevel) throw new HttpError(500, "Failed to delete parking level");
 

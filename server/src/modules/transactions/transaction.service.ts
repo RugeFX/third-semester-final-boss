@@ -4,6 +4,7 @@ import { generateShortCode } from "../../common/utils/generate-short-code";
 import HttpError from "../../common/exceptions/http.error";
 import { z } from "zod";
 
+import auditLogService from "../audit_logs/audit-log.service";
 import categoryService from "../categories/category.service";
 import parkingLevelService from "../parking_levels/parking-level.service";
 import vehicleDetailService from "../vehicle_details/vehicle-detail.service";
@@ -126,10 +127,22 @@ export const createEntryTransaction = async (entryData: entryTransactionInput) =
 }
 
 // Update a transaction
-export const updateTransaction = async (accessCode: string, transactionData: updateTransactionInput) => {
-    await getTransactionByAccessCode(accessCode);
+export const updateTransaction = async (accessCode: string, transactionData: updateTransactionInput, adminUserId: number) => {
+    const oldTransaction = await getTransactionByAccessCode(accessCode);
 
-    return await transactionRepository.update(accessCode, transactionData);
+    const updatedTransaction = await transactionRepository.update(accessCode, transactionData);
+
+    try {
+        await auditLogService.createAuditLog({
+            context: `Admin updated transaction (Access Code: ${accessCode}). Old Data: ${JSON.stringify(oldTransaction)}, New Data: ${JSON.stringify(updatedTransaction)}`,
+            type: "TRANSACTION_UPDATE",
+            createdBy: adminUserId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for transaction update:", error);
+    }
+
+    return updatedTransaction;
 };
 
 // Calculate parking fee based on duration and pricing rules
@@ -240,10 +253,20 @@ export const updateTransactionToExit = async (accessCode: string) => {
 };
 
 // Delete a transaction
-export const deleteTransaction = async (accessCode: string) => {
+export const deleteTransaction = async (accessCode: string, adminUserId: number) => {
     await getTransactionByAccessCode(accessCode);
 
     const deletedTransaction = await transactionRepository.remove(accessCode);
+
+    try {
+        await auditLogService.createAuditLog({
+            context: `Admin deleted transaction (Access Code: ${accessCode}). Data: ${JSON.stringify(deletedTransaction)}`,
+            type: "TRANSACTION_DELETE",
+            createdBy: adminUserId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for transaction deletion:", error);
+    }
 
     return deletedTransaction;
 };

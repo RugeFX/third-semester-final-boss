@@ -1,5 +1,6 @@
 import HttpError from "../../common/exceptions/http.error";
 import { createMemberSchema, updateMemberSchema, renewMembershipSchema } from "./member.schema";
+import auditLogService from "../audit_logs/audit-log.service";
 import memberRepository from "./member.repository";
 import membershipPlanService from "../membership_plans/membership-plan.service";
 import transactionService from "../transactions/transaction.service";   
@@ -50,10 +51,23 @@ export const createMember = async (memberData: createMemberInput) => {
 };
 
 // Update a member
-export const updateMember = async (memberId: number, memberData: updateMemberInput) => {
-    await findMemberById(memberId);
+export const updateMember = async (memberId: number, memberData: updateMemberInput, adminUserId: number) => {
+    const oldMember = await findMemberById(memberId);
 
-    return await memberRepository.update(memberId, memberData);
+    const updatedMember = await memberRepository.update(memberId, memberData);
+
+    // Create audit log for update
+    try {
+        await auditLogService.createAuditLog({
+            context: `Admin updated member (ID: ${memberId}). Old Data: ${JSON.stringify(oldMember)}, New Data: ${JSON.stringify(updatedMember)}`,
+            type: "MEMBER_UPDATE",
+            createdBy: adminUserId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for member update:", error);
+    }
+
+    return updatedMember;
 };
 
 // Renew membership subscription
@@ -79,10 +93,23 @@ export const renewMembership = async (userId: number, renewalData: renewMembersh
 };
 
 // Delete a member
-export const deleteMember = async (memberId: number) => {
+export const deleteMember = async (memberId: number, adminUserId: number) => {
     await findMemberById(memberId);
 
-    return await memberRepository.remove(memberId);
+    const deletedMember = await memberRepository.remove(memberId);
+
+    // Create audit log for deletion
+    try {
+        await auditLogService.createAuditLog({
+            context: `Admin (ID: ${adminUserId}) deleted member (ID: ${memberId}). Data: ${JSON.stringify(deletedMember)}`,
+            type: "MEMBER_DELETE",
+            createdBy: adminUserId
+        });
+    } catch (error) {
+        console.error("Failed to create audit log for member deletion:", error);
+    }
+
+    return deletedMember;
 };
 
 export default { getAllMembers, findMemberById, findMemberByUserId, getTransactionForMember, createMember, updateMember, renewMembership, deleteMember };
