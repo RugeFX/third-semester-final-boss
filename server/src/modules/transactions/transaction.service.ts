@@ -134,7 +134,7 @@ export const updateTransaction = async (accessCode: string, transactionData: upd
 
     try {
         await auditLogService.createAuditLog({
-            context: `Admin updated transaction (Access Code: ${accessCode}). Old Data: ${JSON.stringify(oldTransaction)}, New Data: ${JSON.stringify(updatedTransaction)}`,
+            context: `Admin (ID: ${adminUserId}) updated transaction (Access Code: ${accessCode}). Old Data: ${JSON.stringify(oldTransaction)}, New Data: ${JSON.stringify(updatedTransaction)}`,
             type: "TRANSACTION_UPDATE",
             createdBy: adminUserId
         });
@@ -260,7 +260,7 @@ export const deleteTransaction = async (accessCode: string, adminUserId: number)
 
     try {
         await auditLogService.createAuditLog({
-            context: `Admin deleted transaction (Access Code: ${accessCode}). Data: ${JSON.stringify(deletedTransaction)}`,
+            context: `Admin (ID: ${adminUserId}) deleted transaction (Access Code: ${accessCode}). Data: ${JSON.stringify(deletedTransaction)}`,
             type: "TRANSACTION_DELETE",
             createdBy: adminUserId
         });

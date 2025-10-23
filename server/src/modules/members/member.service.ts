@@ -59,7 +59,7 @@ export const updateMember = async (memberId: number, memberData: updateMemberInp
     // Create audit log for update
     try {
         await auditLogService.createAuditLog({
-            context: `Admin updated member (ID: ${memberId}). Old Data: ${JSON.stringify(oldMember)}, New Data: ${JSON.stringify(updatedMember)}`,
+            context: `Admin (ID: ${adminUserId}) updated member (ID: ${memberId}). Old Data: ${JSON.stringify(oldMember)}, New Data: ${JSON.stringify(updatedMember)}`,
             type: "MEMBER_UPDATE",
             createdBy: adminUserId
         });

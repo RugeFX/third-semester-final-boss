@@ -41,7 +41,7 @@ export const updateMembershipPlan = async (
     // Create audit log for update
     try {
         await auditLogService.createAuditLog({
-            context: `Admin updated membership plan (ID: ${membershipPlanId}). Old Data: ${JSON.stringify(oldMembershipPlan)}, New Data: ${JSON.stringify(updatedMembershipPlan)}`,
+            context: `Admin (ID: ${adminUserId}) updated membership plan (ID: ${membershipPlanId}). Old Data: ${JSON.stringify(oldMembershipPlan)}, New Data: ${JSON.stringify(updatedMembershipPlan)}`,
             type: "MEMBERSHIP_PLAN_UPDATE",
             createdBy: adminUserId
         });
