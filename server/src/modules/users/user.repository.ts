@@ -75,4 +75,19 @@ export const remove = async (userId: number) => {
     return deletedUser;
 }
 
-export default { findAll, findById, create, update, remove };
+// Update user password
+export const updateUserPassword = async (userId: number, hashedPassword: string) => {
+    const [ updatedUser ] = await db.update(usersTable).set({ 
+        password: hashedPassword }
+    ).where(eq(usersTable.id, userId)).returning({
+        // Exclude password field
+        id: usersTable.id,
+        fullname: usersTable.fullname,
+        username: usersTable.username,
+        role: usersTable.role
+    });
+
+    return updatedUser;
+};
+
+export default { findAll, findById, create, update, remove, updateUserPassword };

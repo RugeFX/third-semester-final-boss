@@ -5,17 +5,24 @@ import {
     getUserById,
     createUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    changeUserPassword,
+    resetUserPassword
 } from "./user.controller";
 
 const router = Router();
 
-router.use(authenticateJWT, authorizeAdmin);
+router.use(authenticateJWT);
 
-router.get("/", getAllUsers);
-router.get("/:id", getUserById);
-router.post("/", createUser);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+// Admin routes
+router.get("/", authorizeAdmin, getAllUsers);
+router.get("/:id", authorizeAdmin, getUserById);
+router.post("/", authorizeAdmin, createUser);
+router.put("/:id", authorizeAdmin, updateUser);
+router.put("/:id/password", authorizeAdmin, resetUserPassword);
+router.delete("/:id", authorizeAdmin, deleteUser);
+
+// Member routes
+router.post("/me/change-password", changeUserPassword);
 
 export default router;
