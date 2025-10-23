@@ -34,11 +34,12 @@ export const updateUser = async (userId: number, userData: updateUserInput, admi
     const oldUser = await findUserById(userId);
 
     const updatedUser = await userRepository.update(userId, userData);
+    const sanitizedUpdatedUser = { ...updatedUser, password: undefined };
 
     // Create audit log for update
     try {
         await auditLogService.createAuditLog({
-            context: `Admin updated user (ID: ${userId}). Old Data: ${JSON.stringify(oldUser)}, New Data: ${JSON.stringify(updatedUser)}`,
+            context: `Admin (ID: ${adminUserId}) updated user (ID: ${userId}). Old Data: ${JSON.stringify(oldUser)}, New Data: ${JSON.stringify(sanitizedUpdatedUser)}`,
             type: "USER_UPDATE",
             createdBy: adminUserId
         });
@@ -54,11 +55,12 @@ export const deleteUser = async (userId: number, adminUserId: number) => {
     await findUserById(userId);
 
     const deletedUser = await userRepository.remove(userId);
+    const sanitizedDeletedUser = { ...deletedUser, password: undefined };
 
     // Create audit log for deletion
     try {
         await auditLogService.createAuditLog({
-            context: `Admin deleted user (ID: ${userId}). Data: ${JSON.stringify(deletedUser)}`,
+            context: `Admin (ID: ${adminUserId}) deleted user (ID: ${userId}). Data: ${JSON.stringify(sanitizedDeletedUser)}`,
             type: "USER_DELETE",
             createdBy: adminUserId
         });
