@@ -65,7 +65,7 @@ export const updateUser = async (req: Request, res: Response) => {
     });
 };
 
-// Update user password
+// Reset user password
 export const resetUserPassword = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
     const { newPassword } = resetPasswordSchema.parse(req.body);
@@ -100,7 +100,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     });
 };
 
-// Reset user password
+// Change user password
 export const changeUserPassword = async (req: Request, res: Response) => {
     const { currentPassword, newPassword } = changeUserPasswordSchema.parse(req.body);
 
