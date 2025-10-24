@@ -72,7 +72,20 @@ export const updateMember = async (memberId: number, memberData: updateMemberInp
 
 // Renew membership subscription
 export const renewMembership = async (userId: number, renewalData: renewMembershipInput) => {
-    const member = await findMemberByUserId(userId);
+    let member = await memberRepository.findByUserId(userId);
+
+    // If member does not exist, create one
+    if (!member) {
+        const user = await userService.findUserById(userId); // Ensure user exists
+
+        const newMember = await createMember({
+            userId: user.id,
+            endedAt: new Date()
+        });
+
+        member = { ...newMember, user: user };
+    } 
+
     const { membershipPlanId } = renewalData;
 
     // Fetch membership plan details

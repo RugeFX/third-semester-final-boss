@@ -77,7 +77,9 @@ export const updateMember = async (req: Request, res: Response) => {
 export const renewMembership = async (req: Request, res: Response) => {
     const renewalData = renewMembershipSchema.parse(req.body);
 
-    const updatedMember = await memberService.renewMembership(req.user!.id, renewalData);
+    const userId = req.user!.id;
+
+    const updatedMember = await memberService.renewMembership(userId, renewalData);
 
     if (!updatedMember) throw new HttpError(500, "Failed to renew membership"); 
 
