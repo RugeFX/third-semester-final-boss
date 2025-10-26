@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { z } from "zod";
 
 import { Button } from "@/components/base/buttons/button";
+import { useRegisterUser } from "@/lib/api/auth/auth";
 import { useAppForm } from "@/lib/form";
 import { wait } from "@/lib/utils";
 import { routeTitle } from "@/lib/utils/title";
@@ -22,7 +23,6 @@ const signUpSchema = z
 		username: z
 			.string()
 			.min(3, "Nama pengguna harus berisi setidaknya 3 karakter"),
-		phoneNumber: z.e164("Nomor telepon harus valid"),
 		password: z
 			.string()
 			.min(8, "Kata sandi harus berisi setidaknya 8 karakter")
@@ -47,15 +47,23 @@ type SignUpForm = z.infer<typeof signUpSchema>;
 function RouteComponent() {
 	const navigate = useNavigate();
 
+	const { mutateAsync } = useRegisterUser();
+
 	const form = useAppForm({
 		defaultValues: {
 			fullName: "",
 			username: "",
-			phoneNumber: "",
 			password: "",
 			confirmPassword: "",
 		} as SignUpForm,
-		onSubmit: async () => {
+		onSubmit: async ({ value }) => {
+			await mutateAsync({
+				data: {
+					fullname: value.fullName,
+					username: value.username,
+					password: value.password,
+				},
+			});
 			await wait(3000);
 			navigate({ to: "/sign-up/upgrade" });
 		},
@@ -65,7 +73,7 @@ function RouteComponent() {
 	});
 
 	return (
-		<motion.div
+		<motion.form
 			className="space-y-4 w-full max-w-md"
 			initial={{
 				opacity: 0,
@@ -76,6 +84,11 @@ function RouteComponent() {
 					duration: 0.5,
 					ease: "easeOut",
 				},
+			}}
+			onSubmit={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				form.handleSubmit();
 			}}
 		>
 			<form.AppField name="fullName">
@@ -99,20 +112,6 @@ function RouteComponent() {
 							isRequired
 							label="Nama Pengguna"
 							placeholder="Masukkan Nama Pengguna Anda"
-							className="w-full"
-						/>
-						<field.Errors firstOnly />
-					</div>
-				)}
-			</form.AppField>
-
-			<form.AppField name="phoneNumber">
-				{(field) => (
-					<div>
-						<field.TextInput
-							isRequired
-							label="Nomor Telepon"
-							placeholder="Masukkan Nomor Telepon Anda"
 							className="w-full"
 						/>
 						<field.Errors firstOnly />
@@ -153,6 +152,6 @@ function RouteComponent() {
 					Masuk
 				</Button>
 			</div>
-		</motion.div>
+		</motion.form>
 	);
 }

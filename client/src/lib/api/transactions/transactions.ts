@@ -40,7 +40,6 @@ import {
 
 import type {
 	ApiErrorResponse,
-	BaseResponse,
 	ProcessTransactionPaymentBody,
 	TransactionArrayResponse,
 	TransactionCreate,
@@ -1500,17 +1499,17 @@ export const useCompleteTransaction = <
 	return useMutation(mutationOptions, queryClient);
 };
 /**
- * Allows an admin to manually update transaction details by its primary ID. Restricted to admins.
+ * Allows an admin to manually update transaction details by its access code. Restricted to admins.
  * @summary Manually update a transaction (Admin only)
  */
-export const updateTransactionById = (
-	id: number,
+export const updateTransactionByAccessCode = (
+	accessCode: string,
 	transactionUpdate: BodyType<TransactionUpdate>,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
 	return customInstance<TransactionResponse>(
 		{
-			url: `/transactions/manage/${id}`,
+			url: `/transactions/manage/${accessCode}`,
 			method: "PUT",
 			headers: { "Content-Type": "application/json" },
 			data: transactionUpdate,
@@ -1519,24 +1518,24 @@ export const updateTransactionById = (
 	);
 };
 
-export const getUpdateTransactionByIdMutationOptions = <
+export const getUpdateTransactionByAccessCodeMutationOptions = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof updateTransactionById>>,
+		Awaited<ReturnType<typeof updateTransactionByAccessCode>>,
 		TError,
-		{ id: number; data: BodyType<TransactionUpdate> },
+		{ accessCode: string; data: BodyType<TransactionUpdate> },
 		TContext
 	>;
 	request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-	Awaited<ReturnType<typeof updateTransactionById>>,
+	Awaited<ReturnType<typeof updateTransactionByAccessCode>>,
 	TError,
-	{ id: number; data: BodyType<TransactionUpdate> },
+	{ accessCode: string; data: BodyType<TransactionUpdate> },
 	TContext
 > => {
-	const mutationKey = ["updateTransactionById"];
+	const mutationKey = ["updateTransactionByAccessCode"];
 	const { mutation: mutationOptions, request: requestOptions } = options
 		? options.mutation &&
 			"mutationKey" in options.mutation &&
@@ -1546,84 +1545,86 @@ export const getUpdateTransactionByIdMutationOptions = <
 		: { mutation: { mutationKey }, request: undefined };
 
 	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof updateTransactionById>>,
-		{ id: number; data: BodyType<TransactionUpdate> }
+		Awaited<ReturnType<typeof updateTransactionByAccessCode>>,
+		{ accessCode: string; data: BodyType<TransactionUpdate> }
 	> = (props) => {
-		const { id, data } = props ?? {};
+		const { accessCode, data } = props ?? {};
 
-		return updateTransactionById(id, data, requestOptions);
+		return updateTransactionByAccessCode(accessCode, data, requestOptions);
 	};
 
 	return { mutationFn, ...mutationOptions };
 };
 
-export type UpdateTransactionByIdMutationResult = NonNullable<
-	Awaited<ReturnType<typeof updateTransactionById>>
+export type UpdateTransactionByAccessCodeMutationResult = NonNullable<
+	Awaited<ReturnType<typeof updateTransactionByAccessCode>>
 >;
-export type UpdateTransactionByIdMutationBody = BodyType<TransactionUpdate>;
-export type UpdateTransactionByIdMutationError = ErrorType<
+export type UpdateTransactionByAccessCodeMutationBody =
+	BodyType<TransactionUpdate>;
+export type UpdateTransactionByAccessCodeMutationError = ErrorType<
 	ApiErrorResponse | ApiErrorResponse | ApiErrorResponse
 >;
 
 /**
  * @summary Manually update a transaction (Admin only)
  */
-export const useUpdateTransactionById = <
+export const useUpdateTransactionByAccessCode = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(
 	options?: {
 		mutation?: UseMutationOptions<
-			Awaited<ReturnType<typeof updateTransactionById>>,
+			Awaited<ReturnType<typeof updateTransactionByAccessCode>>,
 			TError,
-			{ id: number; data: BodyType<TransactionUpdate> },
+			{ accessCode: string; data: BodyType<TransactionUpdate> },
 			TContext
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
 	queryClient?: QueryClient,
 ): UseMutationResult<
-	Awaited<ReturnType<typeof updateTransactionById>>,
+	Awaited<ReturnType<typeof updateTransactionByAccessCode>>,
 	TError,
-	{ id: number; data: BodyType<TransactionUpdate> },
+	{ accessCode: string; data: BodyType<TransactionUpdate> },
 	TContext
 > => {
-	const mutationOptions = getUpdateTransactionByIdMutationOptions(options);
+	const mutationOptions =
+		getUpdateTransactionByAccessCodeMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };
 /**
- * Allows an admin to delete/void a transaction by its primary ID. Restricted to admins.
+ * Allows an admin to delete/void a transaction by its access code. Restricted to admins.
  * @summary Delete a transaction (Admin only)
  */
-export const deleteTransactionById = (
-	id: number,
+export const deleteTransactionByAccessCode = (
+	accessCode: string,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<BaseResponse>(
-		{ url: `/transactions/manage/${id}`, method: "DELETE" },
+	return customInstance<TransactionResponse>(
+		{ url: `/transactions/manage/${accessCode}`, method: "DELETE" },
 		options,
 	);
 };
 
-export const getDeleteTransactionByIdMutationOptions = <
+export const getDeleteTransactionByAccessCodeMutationOptions = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof deleteTransactionById>>,
+		Awaited<ReturnType<typeof deleteTransactionByAccessCode>>,
 		TError,
-		{ id: number },
+		{ accessCode: string },
 		TContext
 	>;
 	request?: SecondParameter<typeof customInstance>;
 }): UseMutationOptions<
-	Awaited<ReturnType<typeof deleteTransactionById>>,
+	Awaited<ReturnType<typeof deleteTransactionByAccessCode>>,
 	TError,
-	{ id: number },
+	{ accessCode: string },
 	TContext
 > => {
-	const mutationKey = ["deleteTransactionById"];
+	const mutationKey = ["deleteTransactionByAccessCode"];
 	const { mutation: mutationOptions, request: requestOptions } = options
 		? options.mutation &&
 			"mutationKey" in options.mutation &&
@@ -1633,49 +1634,50 @@ export const getDeleteTransactionByIdMutationOptions = <
 		: { mutation: { mutationKey }, request: undefined };
 
 	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof deleteTransactionById>>,
-		{ id: number }
+		Awaited<ReturnType<typeof deleteTransactionByAccessCode>>,
+		{ accessCode: string }
 	> = (props) => {
-		const { id } = props ?? {};
+		const { accessCode } = props ?? {};
 
-		return deleteTransactionById(id, requestOptions);
+		return deleteTransactionByAccessCode(accessCode, requestOptions);
 	};
 
 	return { mutationFn, ...mutationOptions };
 };
 
-export type DeleteTransactionByIdMutationResult = NonNullable<
-	Awaited<ReturnType<typeof deleteTransactionById>>
+export type DeleteTransactionByAccessCodeMutationResult = NonNullable<
+	Awaited<ReturnType<typeof deleteTransactionByAccessCode>>
 >;
 
-export type DeleteTransactionByIdMutationError = ErrorType<
+export type DeleteTransactionByAccessCodeMutationError = ErrorType<
 	ApiErrorResponse | ApiErrorResponse
 >;
 
 /**
  * @summary Delete a transaction (Admin only)
  */
-export const useDeleteTransactionById = <
+export const useDeleteTransactionByAccessCode = <
 	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
 	TContext = unknown,
 >(
 	options?: {
 		mutation?: UseMutationOptions<
-			Awaited<ReturnType<typeof deleteTransactionById>>,
+			Awaited<ReturnType<typeof deleteTransactionByAccessCode>>,
 			TError,
-			{ id: number },
+			{ accessCode: string },
 			TContext
 		>;
 		request?: SecondParameter<typeof customInstance>;
 	},
 	queryClient?: QueryClient,
 ): UseMutationResult<
-	Awaited<ReturnType<typeof deleteTransactionById>>,
+	Awaited<ReturnType<typeof deleteTransactionByAccessCode>>,
 	TError,
-	{ id: number },
+	{ accessCode: string },
 	TContext
 > => {
-	const mutationOptions = getDeleteTransactionByIdMutationOptions(options);
+	const mutationOptions =
+		getDeleteTransactionByAccessCodeMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };

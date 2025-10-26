@@ -40,7 +40,6 @@ import {
 
 import type {
 	ApiErrorResponse,
-	BaseResponse,
 	MembershipPlanArrayResponse,
 	MembershipPlanCreate,
 	MembershipPlanResponse,
@@ -51,7 +50,7 @@ import { customInstance } from ".././mutator/custom-instance";
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Returns a list of all available membership plans.
+ * Retrieves a list of all available membership plans.
  * @summary List all membership plans
  */
 export const listMembershipPlans = (
@@ -1389,7 +1388,7 @@ export const deleteMembershipPlan = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<BaseResponse>(
+	return customInstance<MembershipPlanResponse>(
 		{ url: `/membership-plans/${id}`, method: "DELETE" },
 		options,
 	);

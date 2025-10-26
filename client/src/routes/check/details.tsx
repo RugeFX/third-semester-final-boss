@@ -3,7 +3,7 @@ import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useEffect, useMemo } from "react";
-
+import { toast } from "sonner";
 import bikeAccent from "@/assets/bike-accent.png";
 import entryBackground from "@/assets/entry-banner-bg.png";
 import { Button } from "@/components/base/buttons/button";
@@ -18,12 +18,18 @@ import {
 } from "@/components/base/dialog/dialog";
 import { InputBase } from "@/components/base/input/input";
 import {
-	getGetCategoryByIdQueryOptions,
+	getGetCategoryByIdSuspenseQueryOptions,
 	useGetCategoryByIdSuspense,
 } from "@/lib/api/categories/categories";
 import {
-	getGetGuestTransactionByAccessCodeQueryOptions,
+	getGetPricesByCategoryIdSuspenseQueryOptions,
+	useGetPricesByCategoryIdSuspense,
+} from "@/lib/api/prices/prices";
+import {
+	getGetGuestTransactionByAccessCodeSuspenseQueryOptions,
+	useCompleteTransaction,
 	useGetGuestTransactionByAccessCodeSuspense,
+	useProcessTransactionPayment,
 } from "@/lib/api/transactions/transactions";
 import { useElapsedTime } from "@/lib/hooks/use-elapsed-time";
 import { useAuthActions } from "@/lib/store/auth";
@@ -46,14 +52,24 @@ export const Route = createFileRoute("/check/details")({
 	},
 	loader: async ({ context }) => {
 		const { data } = await context.queryClient.ensureQueryData(
-			getGetGuestTransactionByAccessCodeQueryOptions(context.accessCode, {
-				query: { meta: { throwNotFound: true } },
-			}),
+			getGetGuestTransactionByAccessCodeSuspenseQueryOptions(
+				context.accessCode,
+				{
+					query: { meta: { throwNotFound: true } },
+				},
+			),
 		);
 
-		await context.queryClient.ensureQueryData(
-			getGetCategoryByIdQueryOptions(data.vehicleDetail.category_id),
-		);
+		const { category_id } = data.vehicleDetail;
+
+		await Promise.all([
+			context.queryClient.ensureQueryData(
+				getGetCategoryByIdSuspenseQueryOptions(category_id),
+			),
+			context.queryClient.ensureQueryData(
+				getGetPricesByCategoryIdSuspenseQueryOptions(category_id),
+			),
+		]);
 
 		return { accessCode: context.accessCode };
 	},
@@ -100,7 +116,7 @@ function NotFoundComponent() {
 		<motion.div
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1, transition: { duration: 1 } }}
-			className="flex flex-col items-center justify-center gap-4 p-4 max-w-lg mx-auto text-center"
+			className="flex grow flex-col items-center justify-center gap-4 p-4 max-w-lg mx-auto text-center"
 		>
 			<img
 				src={bikeAccent}
@@ -165,6 +181,9 @@ function RouteComponent() {
 	const router = useRouter();
 	const { signOut } = useAuthActions();
 
+	const { mutateAsync: exit } = useCompleteTransaction();
+	const { mutateAsync: processPayment } = useProcessTransactionPayment();
+
 	const {
 		data: { vehicleDetail, created_at },
 	} = useGetGuestTransactionByAccessCodeSuspense(accessCode, {
@@ -178,9 +197,54 @@ function RouteComponent() {
 		},
 	);
 
-	const enteredDate = useMemo(() => new Date(created_at), [created_at]);
+	const { data: prices } = useGetPricesByCategoryIdSuspense(
+		vehicleDetail.category_id,
+		{
+			query: { select: ({ data }) => data },
+		},
+	);
 
+	const enteredDate = useMemo(() => new Date(created_at), [created_at]);
 	const { hours, minutes, seconds } = useElapsedTime(enteredDate);
+
+	const currentAmount = useMemo(() => {
+		if (!prices.length) return 0;
+
+		const initialBlock = prices.find((item) => item.type === "INITIAL_BLOCK");
+		const subsequentHour = prices.find(
+			(item) => item.type === "SUBSEQUENT_HOUR",
+		);
+
+		const initialAmount = Number(initialBlock?.amount ?? 0);
+		const blockHours = initialBlock?.block_hours ?? 0;
+		const subsequentAmount = Number(subsequentHour?.amount ?? 0);
+
+		if (enteredDate > new Date()) return 0;
+
+		const totalMinutes = hours * 60 + minutes + (seconds > 0 ? 1 : 0);
+
+		if (totalMinutes <= 0) return initialAmount || 0;
+
+		if (initialBlock && blockHours > 0) {
+			const initialBlockMinutes = blockHours * 60;
+
+			if (totalMinutes <= initialBlockMinutes) return initialAmount;
+
+			const remainingMinutes = totalMinutes - initialBlockMinutes;
+			const billedExtraHours = Math.ceil(remainingMinutes / 60);
+			const extraCharge =
+				subsequentAmount > 0 ? billedExtraHours * subsequentAmount : 0;
+
+			return initialAmount + extraCharge;
+		}
+
+		if (subsequentAmount > 0) {
+			const billedHours = Math.max(1, Math.ceil(totalMinutes / 60));
+			return billedHours * subsequentAmount;
+		}
+
+		return initialAmount;
+	}, [prices, enteredDate, hours, minutes, seconds]);
 
 	const onGoBack = () => {
 		signOut();
@@ -188,7 +252,17 @@ function RouteComponent() {
 		router.invalidate().then(() => router.navigate({ to: "/check" }));
 	};
 
-	const onEndSession = () => {};
+	const onEndSession = async () => {
+		await processPayment({ accessCode, data: { paidAmount: currentAmount } });
+		await exit({ accessCode });
+		signOut();
+
+		await router.invalidate();
+
+		toast.success("Sesi parkir berhasil diakhiri");
+
+		router.navigate({ to: "/check" });
+	};
 
 	const formattedEnteredDate = format(enteredDate, "hh.mm a - dd MMMM yyyy");
 	const paddedHours = String(hours % 100).padStart(2, "0");
@@ -279,8 +353,7 @@ function RouteComponent() {
 					<div className="flex flex-col gap-2 justify-between">
 						<h3 className="text-xl font-semibold shrink-0">Biaya Parkir</h3>
 						<p className="text-5xl font-bold text-bg-brand-solid">
-							{/* TODO: replace with real calculation */}
-							{formatIDR(999999)}
+							{formatIDR(currentAmount)}
 						</p>
 					</div>
 

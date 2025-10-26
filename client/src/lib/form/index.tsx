@@ -29,6 +29,21 @@ import { cx } from "../utils/cx";
 export const { fieldContext, formContext, useFieldContext, useFormContext } =
 	createFormHookContexts();
 
+function Form(props: ComponentProps<"form">) {
+	const form = useFormContext();
+
+	return (
+		<form
+			onSubmit={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				form.handleSubmit();
+			}}
+			{...props}
+		/>
+	);
+}
+
 interface FormInputGroupProps {
 	groupProps?: Omit<InputGroupProps, "children">;
 	inputProps?: InputBaseProps;
@@ -253,6 +268,7 @@ export const { useAppForm, withForm, withFieldGroup } = createFormHook({
 		Errors: FieldErrors,
 	},
 	formComponents: {
+		Form,
 		SubmitButton,
 		Errors: FormErrors,
 	},

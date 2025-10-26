@@ -40,7 +40,6 @@ import {
 
 import type {
 	ApiErrorResponse,
-	BaseResponse,
 	CategoryArrayResponse,
 	CategoryCreate,
 	CategoryResponse,
@@ -1356,7 +1355,7 @@ export const deleteCategory = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<BaseResponse>(
+	return customInstance<CategoryResponse>(
 		{ url: `/categories/${id}`, method: "DELETE" },
 		options,
 	);

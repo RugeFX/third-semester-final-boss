@@ -40,7 +40,6 @@ import {
 
 import type {
 	ApiErrorResponse,
-	BaseResponse,
 	VehicleDetailArrayResponse,
 	VehicleDetailCreate,
 	VehicleDetailResponse,
@@ -1369,7 +1368,7 @@ export const deleteVehicleDetailsId = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<BaseResponse>(
+	return customInstance<VehicleDetailResponse>(
 		{ url: `/vehicle-details/${id}`, method: "DELETE" },
 		options,
 	);

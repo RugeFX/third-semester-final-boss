@@ -40,7 +40,6 @@ import {
 
 import type {
 	ApiErrorResponse,
-	BaseResponse,
 	ParkingLevelArrayResponse,
 	ParkingLevelCreate,
 	ParkingLevelResponse,
@@ -1377,7 +1376,7 @@ export const deleteParkingLevel = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<BaseResponse>(
+	return customInstance<ParkingLevelResponse>(
 		{ url: `/parking-levels/${id}`, method: "DELETE" },
 		options,
 	);

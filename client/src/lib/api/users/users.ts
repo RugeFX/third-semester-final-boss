@@ -41,6 +41,8 @@ import {
 import type {
 	ApiErrorResponse,
 	BaseResponse,
+	PasswordChange,
+	PasswordReset,
 	UserArrayResponse,
 	UserCreate,
 	UserResponse,
@@ -1341,7 +1343,7 @@ export const deleteUser = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<BaseResponse>(
+	return customInstance<UserResponse>(
 		{ url: `/users/${id}`, method: "DELETE" },
 		options,
 	);
@@ -1417,6 +1419,193 @@ export const useDeleteUser = <
 	TContext
 > => {
 	const mutationOptions = getDeleteUserMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};
+/**
+ * Allows an admin to forcibly reset the password for any user.
+ * @summary Reset a user's password (Admin only)
+ */
+export const resetUserPassword = (
+	id: number,
+	passwordReset: BodyType<PasswordReset>,
+	options?: SecondParameter<typeof customInstance>,
+) => {
+	return customInstance<BaseResponse>(
+		{
+			url: `/users/${id}/password`,
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			data: passwordReset,
+		},
+		options,
+	);
+};
+
+export const getResetUserPasswordMutationOptions = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse | ApiErrorResponse>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof resetUserPassword>>,
+		TError,
+		{ id: number; data: BodyType<PasswordReset> },
+		TContext
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof resetUserPassword>>,
+	TError,
+	{ id: number; data: BodyType<PasswordReset> },
+	TContext
+> => {
+	const mutationKey = ["resetUserPassword"];
+	const { mutation: mutationOptions, request: requestOptions } = options
+		? options.mutation &&
+			"mutationKey" in options.mutation &&
+			options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey }, request: undefined };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof resetUserPassword>>,
+		{ id: number; data: BodyType<PasswordReset> }
+	> = (props) => {
+		const { id, data } = props ?? {};
+
+		return resetUserPassword(id, data, requestOptions);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type ResetUserPasswordMutationResult = NonNullable<
+	Awaited<ReturnType<typeof resetUserPassword>>
+>;
+export type ResetUserPasswordMutationBody = BodyType<PasswordReset>;
+export type ResetUserPasswordMutationError = ErrorType<
+	ApiErrorResponse | ApiErrorResponse | ApiErrorResponse
+>;
+
+/**
+ * @summary Reset a user's password (Admin only)
+ */
+export const useResetUserPassword = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse | ApiErrorResponse>,
+	TContext = unknown,
+>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof resetUserPassword>>,
+			TError,
+			{ id: number; data: BodyType<PasswordReset> },
+			TContext
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseMutationResult<
+	Awaited<ReturnType<typeof resetUserPassword>>,
+	TError,
+	{ id: number; data: BodyType<PasswordReset> },
+	TContext
+> => {
+	const mutationOptions = getResetUserPasswordMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};
+/**
+ * Allows the currently authenticated user (admin or member) to change their own password.
+ * @summary Change current user's password
+ */
+export const changeCurrentUserPassword = (
+	passwordChange: BodyType<PasswordChange>,
+	options?: SecondParameter<typeof customInstance>,
+	signal?: AbortSignal,
+) => {
+	return customInstance<BaseResponse>(
+		{
+			url: `/users/me/change-password`,
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			data: passwordChange,
+			signal,
+		},
+		options,
+	);
+};
+
+export const getChangeCurrentUserPasswordMutationOptions = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof changeCurrentUserPassword>>,
+		TError,
+		{ data: BodyType<PasswordChange> },
+		TContext
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof changeCurrentUserPassword>>,
+	TError,
+	{ data: BodyType<PasswordChange> },
+	TContext
+> => {
+	const mutationKey = ["changeCurrentUserPassword"];
+	const { mutation: mutationOptions, request: requestOptions } = options
+		? options.mutation &&
+			"mutationKey" in options.mutation &&
+			options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey }, request: undefined };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof changeCurrentUserPassword>>,
+		{ data: BodyType<PasswordChange> }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return changeCurrentUserPassword(data, requestOptions);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type ChangeCurrentUserPasswordMutationResult = NonNullable<
+	Awaited<ReturnType<typeof changeCurrentUserPassword>>
+>;
+export type ChangeCurrentUserPasswordMutationBody = BodyType<PasswordChange>;
+export type ChangeCurrentUserPasswordMutationError = ErrorType<
+	ApiErrorResponse | ApiErrorResponse
+>;
+
+/**
+ * @summary Change current user's password
+ */
+export const useChangeCurrentUserPassword = <
+	TError = ErrorType<ApiErrorResponse | ApiErrorResponse>,
+	TContext = unknown,
+>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof changeCurrentUserPassword>>,
+			TError,
+			{ data: BodyType<PasswordChange> },
+			TContext
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseMutationResult<
+	Awaited<ReturnType<typeof changeCurrentUserPassword>>,
+	TError,
+	{ data: BodyType<PasswordChange> },
+	TContext
+> => {
+	const mutationOptions = getChangeCurrentUserPasswordMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };

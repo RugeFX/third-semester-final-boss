@@ -40,7 +40,6 @@ import {
 
 import type {
 	ApiErrorResponse,
-	BaseResponse,
 	MemberArrayResponse,
 	MemberCreate,
 	MemberResponse,
@@ -1346,7 +1345,7 @@ export const deleteMember = (
 	id: number,
 	options?: SecondParameter<typeof customInstance>,
 ) => {
-	return customInstance<BaseResponse>(
+	return customInstance<MemberResponse>(
 		{ url: `/members/${id}`, method: "DELETE" },
 		options,
 	);

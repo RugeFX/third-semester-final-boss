@@ -14,13 +14,13 @@ export interface PriceCreate {
 	/** Business rule type for the price. */
 	type: string;
 	/**
-	 * Duration in hours for INITIAL_BLOCK type.
+	 * Duration in hours for INITIAL_BLOCK type. Required if type is 'INITIAL_BLOCK'.
 	 * @nullable
 	 */
-	blockHours?: number | null;
-	isActive?: boolean;
+	block_hours?: number | null;
+	is_active?: boolean;
 	/** @nullable */
-	validFrom?: string | null;
+	valid_from?: string | null;
 	/** @nullable */
-	validUntil?: string | null;
+	valid_until?: string | null;
 }

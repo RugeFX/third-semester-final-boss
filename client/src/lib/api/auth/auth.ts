@@ -16,7 +16,13 @@ import type {
 } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 
-import type { ApiErrorResponse, LoginMember, TokenResponse } from ".././models";
+import type {
+	ApiErrorResponse,
+	LoginMember,
+	TokenResponse,
+	UserRegister,
+	UserResponse,
+} from ".././models";
 import type { BodyType, ErrorType } from ".././mutator/custom-instance";
 import { customInstance } from ".././mutator/custom-instance";
 
@@ -117,6 +123,98 @@ export const useLoginUser = <
 	TContext
 > => {
 	const mutationOptions = getLoginUserMutationOptions(options);
+
+	return useMutation(mutationOptions, queryClient);
+};
+/**
+ * Allows a new user to register for an account. This automatically assigns them the 'member' role.
+ * @summary Member Self-Registration
+ */
+export const registerUser = (
+	userRegister: BodyType<UserRegister>,
+	options?: SecondParameter<typeof customInstance>,
+	signal?: AbortSignal,
+) => {
+	return customInstance<UserResponse>(
+		{
+			url: `/auth/register`,
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			data: userRegister,
+			signal,
+		},
+		options,
+	);
+};
+
+export const getRegisterUserMutationOptions = <
+	TError = ErrorType<ApiErrorResponse>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof registerUser>>,
+		TError,
+		{ data: BodyType<UserRegister> },
+		TContext
+	>;
+	request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof registerUser>>,
+	TError,
+	{ data: BodyType<UserRegister> },
+	TContext
+> => {
+	const mutationKey = ["registerUser"];
+	const { mutation: mutationOptions, request: requestOptions } = options
+		? options.mutation &&
+			"mutationKey" in options.mutation &&
+			options.mutation.mutationKey
+			? options
+			: { ...options, mutation: { ...options.mutation, mutationKey } }
+		: { mutation: { mutationKey }, request: undefined };
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof registerUser>>,
+		{ data: BodyType<UserRegister> }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return registerUser(data, requestOptions);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type RegisterUserMutationResult = NonNullable<
+	Awaited<ReturnType<typeof registerUser>>
+>;
+export type RegisterUserMutationBody = BodyType<UserRegister>;
+export type RegisterUserMutationError = ErrorType<ApiErrorResponse>;
+
+/**
+ * @summary Member Self-Registration
+ */
+export const useRegisterUser = <
+	TError = ErrorType<ApiErrorResponse>,
+	TContext = unknown,
+>(
+	options?: {
+		mutation?: UseMutationOptions<
+			Awaited<ReturnType<typeof registerUser>>,
+			TError,
+			{ data: BodyType<UserRegister> },
+			TContext
+		>;
+		request?: SecondParameter<typeof customInstance>;
+	},
+	queryClient?: QueryClient,
+): UseMutationResult<
+	Awaited<ReturnType<typeof registerUser>>,
+	TError,
+	{ data: BodyType<UserRegister> },
+	TContext
+> => {
+	const mutationOptions = getRegisterUserMutationOptions(options);
 
 	return useMutation(mutationOptions, queryClient);
 };

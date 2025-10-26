@@ -9,11 +9,9 @@ This documentation provides a base for all the resources defined in the database
  */
 
 /**
- * Payload for renewing a membership by referencing a specific plan.
+ * Payload for renewing a membership using a specific plan ID.
  */
 export interface MembershipRenewal {
-	/** The ID of the membership plan to renew. */
+	/** The ID of the membership plan being purchased. */
 	membershipPlanId: number;
-	/** The amount paid for the renewal. */
-	amountPaid: number;
 }

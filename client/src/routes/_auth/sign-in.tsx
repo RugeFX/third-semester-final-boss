@@ -98,7 +98,14 @@ function RouteComponent() {
 				</div>
 			</div>
 
-			<div className="space-y-4">
+			<form
+				className="space-y-4"
+				onSubmit={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					form.handleSubmit();
+				}}
+			>
 				<form.AppField name="username">
 					{(field) => (
 						<div>
@@ -147,7 +154,7 @@ function RouteComponent() {
 						Daftar
 					</Button>
 				</div>
-			</div>
+			</form>
 		</motion.div>
 	);
 }

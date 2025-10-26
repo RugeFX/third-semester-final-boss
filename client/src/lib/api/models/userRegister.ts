@@ -8,9 +8,8 @@ This documentation provides a base for all the resources defined in the database
  * OpenAPI spec version: 1.0.0
  */
 
-export interface MembershipPlan {
-	id: number;
-	cost: number;
-	/** Duration of the plan in months. */
-	period: number;
+export interface UserRegister {
+	fullname: string;
+	username: string;
+	password: string;
 }

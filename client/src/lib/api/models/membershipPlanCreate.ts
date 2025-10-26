@@ -10,5 +10,6 @@ This documentation provides a base for all the resources defined in the database
 
 export interface MembershipPlanCreate {
 	cost: number;
+	/** Duration of the plan in months. */
 	period: number;
 }
