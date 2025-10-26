@@ -367,7 +367,7 @@ function RouteComponent() {
 							Kembali
 						</Button>
 						<DialogTrigger>
-							<Button size="xl" className="h-14 w-full" onClick={onEndSession}>
+							<Button size="xl" className="h-14 w-full">
 								Akhiri Parkir
 							</Button>
 
@@ -393,7 +393,9 @@ function RouteComponent() {
 												>
 													Batal
 												</Button>
-												<Button className="w-full">Akhiri</Button>
+												<Button className="w-full" onClick={onEndSession}>
+													Akhiri
+												</Button>
 											</DialogFooter>
 										</>
 									)}
