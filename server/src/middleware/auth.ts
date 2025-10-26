@@ -25,7 +25,7 @@ export const authenticateJWT = (req: Request, _res: Response, next: NextFunction
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.split(' ')[1];
-        
+
         // Verify token
         jwt.verify(token, env.JWT_SECRET, { algorithms: ['HS256'] }, (error, userPayload) => {
             // If token is invalid or expired
@@ -59,6 +59,6 @@ export const authorizeAdmin = (req: Request, _res: Response, next: NextFunction)
     } else {
         return next(new HttpError(403, 'Forbidden: Admins only'));
     }
-} 
+}
 
 export default { authenticateJWT, authorizeAdmin };

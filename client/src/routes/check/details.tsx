@@ -1,5 +1,10 @@
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
-import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	notFound,
+	redirect,
+	useRouter,
+} from "@tanstack/react-router";
 import { format } from "date-fns";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useEffect, useMemo } from "react";
@@ -59,6 +64,8 @@ export const Route = createFileRoute("/check/details")({
 				},
 			),
 		);
+
+		if (data.status === "EXIT") throw notFound();
 
 		const { category_id } = data.vehicleDetail;
 
@@ -221,9 +228,9 @@ function RouteComponent() {
 
 		if (enteredDate > new Date()) return 0;
 
-		const totalMinutes = hours * 60 + minutes + (seconds > 0 ? 1 : 0);
+		const totalMinutes = hours * 60 + minutes;
 
-		if (totalMinutes <= 0) return initialAmount || 0;
+		if (totalMinutes <= 0) return initialAmount;
 
 		if (initialBlock && blockHours > 0) {
 			const initialBlockMinutes = blockHours * 60;
@@ -244,7 +251,7 @@ function RouteComponent() {
 		}
 
 		return initialAmount;
-	}, [prices, enteredDate, hours, minutes, seconds]);
+	}, [prices, enteredDate, hours, minutes]);
 
 	const onGoBack = () => {
 		signOut();

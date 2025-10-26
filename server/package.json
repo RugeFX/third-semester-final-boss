@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --import=tsx --watch src/index.ts",
+    "start": "node --import=tsx src/index.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",

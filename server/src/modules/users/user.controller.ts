@@ -4,7 +4,7 @@ import { paramsSchema, createUserSchema, updateUserSchema, changeUserPasswordSch
 import HttpError from "../../common/exceptions/http.error";
 
 // Get all users
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (_req: Request, res: Response) => {
     const users = await userService.getAllUsers();
 
     res.status(200).json({

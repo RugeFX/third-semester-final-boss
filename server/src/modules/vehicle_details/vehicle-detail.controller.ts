@@ -33,7 +33,7 @@ export const createVehicleDetail = async (req: Request, res: Response) => {
 
     const newVehicleDetail = await vehicleDetailService.createVehicleDetail(vehicleDetailData);
 
-    if (!newVehicleDetail) throw new HttpError(500, "Failed to create vehicle detail");    
+    if (!newVehicleDetail) throw new HttpError(500, "Failed to create vehicle detail");
 
     res.status(201).json({
         success: true,
@@ -45,9 +45,11 @@ export const createVehicleDetail = async (req: Request, res: Response) => {
 // Update a vehicle detail
 export const updateVehicleDetail = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
+    const userId = req.user!.id;
+
     const vehicleDetailData = updateVehicleDetailSchema.parse(req.body);
 
-    const updatedVehicleDetail = await vehicleDetailService.updateVehicleDetail(id, vehicleDetailData);
+    const updatedVehicleDetail = await vehicleDetailService.updateVehicleDetail(id, vehicleDetailData, userId);
 
     if (!updatedVehicleDetail) throw new HttpError(500, "Failed to update vehicle detail");
 
@@ -61,8 +63,9 @@ export const updateVehicleDetail = async (req: Request, res: Response) => {
 // Delete a vehicle detail
 export const deleteVehicleDetail = async (req: Request, res: Response) => {
     const { id } = paramsSchema.parse(req.params);
+    const userId = req.user!.id;
 
-    const deletedVehicleDetail = await vehicleDetailService.deleteVehicleDetail(id);
+    const deletedVehicleDetail = await vehicleDetailService.deleteVehicleDetail(id, userId);
 
     if (!deletedVehicleDetail) throw new HttpError(500, "Failed to delete vehicle detail");
 

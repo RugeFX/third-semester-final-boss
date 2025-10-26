@@ -1,7 +1,7 @@
 import { db } from '../../db';
 import { eq, and, isNull } from 'drizzle-orm';
 import { transactionsTable } from '../../db/schema';
-import { createTransactionSchema, processPaymentSchema, updateTransactionSchema } from './transaction.schema';
+import { createTransactionSchema, updateTransactionSchema } from './transaction.schema';
 import { z } from 'zod';
 
 type TransactionDB = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
@@ -102,7 +102,7 @@ export const findByUserId = async (userId: number) => {
 
 // Create a new transaction
 export const create = async (transactionData: newTransaction, tx: TransactionDB = db) => {
-    const [ newTransaction ] = await tx.insert(transactionsTable).values({
+    const [newTransaction] = await tx.insert(transactionsTable).values({
         status: transactionData.status,
         paid_amount: transactionData.paidAmount?.toString(),
         access_code: transactionData.accessCode,
@@ -116,7 +116,7 @@ export const create = async (transactionData: newTransaction, tx: TransactionDB 
 
 // Update a transaction
 export const update = async (accessCode: string, transactionData: updatedTransaction) => {
-    const [ updatedTransaction ] = await db.update(transactionsTable).set({
+    const [updatedTransaction] = await db.update(transactionsTable).set({
         status: transactionData.status,
         paid_amount: transactionData.paidAmount?.toString(),
     }).where(eq(transactionsTable.access_code, accessCode)).returning();
@@ -126,7 +126,7 @@ export const update = async (accessCode: string, transactionData: updatedTransac
 
 // Update paid amount of a transaction
 export const updatePaidAmount = async (accessCode: string, paidAmount: number) => {
-    const [ updatedTransactionPaidAmount ] = await db.update(transactionsTable).set({
+    const [updatedTransactionPaidAmount] = await db.update(transactionsTable).set({
         paid_amount: paidAmount.toString(),
     }).where(
         and(
@@ -141,7 +141,7 @@ export const updatePaidAmount = async (accessCode: string, paidAmount: number) =
 
 // Update a transaction to EXIT
 export const updateToExit = async (accessCode: string) => {
-    const [ updatedTransactionExit ] = await db.update(transactionsTable).set({
+    const [updatedTransactionExit] = await db.update(transactionsTable).set({
         status: "EXIT",
     }).where(
         and(
@@ -155,7 +155,7 @@ export const updateToExit = async (accessCode: string) => {
 
 // Delete a transaction
 export const remove = async (accessCode: string) => {
-    const [ deletedTransaction ] = await db.delete(transactionsTable).where(
+    const [deletedTransaction] = await db.delete(transactionsTable).where(
         eq(transactionsTable.access_code, accessCode)
     ).returning();
 

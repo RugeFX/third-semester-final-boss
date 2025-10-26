@@ -1,0 +1,1 @@
+{"version":3,"file":"http.error.js","sourceRoot":"","sources":["../../../src/common/exceptions/http.error.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,OAAO,SAAU,SAAQ,KAAK;IACrB;IAAnB,YAAmB,MAAc,EAAE,OAAe;QAC9C,KAAK,CAAC,OAAO,CAAC,CAAC;QADA,WAAM,GAAN,MAAM,CAAQ;IAEjC,CAAC;CACJ"}

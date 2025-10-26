@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/members")({
@@ -19,5 +19,5 @@ export const Route = createFileRoute("/members")({
 });
 
 function RouteComponent() {
-	return <div>Hello "/members"!</div>;
+	return <Outlet />;
 }
