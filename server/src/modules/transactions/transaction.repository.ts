@@ -116,9 +116,12 @@ export const create = async (transactionData: newTransaction, tx: TransactionDB 
 
 // Update a transaction
 export const update = async (accessCode: string, transactionData: updatedTransaction) => {
+    // Handle paidAmount which can be number or null
+    const paidAmountValue = typeof transactionData.paidAmount === 'number' ? transactionData.paidAmount.toString() : null;
+
     const [updatedTransaction] = await db.update(transactionsTable).set({
         status: transactionData.status,
-        paid_amount: transactionData.paidAmount?.toString(),
+        paid_amount: paidAmountValue,
     }).where(eq(transactionsTable.access_code, accessCode)).returning();
 
     return updatedTransaction;
