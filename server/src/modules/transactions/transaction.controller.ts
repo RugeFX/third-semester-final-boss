@@ -70,9 +70,13 @@ export const processTransactionPayment = async (req: Request, res: Response) => 
     }
 
     let processedTransaction;
+    const now = new Date();
+
+    // Check if the member duration is still active
+    const isMemberActive = member && (new Date(member.ended_at) > now);
 
     // Process payment differently for members and non-members
-    if (member) {
+    if (isMemberActive) {
         processedTransaction = await transactionService.processTransactionPaymentForMember(accessCode);
     } else {
         const { paidAmount } = processPaymentSchema.parse(req.body);
